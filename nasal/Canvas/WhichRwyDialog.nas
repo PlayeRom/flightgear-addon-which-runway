@@ -182,7 +182,7 @@ var WhichRwyDialog = {
                 y += me._printLineWithValue(0, y, "Heading:", math.round(rwy.rwyHdg) ~ "°");
                 y += me._printLineWithValue(0, y, "Length:", math.round(rwy.rwyLength), "m");
                 y += me._printLineWithValue(0, y, "Width:", math.round(rwy.rwyWidth), "m");
-                y += me._printLineWithValue(0, y, "Inverted rwy:", rwy.inverted);
+                y += me._printLineWithValue(0, y, "Reciprocal:", rwy.reciprocal);
                 y += me._printLineWithValue(0, y, "ILS:", rwy.ils == nil ? "No" : (sprintf("%.3f/%.0f°", rwy.ils.frequency / 100, rwy.ils.course)));
 
                 # Margin between runways

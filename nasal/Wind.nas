@@ -47,7 +47,7 @@ var Wind = {
     # @return void
     #
     downloadMetar: func(icao) {
-        logprint(LOG_ALERT, "Start downloadMetar icao = ", icao);
+        # logprint(LOG_ALERT, "Start downloadMetar icao = ", icao);
 
         # The "request-metar" command is set "station-id" property immediately.
 
@@ -63,7 +63,7 @@ var Wind = {
     # @return bool
     #
     isMetarSet: func() {
-        logprint(LOG_ALERT, "isMetarSet start");
+        # logprint(LOG_ALERT, "isMetarSet start");
         if (getprop(me._pathToMyMetar ~ "/data") == nil) {
             logprint(LOG_ALERT, "isMetarSet false - no data");
             return false;
@@ -74,7 +74,7 @@ var Wind = {
 
         var result = airportinfo(lat, lon).id == getprop(me._pathToMyMetar ~ "/station-id");
 
-        logprint(LOG_ALERT, "isMetarSet result = ", result);
+        # logprint(LOG_ALERT, "isMetarSet result = ", result);
 
         return result;
     },

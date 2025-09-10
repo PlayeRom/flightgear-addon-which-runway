@@ -79,7 +79,7 @@ var RunwaysData = {
                 rwyHdg: rwyHdg,
                 rwyLength: runway.length,
                 rwyWidth: runway.width,
-                inverted: me._getInvertedRwyId(runway.id),
+                reciprocal: me._getReciprocalRwyId(runway.id),
                 ils: runway.ils,
             });
         }
@@ -88,14 +88,14 @@ var RunwaysData = {
     },
 
     #
-    # Sort runways data by headwind (the biggest headwind first).
+    # Sort runways data by smaller normDiffDeg first, i.e. larger headwind first.
     #
     # @param  vector  runwaysData  Array of runways data.
     # @return vector  Sorted array of runways data.
     #
     _sortRunwysByHeadwind: func(runwaysData) {
         return sort(runwaysData, func(a, b) {
-                if (a.normDiffDeg > b.normDiffDeg) return  1;  # mniejszy normDiffDeg pierwszy
+                if (a.normDiffDeg > b.normDiffDeg) return  1;
            else if (a.normDiffDeg < b.normDiffDeg) return -1;
 
            return 0;
@@ -103,29 +103,29 @@ var RunwaysData = {
     },
 
     #
-    # Get inverted runway id.
+    # Get reciprocal runway id.
     #
     # @param  string  rwyId  Original runway id.
-    # @return string  Inverted runway id.
+    # @return string  Reciprocal runway id.
     #
-    _getInvertedRwyId: func(rwyId) {
+    _getReciprocalRwyId: func(rwyId) {
         var side = substr(rwyId, size(rwyId) - 1, 1);  # last char, can be "L", "R", "C" or digit
 
-        var invertedSide = me._getInvertedSide(side);
+        var reciprocalSide = me._getReciprocalSide(side);
         var number = me._getNumberWithoutSide(rwyId, side);
 
-        var innvertedNumber = math.round(math.mod(math.round(number * 10) + 180, 360) / 10);
+        var reciprocalNumber = math.round(math.mod(math.round(number * 10) + 180, 360) / 10);
 
-        return sprintf("%02d%s", innvertedNumber, invertedSide);
+        return sprintf("%02d%s", reciprocalNumber, reciprocalSide);
     },
 
     #
-    # Get inverted side of runway.
+    # Get reciprocal side of runway.
     #
     # @param  string  side  Side of runway: "L", "R", "C" or digit.
-    # @return string  Inverted side of runway: "R", "L", "C" or "".
+    # @return string  Reciprocal side of runway: "R", "L", "C" or "".
     #
-    _getInvertedSide: func(side) {
+    _getReciprocalSide: func(side) {
              if (side == "L") return "R";
         else if (side == "R") return "L";
         else if (side == "C") return "C";
