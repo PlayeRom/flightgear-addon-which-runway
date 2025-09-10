@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <meta>
+        <file-type type="string">FlightGear add-on metadata</file-type>
+        <format-version type="int">1</format-version>
+    </meta>
+
+    <addon>
+        <identifier type="string">org.flightgear.addons.which-runway</identifier>
+        <name type="string">Which runway</name>
+        <version type="string">1.0.0</version>
+
+        <authors>
+            <author>
+                <name type="string">Roman Ludwicki</name>
+                <email type="string">kontakt@flightgear.org.pl</email>
+                <url type="string">https://flightgear.org.pl</url>
+            </author>
+        </authors>
+
+        <maintainers>
+            <maintainer>
+                <name type="string">Roman Ludwicki</name>
+                <url type="string">
+                    https://github.com/PlayeRom/flightgear-addon-which-runway
+                </url>
+            </maintainer>
+        </maintainers>
+
+        <short-description type="string">Which runway to choose?</short-description>
+        <long-description type="string">This add-on uses the METAR to indicate which runway is best for takeoff or landing. It also calculates headwind, crosswind and tailwind forces for the each runway of the airport.</long-description>
+
+        <license>
+            <designation type="string">GNU GPL version 3 or later</designation>
+
+            <file type="string">
+                <!-- Use a relative, slash-separated path to a file under the add-on
+                    base directory that contains the add-on license text. -->
+                LICENSE
+            </file>
+
+            <url type="string">https://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+
+        <min-FG-version type="string">2024.1.1</min-FG-version>
+        <max-FG-version type="string">none</max-FG-version>
+
+        <urls>
+            <home-page type="string">https://wiki.flightgear.org/Logbook_Add-on</home-page>
+            <download type="string">https://github.com/PlayeRom/flightgear-addon-which-runway/releases/latest</download>
+            <support type="string">https://github.com/PlayeRom/flightgear-addon-which-runway</support>
+            <code-repository type="string">https://github.com/PlayeRom/flightgear-addon-which-runway</code-repository>
+        </urls>
+
+        <tags>
+            <tag type="string">runway</tag>
+            <tag type="string">wind</tag>
+            <tag type="string">headwind</tag>
+            <tag type="string">crosswind</tag>
+            <tag type="string">tailwind</tag>
+        </tags>
+    </addon>
+</PropertyList>
