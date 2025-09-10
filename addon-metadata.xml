@@ -41,7 +41,7 @@
         <max-FG-version type="string">none</max-FG-version>
 
         <urls>
-            <home-page type="string">https://wiki.flightgear.org/</home-page>
+            <home-page type="string">https://wiki.flightgear.org/Which_Runway_Add-on</home-page>
             <download type="string">https://github.com/PlayeRom/flightgear-addon-which-runway/releases/latest</download>
             <support type="string">https://github.com/PlayeRom/flightgear-addon-which-runway</support>
             <code-repository type="string">https://github.com/PlayeRom/flightgear-addon-which-runway</code-repository>
