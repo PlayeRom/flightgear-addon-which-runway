@@ -16,7 +16,7 @@ var WhichRwyDialog = {
     #
     # Constants
     #
-    WINDOW_WIDTH  : 500,
+    WINDOW_WIDTH  : 800,
     WINDOW_HEIGHT : 700,
     PADDING       : 10,
     MARGIN_Y      : 10,
@@ -56,12 +56,14 @@ var WhichRwyDialog = {
 
         me._scrollDataContent = me.getScrollAreaContent(
             context  : me._scrollData,
-            font     : "LiberationFonts/LiberationSans-Regular.ttf",
+            font     : Fonts.getRegular(),
             fontSize : 16,
             alignment: "left-baseline"
         );
 
         me._drawBottomBar();
+
+        me._windRose = WindRose.new(me._scrollDataContent);
 
         return me;
     },
@@ -74,6 +76,7 @@ var WhichRwyDialog = {
     del: func() {
         me._timer.stop();
 
+        me._windRose.del();
         me._runwaysData.del();
         me._wind.del();
 
@@ -153,12 +156,14 @@ var WhichRwyDialog = {
             var x = 0;
             var y = 0;
 
+            var roseRadius = 200;
+
             var text = me._scrollDataContent.createChild("text")
                 .setText(airport.id ~ ", " ~ airport.name)
                 .setTranslation(x, y)
                 .setColor(me._defaultTextColor)
                 .setFontSize(24)
-                .setFont("LiberationFonts/LiberationSans-Bold.ttf");
+                .setFont(Fonts.getBold());
 
             y += text.getSize()[1] + WhichRwyDialog.MARGIN_Y;
 
@@ -167,7 +172,7 @@ var WhichRwyDialog = {
                 .setTranslation(x, y)
                 .setColor(me._defaultTextColor)
                 .setFontSize(20)
-                .setFont("LiberationFonts/LiberationSans-Bold.ttf");
+                .setFont(Fonts.getBold());
 
             y += text.getSize()[1] + 25;
 
@@ -179,14 +184,23 @@ var WhichRwyDialog = {
 
                 var unit = "kts" ~ (rwy.crosswind == 0 ? "" : (rwy.crosswind < 0 ? " from left" : " from right"));
                 y += me._printLineWithValue(0, y, "Crosswind:", math.round(math.abs(rwy.crosswind)), unit);
-                y += me._printLineWithValue(0, y, "Heading:", math.round(rwy.rwyHdg) ~ "°");
-                y += me._printLineWithValue(0, y, "Length:", math.round(rwy.rwyLength), "m");
-                y += me._printLineWithValue(0, y, "Width:", math.round(rwy.rwyWidth), "m");
-                y += me._printLineWithValue(0, y, "Reciprocal:", rwy.reciprocal);
+                y += me._printLineWithValue(0, y, "Heading:", math.round(rwy.heading) ~ "°");
+                y += me._printLineWithValue(0, y, "Length:", math.round(rwy.length), "m");
+                y += me._printLineWithValue(0, y, "Width:", math.round(rwy.width), "m");
+                y += me._printLineWithValue(0, y, "Reciprocal:", rwy.reciprocalId);
                 y += me._printLineWithValue(0, y, "ILS:", rwy.ils == nil ? "No" : (sprintf("%.3f/%.0f°", rwy.ils.frequency / 100, rwy.ils.course)));
 
+                me._windRose.drawWindRose(
+                    500,
+                    y,
+                    roseRadius,
+                    me._wind.getDirection(),
+                    me._wind.getSpeedKt(),
+                    rwy,
+                );
+
                 # Margin between runways
-                y += text.getSize()[1] + 30;
+                y += (roseRadius * 2);
             }
         }
 
@@ -197,10 +211,10 @@ var WhichRwyDialog = {
     #
     # @param  int  x  Init position of x.
     # @param  int  y  Init position of y.
-    # @param  hash  rwy  Runway data object.
+    # @param  hash  runway  Runway data object.
     # @return int  New position of y shifted by height of printed runway label.
     #
-    _printRunwayLabel: func(x, y, rwy) {
+    _printRunwayLabel: func(x, y, runway) {
         var text = me._scrollDataContent.createChild("text")
             .setText("Runway: ")
             .setTranslation(x, y)
@@ -208,18 +222,18 @@ var WhichRwyDialog = {
 
         x += text.getSize()[0] + 5;
         text = me._scrollDataContent.createChild("text")
-            .setText(rwy.rwyId)
+            .setText(runway.rwyId)
             .setTranslation(x, y)
             .setColor([0.0, 0.0, 0.0])
             .setFontSize(20)
-            .setFont("LiberationFonts/LiberationSans-Bold.ttf");
+            .setFont(Fonts.getBold());
 
         x += text.getSize()[0] + 10;
         text = me._scrollDataContent.createChild("text")
-            .setText(me._geWindLabelByDir(rwy.normDiffDeg))
+            .setText(me._geWindLabelByDir(runway.normDiffDeg))
             .setTranslation(x, y)
-            .setColor(me._geWindColorByDir(rwy.normDiffDeg))
-            .setFont(me._geWindFontByDir(rwy.normDiffDeg));
+            .setColor(me._geWindColorByDir(runway.normDiffDeg))
+            .setFont(me._geWindFontByDir(runway.normDiffDeg));
 
         return text.getSize()[1] + WhichRwyDialog.MARGIN_Y;
     },
@@ -229,9 +243,9 @@ var WhichRwyDialog = {
     # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
     #
     _geWindLabelByDir: func(normDiffDeg) {
-             if (normDiffDeg <= 60) return "Headwind";
-        else if (normDiffDeg <= 90) return "Crosswind";
-        else                        return "Tailwind";
+             if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return "Headwind";
+        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return "Crosswind";
+        else                                              return "Tailwind";
     },
 
     #
@@ -239,9 +253,9 @@ var WhichRwyDialog = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg <= 60) return [0.0, 0.5, 0.0];
-        else if (normDiffDeg <= 90) return [0.9, 0.5, 0.0];
-        else                        return me._defaultTextColor;
+             if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Wind.getHeadwindColor();
+        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Wind.getCrosswindColor();
+        else                                              return me._defaultTextColor;
     },
 
     #
@@ -249,8 +263,8 @@ var WhichRwyDialog = {
     # @return string  Font path.
     #
     _geWindFontByDir: func(normDiffDeg) {
-        if (normDiffDeg <= 90) return "LiberationFonts/LiberationSans-Bold.ttf";
-        else                   return "LiberationFonts/LiberationSans-Regular.ttf";
+        if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Fonts.getBold();
+        else                                         return Fonts.getRegular();
     },
 
     #
@@ -265,23 +279,21 @@ var WhichRwyDialog = {
         var text = me._scrollDataContent.createChild("text")
             .setText(label)
             .setTranslation(x, y)
-            .setColor(me._defaultTextColor)
-            .setFont("LiberationFonts/LiberationSans-Regular.ttf");
+            .setColor(me._defaultTextColor);
 
         x += 100;
         text = me._scrollDataContent.createChild("text")
             .setText(value)
             .setTranslation(x, y)
             .setColor(me._defaultTextColor)
-            .setFont("LiberationFonts/LiberationSans-Bold.ttf");
+            .setFont(Fonts.getBold());
 
         if (unit != nil) {
             x += text.getSize()[0] + 5;
             text = me._scrollDataContent.createChild("text")
                 .setText(unit)
                 .setTranslation(x, y)
-                .setColor(me._defaultTextColor)
-                .setFont("LiberationFonts/LiberationSans-Regular.ttf");
+                .setColor(me._defaultTextColor);
         }
 
         return text.getSize()[1] + WhichRwyDialog.MARGIN_Y;
@@ -298,7 +310,7 @@ var WhichRwyDialog = {
             .setTranslation(0, 0)
             .setColor(isError ? [0.8, 0.3, 0.3] : me._defaultTextColor)
             .setFontSize(20)
-            .setFont("LiberationFonts/LiberationSans-Regular.ttf");
+            .setFont(Fonts.getRegular());
     },
 
     #
@@ -306,10 +318,10 @@ var WhichRwyDialog = {
     # @param  bool  wordWrap  If true then text will be wrapped.
     # @return ghost  Label widget.
     #
-    _getLabel: func(text, wordWrap = true) {
-        return canvas.gui.widgets.Label.new(me._scrollDataContent, canvas.style, {wordWrap: wordWrap})
-            .setText(text);
-    },
+    # _getLabel: func(text, wordWrap = true) {
+    #     return canvas.gui.widgets.Label.new(me._scrollDataContent, canvas.style, {wordWrap: wordWrap})
+    #         .setText(text);
+    # },
 
     #
     # @param  string  text  Label of button.

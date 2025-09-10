@@ -16,7 +16,7 @@
 # @return void
 #
 var main = func(addon) {
-    logprint(LOG_INFO, "Which Runway addon initialized from path ", addon.basePath);
+    logprint(LOG_ALERT, "Which Runway addon initialized from path ", addon.basePath);
 
     loadExtraNasalFiles(addon);
 
@@ -31,11 +31,13 @@ var main = func(addon) {
 #
 var loadExtraNasalFiles = func(addon) {
     var modules = [
+        "nasal/Wind",
         "nasal/Utils",
+        "nasal/Fonts",
+        "nasal/Canvas/WindRose",
         "nasal/Canvas/Dialog",
         "nasal/Canvas/AboutDialog",
         "nasal/Canvas/WhichRwyDialog",
-        "nasal/Wind",
         "nasal/RunwaysData",
         "WhichRwy",
     ];

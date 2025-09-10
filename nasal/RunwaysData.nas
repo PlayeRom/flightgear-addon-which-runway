@@ -74,11 +74,13 @@ var RunwaysData = {
                 headwind: headwind,
                 crosswind: crosswind,
                 rwyId: runway.id,
-                rwyHdg: runway.heading,
-                rwyLength: runway.length,
-                rwyWidth: runway.width,
-                reciprocal: me._getReciprocalRwyId(runway.id),
+                heading: runway.heading,
+                length: runway.length,
+                width: runway.width,
+                reciprocalId: runway.reciprocal.id,
                 ils: runway.ils,
+                lat: runway.lat,
+                lon: runway.lon,
             });
         }
 
@@ -98,51 +100,5 @@ var RunwaysData = {
 
            return 0;
         });
-    },
-
-    #
-    # Get reciprocal runway id.
-    #
-    # @param  string  rwyId  Original runway id.
-    # @return string  Reciprocal runway id.
-    #
-    _getReciprocalRwyId: func(rwyId) {
-        var side = substr(rwyId, size(rwyId) - 1, 1);  # last char, can be "L", "R", "C" or digit
-
-        var reciprocalSide = me._getReciprocalSide(side);
-        var number = me._getNumberWithoutSide(rwyId, side);
-
-        var reciprocalNumber = math.round(math.mod(math.round(number * 10) + 180, 360) / 10);
-
-        return sprintf("%02d%s", reciprocalNumber, reciprocalSide);
-    },
-
-    #
-    # Get reciprocal side of runway.
-    #
-    # @param  string  side  Side of runway: "L", "R", "C" or digit.
-    # @return string  Reciprocal side of runway: "R", "L", "C" or "".
-    #
-    _getReciprocalSide: func(side) {
-             if (side == "L") return "R";
-        else if (side == "R") return "L";
-        else if (side == "C") return "C";
-
-        return ""; # no side if side = digit
-    },
-
-    #
-    # Get runway number without side.
-    #
-    # @param  string  rwyId  Full runway id, eg. "09L" or "09".
-    # @param  string  side   Side of runway: "L", "R", "C" or digit.
-    # @return string  Runway number without side.
-    #
-    _getNumberWithoutSide: func(rwyId, side) {
-        if (side == "L" or side == "R" or side == "C") {
-            return substr(rwyId, 0, size(rwyId) - 1); # return number only without last char
-        }
-
-        return rwyId;
     },
 };

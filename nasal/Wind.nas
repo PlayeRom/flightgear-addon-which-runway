@@ -14,6 +14,12 @@
 #
 var Wind = {
     #
+    # Static constants
+    #
+    HEADWIND_THRESHOLD : 45, # Headwind from 0 to 45
+    CROSSWIND_THRESHOLD: 90, # Crosswind from 46 to 90, tailwind from 91
+
+    #
     # Constructor
     #
     # @return me
@@ -43,12 +49,12 @@ var Wind = {
     },
 
     #
+    # Run FGCommand to download METAR for given ICAO code.
+    #
     # @param  string  icao  ICAO code of airport.
     # @return void
     #
     downloadMetar: func(icao) {
-        # logprint(LOG_ALERT, "Start downloadMetar icao = ", icao);
-
         # The "request-metar" command is set "station-id" property immediately.
 
         fgcommand("request-metar", props.Node.new({
@@ -63,9 +69,7 @@ var Wind = {
     # @return bool
     #
     isMetarSet: func() {
-        # logprint(LOG_ALERT, "isMetarSet start");
         if (getprop(me._pathToMyMetar ~ "/data") == nil) {
-            logprint(LOG_ALERT, "isMetarSet false - no data");
             return false;
         }
 
@@ -73,8 +77,6 @@ var Wind = {
         var lon = getprop(me._pathToMyMetar ~ "/station-longitude-deg");
 
         var result = airportinfo(lat, lon).id == getprop(me._pathToMyMetar ~ "/station-id");
-
-        # logprint(LOG_ALERT, "isMetarSet result = ", result);
 
         return result;
     },
@@ -129,4 +131,22 @@ var Wind = {
     # _isRealWeatherEnabled: func() {
     #     return me._realWxEnabledNode.getValue();
     # },
+
+    #
+    # Get color of headwind (can be call as static method).
+    #
+    # @return vector
+    #
+    getHeadwindColor: func() {
+        return [0.0, 0.5, 0.0];
+    },
+
+    #
+    # Get color of crosswind (can be call as static method).
+    #
+    # @return vector
+    #
+    getCrosswindColor: func() {
+        return [0.9, 0.5, 0.0];
+    },
 };
