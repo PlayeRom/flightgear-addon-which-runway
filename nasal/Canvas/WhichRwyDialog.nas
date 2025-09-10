@@ -93,6 +93,15 @@ var WhichRwyDialog = {
     },
 
     #
+    # @return void
+    #
+    hide: func() {
+        me._timer.stop();
+
+        call(Dialog.hide, [], me);
+    },
+
+    #
     # Initialize download of METAR data.
     #
     # @return void
