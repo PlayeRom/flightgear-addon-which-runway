@@ -360,7 +360,6 @@ var WhichRwyDialog = {
 
         var icaoEdit = canvas.gui.widgets.LineEdit.new(me.group, canvas.style, {})
             .setText(me._icao)
-            .setPlaceholder("EPWA")
             .setFixedSize(80, 26)
             .listen("editingFinished", func(e) {
                 enterIcao(e.detail.text);
