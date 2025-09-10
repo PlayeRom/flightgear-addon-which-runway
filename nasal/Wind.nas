@@ -76,9 +76,12 @@ var Wind = {
         var lat = getprop(me._pathToMyMetar ~ "/station-latitude-deg");
         var lon = getprop(me._pathToMyMetar ~ "/station-longitude-deg");
 
-        var result = airportinfo(lat, lon).id == getprop(me._pathToMyMetar ~ "/station-id");
+        var airport = airportinfo(lat, lon);
+        if (airport == nil) {
+            return false;
+        }
 
-        return result;
+        return airport.id == getprop(me._pathToMyMetar ~ "/station-id");
     },
 
     #
