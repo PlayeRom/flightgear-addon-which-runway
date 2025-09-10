@@ -53,9 +53,7 @@ var RunwaysData = {
         foreach (var runwayName; keys(airport.runways)) {
             var runway = airport.runways[runwayName];
 
-            var rwyHdg = runway.heading;
-
-            var diff = windDir - rwyHdg;
+            var diff = windDir - runway.heading;
             var normDiffDeg = math.round(math.mod((diff + 180), 360) - 180); # normalize to [-180, 180]
             var normDiffRad = normDiffDeg * globals.D2R;
 
@@ -76,7 +74,7 @@ var RunwaysData = {
                 headwind: headwind,
                 crosswind: crosswind,
                 rwyId: runway.id,
-                rwyHdg: rwyHdg,
+                rwyHdg: runway.heading,
                 rwyLength: runway.length,
                 rwyWidth: runway.width,
                 reciprocal: me._getReciprocalRwyId(runway.id),
