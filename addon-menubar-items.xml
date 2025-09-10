@@ -11,7 +11,7 @@
             <enabled type="bool">true</enabled>
 
             <item>
-                <label>Which runway</label>
+                <label>Runways</label>
                 <name>which-runway-addon-main</name>
                 <binding>
                     <command>nasal</command>
