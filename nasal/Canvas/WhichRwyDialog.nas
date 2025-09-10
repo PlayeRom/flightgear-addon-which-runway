@@ -87,7 +87,7 @@ var WhichRwyDialog = {
     # @return void
     #
     show: func() {
-        me._doanloadMetar();
+        me._downloadMetar();
 
         call(Dialog.show, [], me);
     },
@@ -106,7 +106,7 @@ var WhichRwyDialog = {
     #
     # @return void
     #
-    _doanloadMetar: func() {
+    _downloadMetar: func() {
         me._timer.stop();
 
         if (airportinfo(me._icao) == nil) {
@@ -355,7 +355,7 @@ var WhichRwyDialog = {
 
         var enterIcao = func(icao) {
             me._icao = icao;
-            me._doanloadMetar();
+            me._downloadMetar();
         };
 
         var icaoEdit = canvas.gui.widgets.LineEdit.new(me.group, canvas.style, {})
