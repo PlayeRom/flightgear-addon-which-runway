@@ -28,18 +28,12 @@
             </maintainer>
         </maintainers>
 
-        <short-description type="string">Which runway to choose?</short-description>
+        <short-description type="string">Which runway is best for takeoff or landing.</short-description>
         <long-description type="string">This add-on uses the METAR to indicate which runway is best for takeoff or landing. It also calculates headwind, crosswind and tailwind forces for the each runway of the airport.</long-description>
 
         <license>
             <designation type="string">GNU GPL version 3 or later</designation>
-
-            <file type="string">
-                <!-- Use a relative, slash-separated path to a file under the add-on
-                    base directory that contains the add-on license text. -->
-                LICENSE
-            </file>
-
+            <file type="string">LICENSE</file>
             <url type="string">https://www.gnu.org/licenses/gpl-3.0.html</url>
         </license>
 
@@ -47,7 +41,7 @@
         <max-FG-version type="string">none</max-FG-version>
 
         <urls>
-            <home-page type="string">https://wiki.flightgear.org/Logbook_Add-on</home-page>
+            <home-page type="string">https://wiki.flightgear.org/</home-page>
             <download type="string">https://github.com/PlayeRom/flightgear-addon-which-runway/releases/latest</download>
             <support type="string">https://github.com/PlayeRom/flightgear-addon-which-runway</support>
             <code-repository type="string">https://github.com/PlayeRom/flightgear-addon-which-runway</code-repository>
