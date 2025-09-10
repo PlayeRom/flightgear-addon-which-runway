@@ -91,10 +91,10 @@ var Dialog = {
     _createCanvasWindow: func(width, height, title, resize) {
         var type = "dialog";
         var id = nil; # default
-        var allowfocus = true; # default
+        var allowFocus = true; # default
         var destroyOnClose = false; # changed to false
 
-        var window = canvas.Window.new([width, height], type, id, allowfocus, destroyOnClose)
+        var window = canvas.Window.new([width, height], type, id, allowFocus, destroyOnClose)
             .set("title", title)
             .setBool("resize", resize);
 

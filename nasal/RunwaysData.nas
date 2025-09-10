@@ -84,7 +84,7 @@ var RunwaysData = {
             });
         }
 
-        return me._sortRunwysByHeadwind(runwaysData);
+        return me._sortRunwaysByHeadwind(runwaysData);
     },
 
     #
@@ -93,7 +93,7 @@ var RunwaysData = {
     # @param  vector  runwaysData  Array of runways data.
     # @return vector  Sorted array of runways data.
     #
-    _sortRunwysByHeadwind: func(runwaysData) {
+    _sortRunwaysByHeadwind: func(runwaysData) {
         return sort(runwaysData, func(a, b) {
                 if (a.normDiffDeg > b.normDiffDeg) return  1;
            else if (a.normDiffDeg < b.normDiffDeg) return -1;
