@@ -31,10 +31,12 @@ var main = func(addon) {
 #
 var loadExtraNasalFiles = func(addon) {
     var modules = [
+        "nasal/Colors",
         "nasal/Wind",
         "nasal/Utils",
         "nasal/Fonts",
-        "nasal/Canvas/WindRose",
+        "nasal/Canvas/DrawWindRose",
+        "nasal/Canvas/DrawRunways",
         "nasal/Canvas/Dialog",
         "nasal/Canvas/AboutDialog",
         "nasal/Canvas/WhichRwyDialog",

@@ -10,9 +10,11 @@
 #
 
 #
-# Fonts static methods
+# Colors static declarations
 #
-var Fonts = {
-    SANS_REGULAR: "LiberationFonts/LiberationSans-Regular.ttf",
-    SANS_BOLD   : "LiberationFonts/LiberationSans-Bold.ttf",
+var Colors = {
+    HEADWIND    : [0.0, 0.5, 0.0],
+    CROSSWIND   : [0.9, 0.5, 0.0],
+    DEFAULT_TEXT: [0.3, 0.3, 0.3],
+    ERROR_TEXT  : [0.8, 0.3, 0.3],
 };

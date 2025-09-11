@@ -12,7 +12,7 @@
 #
 # Class do draw wind rose on canvas
 #
-var WindRose = {
+var DrawWindRose = {
     #
     # Constructor
     #
@@ -20,7 +20,7 @@ var WindRose = {
     # @return me
     #
     new: func(canvas) {
-        var me = { parents: [WindRose] };
+        var me = { parents: [DrawWindRose] };
 
         me._canvas = canvas;
 
@@ -183,7 +183,7 @@ var WindRose = {
             );
 
         if (isHighlighted) {
-            text.setFont(Fonts.getBold());
+            text.setFont(Fonts.SANS_BOLD);
         }
     },
 
@@ -192,8 +192,8 @@ var WindRose = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Wind.getHeadwindColor();
-        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Wind.getCrosswindColor();
+             if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
+        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
         else                                              return [0, 0, 0];
     },
 

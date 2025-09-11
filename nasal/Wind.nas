@@ -143,22 +143,4 @@ var Wind = {
     getMETAR: func() {
         return getprop(me._pathToMyMetar ~ "/data");
     },
-
-    #
-    # Get color of headwind (can be call as static method).
-    #
-    # @return vector
-    #
-    getHeadwindColor: func() {
-        return [0.0, 0.5, 0.0];
-    },
-
-    #
-    # Get color of crosswind (can be call as static method).
-    #
-    # @return vector
-    #
-    getCrosswindColor: func() {
-        return [0.9, 0.5, 0.0];
-    },
 };
