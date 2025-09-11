@@ -69,7 +69,7 @@ var Wind = {
     # @return bool
     #
     isMetarSet: func() {
-        if (getprop(me._pathToMyMetar ~ "/data") == nil) {
+        if (me.getMETAR() == nil) {
             return false;
         }
 
@@ -134,6 +134,15 @@ var Wind = {
     # _isRealWeatherEnabled: func() {
     #     return me._realWxEnabledNode.getValue();
     # },
+
+    #
+    # Get full METAR string or nil if not downloaded.
+    #
+    # @return string|nil
+    #
+    getMETAR: func() {
+        return getprop(me._pathToMyMetar ~ "/data");
+    },
 
     #
     # Get color of headwind (can be call as static method).

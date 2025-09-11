@@ -172,7 +172,7 @@ var WhichRwyDialog = {
             var x = 0;
             var y = 0;
 
-            var roseRadius = 200;
+            var roseRadius = 175;
 
             var text = me._scrollDataContent.createChild("text")
                 .setText(airport.id ~ ", " ~ airport.name)
@@ -183,14 +183,23 @@ var WhichRwyDialog = {
 
             y += text.getSize()[1] + WhichRwyDialog.MARGIN_Y;
 
+            var metar = me._wind.getMETAR();
             text = me._scrollDataContent.createChild("text")
-                .setText("Wind: " ~ math.round(me._wind.getDirection()) ~ "° at " ~ math.round(me._wind.getSpeedKt()) ~ " kts")
+                .setText(metar == nil ? "No METAR" : metar)
+                .setTranslation(x, y)
+                .setColor(me._defaultTextColor)
+                .setFontSize(12);
+
+            y += text.getSize()[1] + (WhichRwyDialog.MARGIN_Y * 2.5);
+
+            text = me._scrollDataContent.createChild("text")
+                .setText("Wind " ~ math.round(me._wind.getDirection()) ~ "° at " ~ math.round(me._wind.getSpeedKt()) ~ " kts")
                 .setTranslation(x, y)
                 .setColor(me._defaultTextColor)
                 .setFontSize(20)
                 .setFont(Fonts.getBold());
 
-            y += text.getSize()[1] + 25;
+            y += text.getSize()[1] + (WhichRwyDialog.MARGIN_Y * 5);
 
             foreach (var rwy; runwaysData) {
                 y += me._printRunwayLabel(0, y, rwy);
