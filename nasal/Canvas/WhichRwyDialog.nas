@@ -58,12 +58,16 @@ var WhichRwyDialog = {
             context  : me._scrollData,
             font     : Fonts.getRegular(),
             fontSize : 16,
-            alignment: "left-baseline"
+            alignment: "left-baseline",
         );
 
         me._drawBottomBar();
 
         me._windRose = WindRose.new(me._scrollDataContent);
+
+        # A variable that remembers whether the Loading screen has already been drawn,
+        # so as not to redraw it unnecessarily in the timer.
+        me._isLoading = false;
 
         return me;
     },
@@ -107,6 +111,7 @@ var WhichRwyDialog = {
     # @return void
     #
     _downloadMetar: func() {
+        me._isLoading = false;
         me._timer.stop();
 
         if (airportinfo(me._icao) == nil) {
@@ -127,7 +132,9 @@ var WhichRwyDialog = {
         if (me._wind.isMetarSet()) {
             me._timer.stop();
             me._reDrawContent();
-        } else {
+            me._isLoading = false;
+        } else if (!me._isLoading) {
+            me._isLoading = true;
             me._reDrawContentWithMessage("Loading...");
         }
     },
