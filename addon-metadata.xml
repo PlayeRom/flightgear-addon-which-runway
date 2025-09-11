@@ -31,6 +31,13 @@
         <short-description type="string">Which runway is best for takeoff or landing.</short-description>
         <long-description type="string">This add-on uses the METAR to indicate which runway is best for takeoff or landing. It also calculates headwind, crosswind and tailwind forces for the each runway of the airport.</long-description>
 
+        <localized>
+            <pl>
+                <short-description type="string">Który pas startowy jest najlepszy do startu i lądowania.</short-description>
+                <long-description type="string">Ten dodatek wykorzystuje dane METAR do wskazania najlepszego pasa startowego do startu lub lądowania. Oblicza również siłę wiatru czołowego, bocznego i tylnego dla każdego pasa startowego lotniska.</long-description>
+            </pl>
+        </localized>
+
         <license>
             <designation type="string">GNU GPL version 3 or later</designation>
             <file type="string">LICENSE</file>
