@@ -45,8 +45,8 @@ var RunwaysData = {
         # TODO: it seems that the runway headings are "true", so there is no need to use magnetic variation?
         # var magVariation = magvar(airport);
         # var windDir = me._metar.getWindDir() - magVariation;
-        var windDir   = airport.has_metar ? me._metar.getWindDir() : 0;
-        var windSpeed = airport.has_metar ? me._metar.getWindSpeedKt() : 0;
+        var windDir   = me._metar.canUseMETAR(airport) ? me._metar.getWindDir() : 0;
+        var windSpeed = me._metar.canUseMETAR(airport) ? me._metar.getWindSpeedKt() : 0;
 
         var runwaysData = [];
 
@@ -70,9 +70,9 @@ var RunwaysData = {
             }
 
             append(runwaysData, {
-                normDiffDeg: airport.has_metar ? math.abs(normDiffDeg) : nil,
-                headwind   : airport.has_metar ? headwind : nil,
-                crosswind  : airport.has_metar ? crosswind : nil,
+                normDiffDeg: me._metar.canUseMETAR(airport) ? math.abs(normDiffDeg) : nil,
+                headwind   : me._metar.canUseMETAR(airport) ? headwind : nil,
+                crosswind  : me._metar.canUseMETAR(airport) ? crosswind : nil,
                 rwyId: runway.id,
                 heading: runway.heading,
                 length: runway.length,
@@ -85,7 +85,7 @@ var RunwaysData = {
             });
         }
 
-        return airport.has_metar
+        return me._metar.canUseMETAR(airport)
             ? me._sortRunwaysByHeadwind(runwaysData)
             : runwaysData;
     },

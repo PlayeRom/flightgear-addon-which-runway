@@ -37,7 +37,7 @@ var METAR = {
             call(funcUpdatedCallback, [], objUpdatedCallback);
         });
 
-        # me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
+        me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
 
         # me._metarWindDirNode   = props.globals.getNode("/environment/metar/base-wind-dir-deg");
         # me._metarWindSpeedNode = props.globals.getNode("/environment/metar/base-wind-speed-kt");
@@ -65,9 +65,10 @@ var METAR = {
     # @return void
     #
     download: func(icao, force = false) {
-        # TIP: the "request-metar" command is set "station-id" property immediately.
-        # TIP: the fgcommand method will not download the METAR if time-to-live > 0,
-        #      and if time-to-live passes, the METAR will update automatically!
+        # TIP 1: the "request-metar" command is set "station-id" property immediately.
+        # TIP 2: the fgcommand method will not download the METAR if time-to-live > 0,
+        #        and if time-to-live passes, the METAR will update automatically!
+        # TIP 3: METAR will not be downloaded if the Live Data weather scenario is disabled.
 
         if (force) {
             # The fgcommand will only trigger a METAR download when the time-to-live expires.
@@ -92,7 +93,7 @@ var METAR = {
             return dir;
         }
 
-        # if (me._isRealWeatherEnabled() and me._metarWindDirNode != nil) {
+        # if (me.isRealWeatherEnabled() and me._metarWindDirNode != nil) {
         #     return me._metarWindDirNode.getValue();
         # }
 
@@ -114,7 +115,7 @@ var METAR = {
             return speed;
         }
 
-        # if (me._isRealWeatherEnabled() and me._metarWindSpeedNode != nil) {
+        # if (me.isRealWeatherEnabled() and me._metarWindSpeedNode != nil) {
         #     return me._metarWindSpeedNode.getValue();
         # }
 
@@ -128,9 +129,9 @@ var METAR = {
     #
     # @return bool
     #
-    # _isRealWeatherEnabled: func() {
-    #     return me._realWxEnabledNode.getValue();
-    # },
+    isRealWeatherEnabled: func() {
+        return me._realWxEnabledNode.getValue();
+    },
 
     #
     # Get full METAR string or nil if not downloaded.
@@ -142,13 +143,22 @@ var METAR = {
     },
 
     #
+    # Return true if live METAR can be using.
+    #
+    # @return bool
+    #
+    canUseMETAR: func(airport) {
+        return airport.has_metar and me.isRealWeatherEnabled();
+    },
+
+    #
     # Get QNH with 3 values: mmHg, hPa and inHg.
     #
     # @param  ghost  airport  Airport object.
     # @return string
     #
     getQNHValues: func(airport) {
-        if (!airport.has_metar) {
+        if (!me.canUseMETAR(airport)) {
             return "n/a";
         }
 
@@ -172,7 +182,7 @@ var METAR = {
     # @return string
     #
     getQFEValues: func(airport) {
-        if (!airport.has_metar) {
+        if (!me.canUseMETAR(airport)) {
             return "n/a";
         }
 

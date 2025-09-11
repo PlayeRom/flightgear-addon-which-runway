@@ -54,24 +54,8 @@ var DrawTabContent = {
         me._metar = METAR.new(tabId, me, me._metarUpdatedCallback);
         me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
 
-        # Get ICAO code from appropriate property and listen it for update METAR.
-        me._listener = nil;
-        var icaoProperty = me._getPropertyByTabId();
-        if (icaoProperty != nil) {
-            var init = true; # If set to 1 (true), the listener will additionally be triggered when it is created.
-            var type = 0; # 0 means that the listener will only trigger when the property is changed.
-            me._listener = setlistener(
-                icaoProperty,
-                func(node) {
-                    if (node != nil) {
-                        logprint(LOG_ALERT, "Which Runway ----- ", tabId, " got a new ICAO = ", node.getValue());
-                        me._downloadMetar(node.getValue());
-                    }
-                },
-                init,
-                type,
-            );
-        }
+        me._listeners = std.Vector.new();
+        me._setListeners();
 
         if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) {
             me._reDrawContentWithMessage("Enter the ICAO code of an airport below.");
@@ -86,14 +70,53 @@ var DrawTabContent = {
     # @return void
     #
     del: func() {
-        if (me._listener != nil) {
-            removelistener(me._listener);
-        }
+        me._removeListeners();
 
         me._metar.del();
         me._drawRunways.del();
     },
 
+    #
+    # Set listeners
+    #
+    # @return void
+    #
+    _setListeners: func() {
+        # Get ICAO code from appropriate property and listen it for update METAR.
+        var icaoProperty = me._getICAOPropertyByTabId();
+        if (icaoProperty != nil) {
+            me._listeners.append(setlistener(
+                icaoProperty,
+                func(node) {
+                    if (node != nil) {
+                        logprint(LOG_ALERT, "Which Runway ----- ", me._tabId, " got a new ICAO = ", node.getValue());
+                        me._downloadMetar(node.getValue());
+                    }
+                },
+                true, # init - if set to true, the listener will additionally be triggered when it is created.
+                0, # type - 0 means that the listener will only trigger when the property is changed.
+            ));
+        }
+    },
+
+    #
+    # Remove all listeners created by _setListeners
+    #
+    # @return void
+    #
+    _removeListeners: func() {
+        foreach (var listener; me._listeners.vector) {
+            removelistener(listener);
+        }
+
+        me._listeners.clear();
+    },
+
+    #
+    # Create ScrollArea widget.
+    #
+    # @return ghost  ScrollArea widget.
+    #
     _createScrollArea: func() {
         var margins = {
             left   : DrawTabContent.PADDING,
@@ -140,7 +163,7 @@ var DrawTabContent = {
     #
     # @return string|nil
     #
-    _getPropertyByTabId: func() {
+    _getICAOPropertyByTabId: func() {
              if (me._tabId == WhichRwyDialog.TAB_NEAREST)   return "/sim/airport/closest-airport-id";
         else if (me._tabId == WhichRwyDialog.TAB_DEPARTURE) return "/autopilot/route-manager/departure/airport";
         else if (me._tabId == WhichRwyDialog.TAB_ARRIVAL)   return "/autopilot/route-manager/destination/airport";
@@ -200,7 +223,7 @@ var DrawTabContent = {
             return;
         }
 
-        if (airport.has_metar) {
+        if (me._metar.canUseMETAR(airport)) {
             me._reDrawContentWithMessage("Loading...");
             me._metar.download(me._icao, true);
         } else {
@@ -281,13 +304,18 @@ var DrawTabContent = {
         y += DrawTabContent.MARGIN_Y;
 
         # Airport METAR
-        var metar = airport.has_metar ? me._metar.getMETAR() : nil;
-        text = me._scrollContent.createChild("text")
-            .setText(metar == nil ? "No METAR" : metar)
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            # .setFontSize(12)
-            ;
+        if (me._metar.isRealWeatherEnabled()) {
+            var metar = airport.has_metar ? me._metar.getMETAR() : nil;
+            text = me._scrollContent.createChild("text")
+                .setText(metar == nil ? "No METAR" : metar)
+                .setTranslation(x, y)
+                .setColor(Colors.DEFAULT_TEXT);
+        } else {
+            text = me._scrollContent.createChild("text")
+                .setText("For METAR, it is necessary to select the Live Data weather scenario!")
+                .setTranslation(x, y)
+                .setColor(Colors.ERROR_TEXT);
+        }
 
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
 
@@ -313,7 +341,7 @@ var DrawTabContent = {
     # @return string
     #
     _getWindInfoText: func(airport) {
-        if (airport.has_metar) {
+        if (me._metar.canUseMETAR(airport)) {
             return math.round(me._metar.getWindDir()) ~ "° at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
         }
 
@@ -325,12 +353,12 @@ var DrawTabContent = {
     # @param  bool  isError  If true then message is error message (red color).
     # @return void
     #
-    _printMessage: func(message, isError = false) {
+    _printMessage: func(message, isError = false, fontSize = 20) {
         me._scrollContent.createChild("text")
             .setText(message)
             .setTranslation(0, 0)
             .setColor(isError ? Colors.ERROR_TEXT : Colors.DEFAULT_TEXT)
-            .setFontSize(20);
+            .setFontSize(fontSize);
     },
 
     #
