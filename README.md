@@ -18,7 +18,7 @@ This add-on adds a "Which Runway" item to the main menu, from which you select "
 
 At the bottom, there's an input field for entering the ICAO code of any other airport, allowing you to also check the runway for your destination airport.
 
-![alt main-window](docs/which-runway.png "Wich Runway main window")
+![alt which-runway](docs/which-runway.png "Wich Runway main window")
 
 ## Authors
 
