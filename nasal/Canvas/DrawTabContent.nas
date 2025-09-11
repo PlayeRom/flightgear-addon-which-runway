@@ -73,6 +73,10 @@ var DrawTabContent = {
             );
         }
 
+        if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) {
+            me._reDrawContentWithMessage("Enter the ICAO code of an airport below.");
+        }
+
         return me;
     },
 
