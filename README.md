@@ -26,4 +26,4 @@ At the bottom, there's an input field for entering the ICAO code of any other ai
 
 ## License
 
-Logbook is an Open Source project and it is licensed under the GNU Public License v3 (GPLv3).
+"Which Runway" is an Open Source project and it is licensed under the GNU Public License v3 (GPLv3).
