@@ -16,17 +16,17 @@ var DrawRunways = {
     #
     # Constructor
     #
-    # @param  ghost  canvas  Canvas object where runways will be drawn.
+    # @param  ghost  canvasContent  Canvas object where runways will be drawn.
     # @param  ghost  wind  Wind object.
     # @return me
     #
-    new: func(canvas, wind) {
+    new: func(canvasContent, wind) {
         var me = { parents: [DrawRunways] };
 
-        me._canvas = canvas;
+        me._canvas = canvasContent;
         me._wind = wind;
         me._runwaysData = RunwaysData.new(wind);
-        me._drawWindRose = DrawWindRose.new(canvas);
+        me._drawWindRose = DrawWindRose.new(canvasContent);
 
         return me;
     },
@@ -51,32 +51,37 @@ var DrawRunways = {
     drawRunways: func(y, airport) {
         var runwaysData = me._runwaysData.getRunways(airport);
         var roseRadius = 175;
+        var aptMagVar = magvar(airport);
 
         foreach (var rwy; runwaysData) {
             y += me._printRunwayLabel(0, y, rwy);
 
-            var label = rwy.headwind < 0 ? "Tailwind:" : "Headwind:";
-            y += me._printLineWithValue(0, y, label, math.round(math.abs(rwy.headwind)), "kts");
+            y += me.printLineWithValue(0, y,
+                me._getMainWindLabel(rwy.headwind),
+                me._getMainWindValue(rwy.headwind),
+                rwy.headwind == nil ? nil : "kts",
+            );
 
-            var unit = "kts" ~ (rwy.crosswind == 0 ? "" : (rwy.crosswind < 0 ? " from left" : " from right"));
-            y += me._printLineWithValue(0, y, "Crosswind:", math.round(math.abs(rwy.crosswind)), unit);
-            y += me._printLineWithValue(0, y, "Heading:", math.round(rwy.heading) ~ "°");
-            y += me._printLineWithValue(0, y, "Length:", math.round(rwy.length), "m");
-            y += me._printLineWithValue(0, y, "Width:", math.round(rwy.width), "m");
-            y += me._printLineWithValue(0, y, "Reciprocal:", rwy.reciprocalId);
-            y += me._printLineWithValue(0, y, "ILS:", rwy.ils == nil ? "No" : (sprintf("%.3f/%.0f°", rwy.ils.frequency / 100, rwy.ils.course)));
+            y += me.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind), me._crosswindUnit(rwy.crosswind));
+            y += me.printLineWithValue(0, y, "Heading true:", math.round(rwy.heading) ~ "°");
+            y += me.printLineWithValue(0, y, "Heading mag:", math.round(rwy.heading - aptMagVar) ~ "°");
+            y += me.printLineWithValue(0, y, "Length:", math.round(rwy.length), "m");
+            y += me.printLineWithValue(0, y, "Width:", math.round(rwy.width), "m");
+            y += me.printLineWithValue(0, y, "Surface:", me._getSurface(rwy.surface));
+            y += me.printLineWithValue(0, y, "Reciprocal:", rwy.reciprocalId);
+            y += me.printLineWithValue(0, y, "ILS:", rwy.ils == nil ? "No" : (sprintf("%.3f/%.0f°", rwy.ils.frequency / 100, rwy.ils.course)));
 
             me._drawWindRose.drawWindRose(
                 500,
-                y,
+                y - 50, # -50 for move wind rose up.
                 roseRadius,
-                me._wind.getDirection(),
-                me._wind.getSpeedKt(),
+                airport.has_metar ? me._wind.getDirection() : nil,
+                airport.has_metar ? me._wind.getSpeedKt() : nil,
                 rwy,
             );
 
             # Margin between runways
-            y += (roseRadius * 2);
+            y += (roseRadius * 1.5);
         }
 
         return y;
@@ -109,36 +114,91 @@ var DrawRunways = {
             .setColor(me._geWindColorByDir(runway.normDiffDeg))
             .setFont(me._geWindFontByDir(runway.normDiffDeg));
 
-        return text.getSize()[1] + WhichRwyDialog.MARGIN_Y;
+        return text.getSize()[1] + DrawTabContent.MARGIN_Y;
     },
 
     #
-    # @param  int  normDiffDeg
+    # @param  double|nil  headwind
+    # @return string
+    #
+    _getMainWindLabel: func(headwind) {
+             if (headwind == nil) return "Wind:";
+        else if (headwind < 0)    return "Tailwind:";
+        else                      return "Headwind:";
+    },
+
+    #
+    # @param  double|nil  headwind
+    # @return string|decimal
+    #
+    _getMainWindValue: func(headwind) {
+        if (headwind == nil) {
+            return "n/a";
+        }
+
+        return math.round(math.abs(headwind));
+    },
+
+    #
+    # @param  double|nil  crosswind
+    # @return string|double
+    #
+    _crosswindValue: func(crosswind) {
+        if (crosswind == nil) {
+            return "n/a";
+        }
+
+        return math.round(math.abs(crosswind));
+    },
+
+    #
+    # @param  double|nil  crosswind
+    # @return string|double
+    #
+    _crosswindUnit: func(crosswind) {
+        if (crosswind == nil) {
+            return nil;
+        }
+
+        var unit = "kts";
+
+        if (crosswind == 0) {
+            return unit;
+        }
+
+        return unit ~ (crosswind < 0 ? " from left" : " from right");
+    },
+
+    #
+    # @param  int|nil  normDiffDeg
     # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
     #
     _geWindLabelByDir: func(normDiffDeg) {
-             if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return "Headwind";
+             if (normDiffDeg == nil)                      return "n/a";
+        else if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return "Headwind";
         else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return "Crosswind";
         else                                              return "Tailwind";
     },
 
     #
-    # @param  int  normDiffDeg
+    # @param  int|nil  normDiffDeg
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
+             if (normDiffDeg == nil)                      return Colors.DEFAULT_TEXT;
+        else if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
         else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
         else                                              return Colors.DEFAULT_TEXT;
     },
 
     #
-    # @param  int  normDiffDeg
+    # @param  int|nil  normDiffDeg
     # @return string  Font path.
     #
     _geWindFontByDir: func(normDiffDeg) {
-        if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
-        else                                         return Fonts.SANS_REGULAR;
+             if (normDiffDeg == nil)                      return Fonts.SANS_REGULAR;
+        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
+        else                                              return Fonts.SANS_REGULAR;
     },
 
     #
@@ -149,13 +209,13 @@ var DrawRunways = {
     # @param  string|nil  unit  Unit to display.
     # @return int  New position of y shifted by height of printed line.
     #
-    _printLineWithValue: func(x, y, label, value, unit = nil) {
+    printLineWithValue: func(x, y, label, value, unit = nil) {
         var text = me._canvas.createChild("text")
             .setText(label)
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT);
 
-        x += 100;
+        x += 110;
         text = me._canvas.createChild("text")
             .setText(value)
             .setTranslation(x, y)
@@ -170,6 +230,26 @@ var DrawRunways = {
                 .setColor(Colors.DEFAULT_TEXT);
         }
 
-        return text.getSize()[1] + WhichRwyDialog.MARGIN_Y;
+        return text.getSize()[1] + DrawTabContent.MARGIN_Y;
+    },
+
+    #
+    # Get surface name by ID.
+    #
+    # @param  int  surfaceId
+    # @return string
+    #
+    _getSurface: func(surfaceId) {
+             if(surfaceId == 1)  return "asphalt";
+        else if(surfaceId == 2)  return "concrete";
+        else if(surfaceId == 3)  return "turf";
+        else if(surfaceId == 4)  return "dirt";
+        else if(surfaceId == 5)  return "gravel";
+        else if(surfaceId == 6)  return "asphalt helipad";
+        else if(surfaceId == 7)  return "concrete helipad";
+        else if(surfaceId == 8)  return "turf helipad";
+        else if(surfaceId == 9)  return "dirt helipad";
+        else if(surfaceId == 12) return "lakebed";
+        else                     return "unknown";
     },
 };

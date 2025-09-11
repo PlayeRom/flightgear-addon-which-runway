@@ -22,12 +22,13 @@ var Wind = {
     #
     # Constructor
     #
+    # @param  string  tabId  Tab ID.
     # @return me
     #
-    new: func() {
+    new: func(tabId) {
         var me = { parents: [Wind] };
 
-        me._pathToMyMetar = g_Addon.node.getPath() ~ "/metar";
+        me._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ tabId ~ "/metar";
 
         # me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
 
@@ -142,5 +143,39 @@ var Wind = {
     #
     getMETAR: func() {
         return getprop(me._pathToMyMetar ~ "/data");
+    },
+
+    #
+    # Get QNH with 3 values: mmHg, hPa and inHg.
+    #
+    # @return string
+    #
+    getQNHValues: func() {
+        var pressQNH = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+
+        return sprintf(
+            "%d / %4d / %.2f",
+            math.round(pressQNH / 29.92 * 760),  # mmHg
+            math.round(pressQNH / 29.92 * 1013), # hPa
+            math.round(pressQNH, 0.01),          # inHg
+        );
+    },
+
+    #
+    # Get QFE with 3 values: mmHg, hPa and inHg.
+    #
+    # @param  ghost  airport  Airport object.
+    # @return string
+    #
+    getQFEValues: func(airport) {
+        var pressQNH = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+        var pressQFE = pressQNH - airport.elevation * M2FT / 1000 * 1.06;
+
+        return sprintf(
+            "%d / %4d / %.2f",
+            math.round(pressQFE / 29.92 * 760),   # mmHg
+            math.round(pressQFE / 29.92 * 1013),  # hPa
+            math.round(pressQFE, 0.01),           # inHg
+        );
     },
 };

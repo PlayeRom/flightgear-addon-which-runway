@@ -1,0 +1,376 @@
+#
+# Which runway - Add-on for FlightGear
+#
+# Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
+#
+# Copyright (C) 2025 Roman Ludwicki
+#
+# Which Runway is an Open Source project and it is licensed
+# under the GNU Public License v3 (GPLv3)
+#
+
+#
+# DrawTabContent class
+#
+var DrawTabContent = {
+    #
+    # Statics:
+    #
+    PADDING  : 10,
+    MARGIN_Y : 10,
+
+    #
+    # Constructor
+    #
+    # @param  ghost  tabsContent  Tabs canvas content.
+    # @param  ghost  tabContent  Single tab canvas content.
+    # @param  string  tabId
+    # @return me
+    #
+    new: func(tabsContent, tabContent, tabId) {
+        var me = { parents: [DrawTabContent] };
+
+        me._tabsContent = tabsContent;
+        me._tabContent = tabContent;
+        me._tabId = tabId;
+        me._icao = "";
+        me._icaoEdit = nil;
+
+        me._scrollArea = me._createScrollArea();
+
+        me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
+
+        me._scrollContent = me._getScrollAreaContent(
+            context  : me._scrollArea,
+            font     : Fonts.SANS_REGULAR,
+            fontSize : 16,
+            alignment: "left-baseline",
+        );
+
+        me._drawBottomBar();
+
+
+
+        me._wind = Wind.new(tabId);
+        me._drawRunways = DrawRunways.new(me._scrollContent, me._wind);
+        me._timer = maketimer(0.1, me, me._checkMetarCallback);
+
+        # Get ICAO code from appropriate property and listen it for update METAR.
+        me._listener = nil;
+        var icaoProperty = me._getPropertyByTabId();
+        if (icaoProperty != nil) {
+            var init = true; # If set to 1 (true), the listener will additionally be triggered when it is created.
+            var type = 0; # 0 means that the listener will only trigger when the property is changed.
+            me._listener = setlistener(
+                icaoProperty,
+                func(node) {
+                    if (node != nil) {
+                        logprint(LOG_ALERT, "----------------- listener ", tabId, " icao = ", node.getValue());
+                        me._downloadMetar(node.getValue());
+                    }
+                },
+                init,
+                type,
+            );
+        }
+
+        return me;
+    },
+
+    #
+    # Destructor
+    #
+    # @return void
+    #
+    del: func() {
+        if (me._listener != nil) {
+            removelistener(me._listener);
+        }
+
+        me._timer.stop();
+        me._wind.del();
+        me._drawRunways.del();
+    },
+
+    _createScrollArea: func() {
+        var margins = {
+            left   : DrawTabContent.PADDING,
+            top    : DrawTabContent.PADDING,
+            right  : 1,
+            bottom : DrawTabContent.PADDING,
+        };
+
+        var scrollArea = canvas.gui.widgets.ScrollArea.new(me._tabsContent, canvas.style, {});
+
+        scrollArea.setColorBackground(canvas.style.getColor("bg_color"));
+        scrollArea.setContentsMargins(margins.left, margins.top, margins.right, margins.bottom);
+
+        return scrollArea;
+    },
+
+    #
+    # @param  ghost  context  Parent object as ScrollArea widget.
+    # @param  string|nil  font  Font file name.
+    # @param  int|nil  fontSize  Font size.
+    # @param  string|nil  alignment  Content alignment value.
+    # @return ghost  Content group of ScrollArea.
+    #
+    _getScrollAreaContent: func(context, font = nil, fontSize = nil, alignment = nil) {
+        var scrollContent = context.getContent();
+
+        if (font != nil) {
+            scrollContent.set("font", font);
+        }
+
+        if (fontSize != nil) {
+            scrollContent.set("character-size", fontSize);
+        }
+
+        if (alignment != nil) {
+            scrollContent.set("alignment", alignment);
+        }
+
+        return scrollContent;
+    },
+
+    #
+    # Get property path to auto update METAR.
+    #
+    # @return string|nil
+    #
+    _getPropertyByTabId: func() {
+             if (me._tabId == WhichRwyDialog.TAB_NEAREST)   return "/sim/airport/closest-airport-id";
+        else if (me._tabId == WhichRwyDialog.TAB_DEPARTURE) return "/autopilot/route-manager/departure/airport";
+        else if (me._tabId == WhichRwyDialog.TAB_ARRIVAL)   return "/autopilot/route-manager/destination/airport";
+        else if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) return nil;
+
+        return nil;
+    },
+
+    #
+    # Return true if user can change ICAO code on this tab.
+    #
+    # @return bool
+    #
+    _canChangeICAO: func() {
+             if (me._tabId == WhichRwyDialog.TAB_NEAREST)   return true;
+        else if (me._tabId == WhichRwyDialog.TAB_DEPARTURE) return false;
+        else if (me._tabId == WhichRwyDialog.TAB_ARRIVAL)   return false;
+        else if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) return true;
+
+        return true;
+    },
+
+    #
+    # Initialize download of METAR data.
+    #
+    # @param  string|nil  icao
+    # @return void
+    #
+    _downloadMetar: func(icao) {
+        if (icao == nil or icao == "") {
+            me._reDrawContentWithMessage("No ICAO code", true);
+            return;
+        }
+
+        me._icao = icao;
+
+        if (me._icaoEdit != nil) {
+            me._icaoEdit.setText(me._icao);
+        }
+
+        me._timer.stop();
+
+        var airport = airportinfo(me._icao);
+        if (airport == nil) {
+            me._reDrawContentWithMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
+            return;
+        }
+
+        if (airport.has_metar) {
+            me._reDrawContentWithMessage("Loading...");
+            me._wind.downloadMetar(me._icao);
+            me._timer.start();
+        } else {
+            me._reDrawContent();
+        }
+    },
+
+    #
+    # Callback for timer to check if METAR data is set.
+    #
+    # @return void
+    #
+    _checkMetarCallback: func() {
+        if (me._wind.isMetarSet()) {
+            me._timer.stop();
+            me._reDrawContent();
+        }
+    },
+
+    #
+    # Redraw whole content with given message text.
+    #
+    # @param  string  message  Error message.
+    # @param  bool  isError  If true then message is error message (red color).
+    # @return void
+    #
+    _reDrawContentWithMessage: func(message, isError = false) {
+        me._scrollContent.removeAllChildren();
+
+        me._printMessage(message, isError);
+
+        me._scrollArea.scrollToTop();
+        me._scrollArea.scrollToLeft();
+    },
+
+    #
+    # Draw whole content.
+    #
+    # @return void
+    #
+    _reDrawContent: func() {
+        me._scrollContent.removeAllChildren();
+
+        var airport = airportinfo(me._icao);
+        if (airport == nil) {
+            me._printMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
+        } else {
+            var y = me._drawAirportAndMetar(airport);
+
+            me._drawRunways.drawRunways(y, airport);
+        }
+
+        me._scrollArea.scrollToTop();
+        me._scrollArea.scrollToLeft();
+    },
+
+    #
+    # Draw airport and METAR information.
+    #
+    # @param  ghost  airport
+    # @return int  New position of y shifted by height of printed line.
+    #
+    _drawAirportAndMetar: func(airport) {
+        var x = 0;
+        var y = 0;
+
+        # Airport ICAO and name
+        var text = me._scrollContent.createChild("text")
+            .setText(airport.id ~ ", " ~ airport.name)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFontSize(24)
+            .setFont(Fonts.SANS_BOLD);
+
+        y += text.getSize()[1] + DrawTabContent.MARGIN_Y;
+
+        y += me._drawRunways.printLineWithValue(x, y, "Lat, Lon:", sprintf("%.4f, %.4f", airport.lat, airport.lon));
+        y += me._drawRunways.printLineWithValue(x, y, "Elevation:", math.round(airport.elevation), "m");
+        y += me._drawRunways.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", magvar(airport)));
+        y += me._drawRunways.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No");
+        y += DrawTabContent.MARGIN_Y;
+
+        # Airport METAR
+        var metar = airport.has_metar ? me._wind.getMETAR() : nil;
+        text = me._scrollContent.createChild("text")
+            .setText(metar == nil ? "No METAR" : metar)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            # .setFontSize(12)
+            ;
+
+        y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
+
+        y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._wind.getQNHValues());
+        y += me._drawRunways.printLineWithValue(x, y, "QFE:", me._wind.getQFEValues(airport));
+        y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
+
+        # Wind
+        text = me._scrollContent.createChild("text")
+            .setText("Wind " ~ (airport.has_metar ? math.round(me._wind.getDirection()) ~ "° at " ~ math.round(me._wind.getSpeedKt()) ~ " kts" : "n/a"))
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFontSize(20)
+            .setFont(Fonts.SANS_BOLD);
+
+        y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 5);
+
+        return y;
+    },
+
+    #
+    # @param  string  message  Error message.
+    # @param  bool  isError  If true then message is error message (red color).
+    # @return void
+    #
+    _printMessage: func(message, isError = false) {
+        me._scrollContent.createChild("text")
+            .setText(message)
+            .setTranslation(0, 0)
+            .setColor(isError ? Colors.ERROR_TEXT : Colors.DEFAULT_TEXT)
+            .setFontSize(20);
+    },
+
+    #
+    # @return ghost  HBoxLayout object with controls.
+    #
+    _drawBottomBar: func() {
+        var buttonBox = canvas.HBoxLayout.new();
+
+        var label = nil;
+        var btnLoad = nil;
+
+        if (me._canChangeICAO()) {
+            label = canvas.gui.widgets.Label.new(me._tabsContent, canvas.style, {})
+                .setText("ICAO:");
+
+            me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent, canvas.style, {})
+                .setText(me._icao)
+                .setFixedSize(80, 26)
+                .listen("editingFinished", func(e) {
+                    me._downloadMetar(e.detail.text);
+                });
+
+            btnLoad = me._getButton("Load", func() {
+                me._downloadMetar(me._icaoEdit.text());
+            });
+        } else {
+            me._icaoEdit = nil;
+
+            btnLoad = me._getButton("Update METAR", func() {
+                me._downloadMetar(me._icao);
+            });
+        }
+
+        buttonBox.addStretch(1);
+
+        if (label != nil) {
+            buttonBox.addItem(label);
+        }
+
+        if (me._icaoEdit != nil) {
+            buttonBox.addItem(me._icaoEdit);
+        }
+
+        buttonBox.addItem(btnLoad);
+        buttonBox.addStretch(1);
+
+        me._tabContent.addSpacing(10);
+        me._tabContent.addItem(buttonBox);
+        me._tabContent.addSpacing(10);
+
+        return buttonBox;
+    },
+
+    #
+    # @param  string  text  Label of button.
+    # @param  func  callback  Function which will be executed after click the button.
+    # @return ghost  Button widget.
+    #
+    _getButton: func(text, callback) {
+        return canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
+            .setText(text)
+            .listen("clicked", callback);
+    },
+};

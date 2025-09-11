@@ -16,13 +16,13 @@ var DrawWindRose = {
     #
     # Constructor
     #
-    # @param  ghost  canvas  Canvas object where wind rose will be drawn.
+    # @param  ghost  canvasContent  Canvas object where wind rose will be drawn.
     # @return me
     #
-    new: func(canvas) {
+    new: func(canvasContent) {
         var me = { parents: [DrawWindRose] };
 
-        me._canvas = canvas;
+        me._canvas = canvasContent;
 
         me._textColor = [0.1, 0.1, 0.1];
         me._colorWind = [0.0, 0.5, 1.0];
@@ -46,8 +46,8 @@ var DrawWindRose = {
     # @param  double  centerX  X coordinate of center in pixels.
     # @param  double  centerY  Y coordinate of center in pixels.
     # @param  double  radius  Radius in pixels.
-    # @param  double  windDir  Wind direction in degrees.
-    # @param  double  windKt  Wind speed in knots.
+    # @param  double|nil  windDir  Wind direction in degrees.
+    # @param  double|nil  windKt  Wind speed in knots.
     # @param  hash  runway  Object with runway data.
     # @return void
     #
@@ -188,11 +188,12 @@ var DrawWindRose = {
     },
 
     #
-    # @param  int  normDiffDeg
+    # @param  int|nil  normDiffDeg
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
+             if (normDiffDeg == nil)                      return [0, 0, 0];
+        else if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
         else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
         else                                              return [0, 0, 0];
     },
@@ -202,11 +203,15 @@ var DrawWindRose = {
     #
     # @param  double  centerX  Center of wind rose in pixels.
     # @param  double  centerY  Center of wind rose in pixels.
-    # @param  double  windDir  Wind direction in degrees.
-    # @param  double  windKt  Wind speed in knots.
+    # @param  double|nil  windDir  Wind direction in degrees.
+    # @param  double|nil  windKt  Wind speed in knots.
     # @return void
     #
     _drawWindArrow: func(centerX, centerY, windDir, windKt) {
+        if (windDir == nil or windKt == nil) {
+            return;
+        }
+
         var windRad = (windDir - 90) * globals.D2R;  # direction in radians
 
         # Line from opposite side to end (full diameter)
