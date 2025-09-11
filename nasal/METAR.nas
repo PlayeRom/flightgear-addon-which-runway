@@ -10,9 +10,9 @@
 #
 
 #
-# Wind class
+# Class to handle METAR
 #
-var Wind = {
+var METAR = {
     #
     # Static constants
     #
@@ -26,7 +26,7 @@ var Wind = {
     # @return me
     #
     new: func(tabId) {
-        var me = { parents: [Wind] };
+        var me = { parents: [METAR] };
 
         me._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ tabId ~ "/metar";
 
@@ -55,7 +55,7 @@ var Wind = {
     # @param  string  icao  ICAO code of airport.
     # @return void
     #
-    downloadMetar: func(icao) {
+    download: func(icao) {
         # The "request-metar" command is set "station-id" property immediately.
 
         fgcommand("request-metar", props.Node.new({
@@ -90,7 +90,7 @@ var Wind = {
     #
     # @return double
     #
-    getDirection: func() {
+    getWindDir: func() {
         var dir = getprop(me._pathToMyMetar ~ "/base-wind-dir-deg");
         if (dir != nil) {
             return dir;
@@ -112,7 +112,7 @@ var Wind = {
     #
     # @return double
     #
-    getSpeedKt: func() {
+    getWindSpeedKt: func() {
         var speed = getprop(me._pathToMyMetar ~ "/base-wind-speed-kt");
         if (speed != nil) {
             return speed;

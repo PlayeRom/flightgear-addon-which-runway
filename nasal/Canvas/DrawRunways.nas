@@ -17,15 +17,15 @@ var DrawRunways = {
     # Constructor
     #
     # @param  ghost  canvasContent  Canvas object where runways will be drawn.
-    # @param  ghost  wind  Wind object.
+    # @param  ghost  metar  METAR object.
     # @return me
     #
-    new: func(canvasContent, wind) {
+    new: func(canvasContent, metar) {
         var me = { parents: [DrawRunways] };
 
         me._canvas = canvasContent;
-        me._wind = wind;
-        me._runwaysData = RunwaysData.new(wind);
+        me._metar = metar;
+        me._runwaysData = RunwaysData.new(metar);
         me._drawWindRose = DrawWindRose.new(canvasContent);
 
         return me;
@@ -75,8 +75,8 @@ var DrawRunways = {
                 500,
                 y - 50, # -50 for move wind rose up.
                 roseRadius,
-                airport.has_metar ? me._wind.getDirection() : nil,
-                airport.has_metar ? me._wind.getSpeedKt() : nil,
+                airport.has_metar ? me._metar.getWindDir() : nil,
+                airport.has_metar ? me._metar.getWindSpeedKt() : nil,
                 rwy,
             );
 
@@ -174,10 +174,10 @@ var DrawRunways = {
     # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
     #
     _geWindLabelByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                      return "n/a";
-        else if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return "Headwind";
-        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return "Crosswind";
-        else                                              return "Tailwind";
+             if (normDiffDeg == nil)                       return "n/a";
+        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return "Headwind";
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return "Crosswind";
+        else                                               return "Tailwind";
     },
 
     #
@@ -185,10 +185,10 @@ var DrawRunways = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                      return Colors.DEFAULT_TEXT;
-        else if (normDiffDeg <= Wind.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
-        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
-        else                                              return Colors.DEFAULT_TEXT;
+             if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
+        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
+        else                                               return Colors.DEFAULT_TEXT;
     },
 
     #
@@ -196,9 +196,9 @@ var DrawRunways = {
     # @return string  Font path.
     #
     _geWindFontByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                      return Fonts.SANS_REGULAR;
-        else if (normDiffDeg <= Wind.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
-        else                                              return Fonts.SANS_REGULAR;
+             if (normDiffDeg == nil)                       return Fonts.SANS_REGULAR;
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
+        else                                               return Fonts.SANS_REGULAR;
     },
 
     #

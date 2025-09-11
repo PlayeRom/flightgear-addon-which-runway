@@ -51,8 +51,8 @@ var DrawTabContent = {
 
 
 
-        me._wind = Wind.new(tabId);
-        me._drawRunways = DrawRunways.new(me._scrollContent, me._wind);
+        me._metar = METAR.new(tabId);
+        me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
         me._timer = maketimer(0.1, me, me._checkMetarCallback);
 
         # Get ICAO code from appropriate property and listen it for update METAR.
@@ -88,7 +88,7 @@ var DrawTabContent = {
         }
 
         me._timer.stop();
-        me._wind.del();
+        me._metar.del();
         me._drawRunways.del();
     },
 
@@ -189,7 +189,7 @@ var DrawTabContent = {
 
         if (airport.has_metar) {
             me._reDrawContentWithMessage("Loading...");
-            me._wind.downloadMetar(me._icao);
+            me._metar.download(me._icao);
             me._timer.start();
         } else {
             me._reDrawContent();
@@ -202,7 +202,7 @@ var DrawTabContent = {
     # @return void
     #
     _checkMetarCallback: func() {
-        if (me._wind.isMetarSet()) {
+        if (me._metar.isMetarSet()) {
             me._timer.stop();
             me._reDrawContent();
         }
@@ -272,7 +272,7 @@ var DrawTabContent = {
         y += DrawTabContent.MARGIN_Y;
 
         # Airport METAR
-        var metar = airport.has_metar ? me._wind.getMETAR() : nil;
+        var metar = airport.has_metar ? me._metar.getMETAR() : nil;
         text = me._scrollContent.createChild("text")
             .setText(metar == nil ? "No METAR" : metar)
             .setTranslation(x, y)
@@ -282,13 +282,13 @@ var DrawTabContent = {
 
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
 
-        y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._wind.getQNHValues());
-        y += me._drawRunways.printLineWithValue(x, y, "QFE:", me._wind.getQFEValues(airport));
+        y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._metar.getQNHValues());
+        y += me._drawRunways.printLineWithValue(x, y, "QFE:", me._metar.getQFEValues(airport));
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
 
         # Wind
         text = me._scrollContent.createChild("text")
-            .setText("Wind " ~ (airport.has_metar ? math.round(me._wind.getDirection()) ~ "° at " ~ math.round(me._wind.getSpeedKt()) ~ " kts" : "n/a"))
+            .setText("Wind " ~ me._getWindInfoText(airport))
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFontSize(20)
@@ -297,6 +297,18 @@ var DrawTabContent = {
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 5);
 
         return y;
+    },
+
+    #
+    # @param  ghost  airport
+    # @return string
+    #
+    _getWindInfoText: func(airport) {
+        if (airport.has_metar) {
+            return math.round(me._metar.getWindDir()) ~ "° at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
+        }
+
+        return "n/a";
     },
 
     #
