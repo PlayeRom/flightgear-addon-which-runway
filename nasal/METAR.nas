@@ -23,12 +23,19 @@ var METAR = {
     # Constructor
     #
     # @param  string  tabId  Tab ID.
+    # @param  func  objUpdatedCallback
+    # @param  func  funcUpdatedCallback
     # @return me
     #
-    new: func(tabId) {
+    new: func(tabId, objUpdatedCallback, funcUpdatedCallback) {
         var me = { parents: [METAR] };
 
         me._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ tabId ~ "/metar";
+
+        me._listener = setlistener(me._pathToMyMetar ~ "/data", func() {
+            logprint(LOG_ALERT, "Which Runway ----- METAR for ", tabId, " has been updated");
+            call(funcUpdatedCallback, [], objUpdatedCallback);
+        });
 
         # me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
 
@@ -47,42 +54,31 @@ var METAR = {
     # @return void
     #
     del: func() {
+        removelistener(me._listener);
     },
 
     #
     # Run FGCommand to download METAR for given ICAO code.
     #
     # @param  string  icao  ICAO code of airport.
+    # @param  bool  force
     # @return void
     #
-    download: func(icao) {
-        # The "request-metar" command is set "station-id" property immediately.
+    download: func(icao, force = false) {
+        # TIP: the "request-metar" command is set "station-id" property immediately.
+        # TIP: the fgcommand method will not download the METAR if time-to-live > 0,
+        #      and if time-to-live passes, the METAR will update automatically!
+
+        if (force) {
+            # The fgcommand will only trigger a METAR download when the time-to-live expires.
+            # So we set this to 0 to force a refresh.
+            setprop(me._pathToMyMetar ~ "/time-to-live", 0);
+        }
 
         fgcommand("request-metar", props.Node.new({
             "path": me._pathToMyMetar,
             "station": icao,
         }));
-    },
-
-    #
-    # Return true if METAR data is set in our property.
-    #
-    # @return bool
-    #
-    isMetarSet: func() {
-        if (me.getMETAR() == nil) {
-            return false;
-        }
-
-        var lat = getprop(me._pathToMyMetar ~ "/station-latitude-deg");
-        var lon = getprop(me._pathToMyMetar ~ "/station-longitude-deg");
-
-        var airport = airportinfo(lat, lon);
-        if (airport == nil) {
-            return false;
-        }
-
-        return airport.id == getprop(me._pathToMyMetar ~ "/station-id");
     },
 
     #
@@ -148,10 +144,18 @@ var METAR = {
     #
     # Get QNH with 3 values: mmHg, hPa and inHg.
     #
+    # @param  ghost  airport  Airport object.
     # @return string
     #
-    getQNHValues: func() {
+    getQNHValues: func(airport) {
+        if (!airport.has_metar) {
+            return "n/a";
+        }
+
         var pressQNH = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+        if (pressQNH == nil) {
+            return "n/a";
+        }
 
         return sprintf(
             "%d / %4d / %.2f",
@@ -168,7 +172,15 @@ var METAR = {
     # @return string
     #
     getQFEValues: func(airport) {
+        if (!airport.has_metar) {
+            return "n/a";
+        }
+
         var pressQNH = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+        if (pressQNH == nil) {
+            return "n/a";
+        }
+
         var pressQFE = pressQNH - airport.elevation * M2FT / 1000 * 1.06;
 
         return sprintf(

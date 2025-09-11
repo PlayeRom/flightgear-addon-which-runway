@@ -51,9 +51,8 @@ var DrawTabContent = {
 
 
 
-        me._metar = METAR.new(tabId);
+        me._metar = METAR.new(tabId, me, me._metarUpdatedCallback);
         me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
-        me._timer = maketimer(0.1, me, me._checkMetarCallback);
 
         # Get ICAO code from appropriate property and listen it for update METAR.
         me._listener = nil;
@@ -65,7 +64,7 @@ var DrawTabContent = {
                 icaoProperty,
                 func(node) {
                     if (node != nil) {
-                        logprint(LOG_ALERT, "----------------- listener ", tabId, " icao = ", node.getValue());
+                        logprint(LOG_ALERT, "Which Runway ----- ", tabId, " got a new ICAO = ", node.getValue());
                         me._downloadMetar(node.getValue());
                     }
                 },
@@ -87,7 +86,6 @@ var DrawTabContent = {
             removelistener(me._listener);
         }
 
-        me._timer.stop();
         me._metar.del();
         me._drawRunways.del();
     },
@@ -162,6 +160,19 @@ var DrawTabContent = {
     },
 
     #
+    # Get error message if ICAO is null or empty.
+    #
+    # @return string
+    #
+    _getNoIcaoMessage: func() {
+             if (me._tabId == WhichRwyDialog.TAB_NEAREST)   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
+        else if (me._tabId == WhichRwyDialog.TAB_DEPARTURE) return "No ICAO code. Enter the departure airport in Route Manager first.";
+        else if (me._tabId == WhichRwyDialog.TAB_ARRIVAL)   return "No ICAO code. Enter the arrival airport in Route Manager first.";
+
+        return "No ICAO code.";
+    },
+
+    #
     # Initialize download of METAR data.
     #
     # @param  string|nil  icao
@@ -169,17 +180,15 @@ var DrawTabContent = {
     #
     _downloadMetar: func(icao) {
         if (icao == nil or icao == "") {
-            me._reDrawContentWithMessage("No ICAO code", true);
+            me._reDrawContentWithMessage(me._getNoIcaoMessage(), true);
             return;
         }
 
-        me._icao = icao;
+        me._icao = globals.string.uc(icao);
 
         if (me._icaoEdit != nil) {
             me._icaoEdit.setText(me._icao);
         }
-
-        me._timer.stop();
 
         var airport = airportinfo(me._icao);
         if (airport == nil) {
@@ -189,23 +198,19 @@ var DrawTabContent = {
 
         if (airport.has_metar) {
             me._reDrawContentWithMessage("Loading...");
-            me._metar.download(me._icao);
-            me._timer.start();
+            me._metar.download(me._icao, true);
         } else {
             me._reDrawContent();
         }
     },
 
     #
-    # Callback for timer to check if METAR data is set.
+    # Callback function, called when METAR has been updated.
     #
     # @return void
     #
-    _checkMetarCallback: func() {
-        if (me._metar.isMetarSet()) {
-            me._timer.stop();
-            me._reDrawContent();
-        }
+    _metarUpdatedCallback: func() {
+        me._reDrawContent();
     },
 
     #
@@ -282,7 +287,7 @@ var DrawTabContent = {
 
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
 
-        y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._metar.getQNHValues());
+        y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._metar.getQNHValues(airport));
         y += me._drawRunways.printLineWithValue(x, y, "QFE:", me._metar.getQFEValues(airport));
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
 
