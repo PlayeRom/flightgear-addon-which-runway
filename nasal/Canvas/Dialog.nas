@@ -64,13 +64,13 @@ var Dialog = {
                 });
 
                 # Set listener for resize width of window
-                setlistener(me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[0]", func(node) {
+                setlistener(me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[0]", func() {
                     resizeTimer.isRunning
                         ? resizeTimer.restart(0.1)
                         : resizeTimer.start();
                 });
 
-                setlistener(me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[1]", func(node) {
+                setlistener(me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[1]", func() {
                     resizeTimer.isRunning
                         ? resizeTimer.restart(0.1)
                         : resizeTimer.start();

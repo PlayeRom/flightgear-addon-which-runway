@@ -54,7 +54,7 @@ var DrawTabContent = {
         me._metar = METAR.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
         me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
 
-        me._listeners = std.Vector.new();
+        me._listeners = Listeners.new();
         me._setListeners();
 
         if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) {
@@ -70,8 +70,7 @@ var DrawTabContent = {
     # @return void
     #
     del: func() {
-        me._removeListeners();
-
+        me._listeners.del();
         me._metar.del();
         me._drawRunways.del();
     },
@@ -85,31 +84,18 @@ var DrawTabContent = {
         # Get ICAO code from appropriate property and listen it for update METAR.
         var icaoProperty = me._getICAOPropertyByTabId();
         if (icaoProperty != nil) {
-            me._listeners.append(setlistener(
-                icaoProperty,
-                func(node) {
+            me._listeners.add(
+                node: icaoProperty,
+                code: func(node) {
                     if (node != nil) {
                         logprint(LOG_ALERT, "Which Runway ----- ", me._tabId, " got a new ICAO = ", node.getValue());
                         me._downloadMetar(node.getValue());
                     }
                 },
-                true, # init - if set to true, the listener will additionally be triggered when it is created.
-                0, # type - 0 means that the listener will only trigger when the property is changed.
-            ));
+                init: true, # if set to true, the listener will additionally be triggered when it is created.
+                type: Listeners.ON_CHANGE_ONLY, # the listener will only trigger when the property is changed.
+            );
         }
-    },
-
-    #
-    # Remove all listeners created by _setListeners
-    #
-    # @return void
-    #
-    _removeListeners: func() {
-        foreach (var listener; me._listeners.vector) {
-            removelistener(listener);
-        }
-
-        me._listeners.clear();
     },
 
     #

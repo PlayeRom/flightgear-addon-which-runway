@@ -40,7 +40,7 @@ var METAR = {
 
         me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
 
-        me._listeners = std.Vector.new();
+        me._listeners = Listeners.new();
         me._setListeners();
 
         # me._metarWindDirNode   = props.globals.getNode("/environment/metar/base-wind-dir-deg");
@@ -58,7 +58,7 @@ var METAR = {
     # @return void
     #
     del: func() {
-        me._removeListeners();
+        me._listeners.del();
     },
 
     #
@@ -68,28 +68,23 @@ var METAR = {
     #
     _setListeners: func() {
         # Redraw canvas if METAR has been changed.
-        me._listeners.append(setlistener(me._pathToMyMetar ~ "/data", func() {
-            logprint(LOG_ALERT, "Which Runway ----- METAR for ", me._tabId, " has been updated");
-            call(me._funcUpdatedCallback, [], me._objCallbacks);
-        }));
+        me._listeners.add(
+            node: me._pathToMyMetar ~ "/data",
+            code: func() {
+                logprint(LOG_ALERT, "Which Runway ----- METAR for ", me._tabId, " has been updated");
+                call(me._funcUpdatedCallback, [], me._objCallbacks);
+            },
+        );
 
         # Redraw canvas if Live Data is enabled/disabled.
-        me._listeners.append(setlistener("/environment/realwx/enabled", func(node) {
-            call(me._funcRealWxCallback, [], me._objCallbacks);
-        }, false, 0)); # 0 - trigger listener callback only when value has been changed.
-    },
-
-    #
-    # Remove all listeners created by _setListeners
-    #
-    # @return void
-    #
-    _removeListeners: func() {
-        foreach (var listener; me._listeners.vector) {
-            removelistener(listener);
-        }
-
-        me._listeners.clear();
+        me._listeners.add(
+            node: "/environment/realwx/enabled",
+            code: func(node) {
+                call(me._funcRealWxCallback, [], me._objCallbacks);
+            },
+            init: false,
+            type: Listeners.ON_CHANGE_ONLY,
+        );
     },
 
     #
