@@ -44,9 +44,9 @@ var DrawRunways = {
     #
     # Draw runways information with wind rose.
     #
-    # @param  int  y  Init position of y.
+    # @param  double  y  Init position of y.
     # @param  ghost  airport
-    # @return int  New position of y shifted by height of printed line.
+    # @return double  New position of y shifted by height of printed line.
     #
     drawRunways: func(y, airport) {
         var runwaysData = me._runwaysData.getRunways(airport);
@@ -92,10 +92,10 @@ var DrawRunways = {
     },
 
     #
-    # @param  int  x  Init position of x.
-    # @param  int  y  Init position of y.
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
     # @param  hash  runway  Runway data object.
-    # @return int  New position of y shifted by height of printed runway label.
+    # @return double  New position of y shifted by height of printed runway label.
     #
     _printRunwayLabel: func(x, y, runway) {
         var text = me._canvas.createChild("text")
@@ -206,13 +206,13 @@ var DrawRunways = {
     },
 
     #
-    # @param  int  x  Init position of x.
-    # @param  int  y  Init position of y.
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
     # @param  string  label  Label text.
-    # @param  string|int  value  Value to display.
+    # @param  string|int|double  value  Value to display.
     # @param  string|nil  unit  Unit to display.
     # @param  bool  isWindColor
-    # @return int  New position of y shifted by height of printed line.
+    # @return double  New position of y shifted by height of printed line.
     #
     printLineWithValue: func(x, y, label, value, unit = nil, isWindColor = false) {
         var text = me._canvas.createChild("text")

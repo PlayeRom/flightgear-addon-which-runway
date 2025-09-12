@@ -32,7 +32,12 @@ var WhichRwyDialog = {
     new: func() {
         var me = { parents: [
             WhichRwyDialog,
-            Dialog.new(WhichRwyDialog.WINDOW_WIDTH, WhichRwyDialog.WINDOW_HEIGHT, "Which Runway", true),
+            Dialog.new(
+                width : WhichRwyDialog.WINDOW_WIDTH,
+                height: WhichRwyDialog.WINDOW_HEIGHT,
+                title : "Which Runway",
+                resize: true,
+            ),
         ] };
 
         me.setPositionOnCenter();
@@ -74,19 +79,5 @@ var WhichRwyDialog = {
         me._drawTabContentAlternate.del();
 
         call(Dialog.del, [], me);
-    },
-
-    #
-    # @return void
-    #
-    show: func() {
-        call(Dialog.show, [], me);
-    },
-
-    #
-    # @return void
-    #
-    hide: func() {
-        call(Dialog.hide, [], me);
     },
 };

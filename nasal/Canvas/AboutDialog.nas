@@ -28,7 +28,7 @@ var AboutDialog = {
     new: func() {
         var me = { parents: [
             AboutDialog,
-            Dialog.new(AboutDialog.WINDOW_WIDTH, AboutDialog.WINDOW_HEIGHT, "Which Runway About"),
+            Dialog.new(AboutDialog.WINDOW_WIDTH, AboutDialog.WINDOW_HEIGHT, "About Which Runway"),
         ] };
 
         me.setPositionOnCenter();

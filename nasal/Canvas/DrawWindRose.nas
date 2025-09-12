@@ -152,8 +152,7 @@ var DrawWindRose = {
             .setColor([0,0,0])
             .setFill([0,0,0])
             .setStroke([0.5, 0.5, 0.5])
-            .setStrokeLineWidth(widthPix)
-            ;
+            .setStrokeLineWidth(widthPix);
 
         # Add runway labels
         me._drawRunwayId(centerX, centerY, runway.reciprocalId, runway.normDiffDeg, angleRad, lenPix);
