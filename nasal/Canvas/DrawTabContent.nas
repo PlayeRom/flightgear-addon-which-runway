@@ -322,7 +322,7 @@ var DrawTabContent = {
         text = me._scrollContent.createChild("text")
             .setText("Wind " ~ me._getWindInfoText(airport))
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
+            .setColor(Colors.WIND)
             .setFontSize(20)
             .setFont(Fonts.SANS_BOLD);
 

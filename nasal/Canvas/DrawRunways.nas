@@ -60,12 +60,13 @@ var DrawRunways = {
                 me._getMainWindLabel(rwy.headwind),
                 me._getMainWindValue(rwy.headwind),
                 rwy.headwind == nil ? nil : "kts",
+                true,
             );
 
             var rwyHdgTrue = math.round(rwy.heading);
             var rwyHdgMag = Utils.normalizeCourse(rwy.heading - aptMagVar);
 
-            y += me.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind), me._crosswindUnit(rwy.crosswind));
+            y += me.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind), me._crosswindUnit(rwy.crosswind), true);
             y += me.printLineWithValue(0, y, "Heading true:", rwyHdgTrue ~ "°");
             y += me.printLineWithValue(0, y, "Heading mag:", rwyHdgMag ~ "°");
             y += me.printLineWithValue(0, y, "Length:", math.round(rwy.length), "m");
@@ -210,19 +211,20 @@ var DrawRunways = {
     # @param  string  label  Label text.
     # @param  string|int  value  Value to display.
     # @param  string|nil  unit  Unit to display.
+    # @param  bool  isWindColor
     # @return int  New position of y shifted by height of printed line.
     #
-    printLineWithValue: func(x, y, label, value, unit = nil) {
+    printLineWithValue: func(x, y, label, value, unit = nil, isWindColor = false) {
         var text = me._canvas.createChild("text")
             .setText(label)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
+            .setColor(isWindColor ? Colors.WIND : Colors.DEFAULT_TEXT);
 
         x += 110;
         text = me._canvas.createChild("text")
             .setText(value)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
+            .setColor(isWindColor ? Colors.WIND : Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD);
 
         if (unit != nil) {
@@ -230,7 +232,7 @@ var DrawRunways = {
             text = me._canvas.createChild("text")
                 .setText(unit)
                 .setTranslation(x, y)
-                .setColor(Colors.DEFAULT_TEXT);
+                .setColor(isWindColor ? Colors.WIND : Colors.DEFAULT_TEXT);
         }
 
         return text.getSize()[1] + DrawTabContent.MARGIN_Y;

@@ -25,7 +25,6 @@ var DrawWindRose = {
         me._canvas = canvasContent;
 
         me._textColor = [0.1, 0.1, 0.1];
-        me._colorWind = [0.0, 0.5, 1.0];
         me._windLineWidth = 2;
         me._radius = 0;
 
@@ -223,9 +222,9 @@ var DrawWindRose = {
         me._canvas.createChild("path")
             .moveTo(xStart, yStart)
             .lineTo(xEnd, yEnd)
-            .setColor(me._colorWind)
-            .setFill(me._colorWind)
-            .setStroke(me._colorWind)
+            .setColor(Colors.WIND)
+            .setFill(Colors.WIND)
+            .setStroke(Colors.WIND)
             .setStrokeLineWidth(me._windLineWidth);
 
         # Arrowhead
@@ -271,7 +270,7 @@ var DrawWindRose = {
         me._canvas.createChild("text")
             .setText(info)
             .setTranslation(xLabel, yLabel)
-            .setColor(me._colorWind)
+            .setColor(Colors.WIND)
             .setFontSize(11)
             .setAlignment("center-center");
     },
@@ -290,18 +289,18 @@ var DrawWindRose = {
         me._canvas.createChild("path")
             .moveTo(x, y)
             .lineTo(x - math.cos(left) * arrowLength, y - math.sin(left) * arrowLength)
-            .setColor(me._colorWind)
-            .setFill(me._colorWind)
-            .setStroke(me._colorWind)
+            .setColor(Colors.WIND)
+            .setFill(Colors.WIND)
+            .setStroke(Colors.WIND)
             .setStrokeLineWidth(me._windLineWidth);
 
         # Right arrowhead line
         me._canvas.createChild("path")
             .moveTo(x, y)
             .lineTo(x - math.cos(right) * arrowLength, y - math.sin(right) * arrowLength)
-            .setColor(me._colorWind)
-            .setFill(me._colorWind)
-            .setStroke(me._colorWind)
+            .setColor(Colors.WIND)
+            .setFill(Colors.WIND)
+            .setStroke(Colors.WIND)
             .setStrokeLineWidth(me._windLineWidth);
     },
 };
