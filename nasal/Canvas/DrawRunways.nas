@@ -62,14 +62,17 @@ var DrawRunways = {
                 rwy.headwind == nil ? nil : "kts",
             );
 
+            var rwyHdgTrue = math.round(rwy.heading);
+            var rwyHdgMag = Utils.normalizeCourse(rwy.heading - aptMagVar);
+
             y += me.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind), me._crosswindUnit(rwy.crosswind));
-            y += me.printLineWithValue(0, y, "Heading true:", math.round(rwy.heading) ~ "°");
-            y += me.printLineWithValue(0, y, "Heading mag:", math.round(rwy.heading - aptMagVar) ~ "°");
+            y += me.printLineWithValue(0, y, "Heading true:", rwyHdgTrue ~ "°");
+            y += me.printLineWithValue(0, y, "Heading mag:", rwyHdgMag ~ "°");
             y += me.printLineWithValue(0, y, "Length:", math.round(rwy.length), "m");
             y += me.printLineWithValue(0, y, "Width:", math.round(rwy.width), "m");
             y += me.printLineWithValue(0, y, "Surface:", me._getSurface(rwy.surface));
             y += me.printLineWithValue(0, y, "Reciprocal:", rwy.reciprocalId);
-            y += me.printLineWithValue(0, y, "ILS:", rwy.ils == nil ? "No" : (sprintf("%.3f/%.0f°", rwy.ils.frequency / 100, rwy.ils.course)));
+            y += me.printLineWithValue(0, y, "ILS:", me._getIlsValue(rwy, rwyHdgTrue, rwyHdgMag, aptMagVar));
 
             me._drawWindRose.drawWindRose(
                 500,
@@ -115,6 +118,38 @@ var DrawRunways = {
             .setFont(me._geWindFontByDir(runway.normDiffDeg));
 
         return text.getSize()[1] + DrawTabContent.MARGIN_Y;
+    },
+
+        #
+    # @param  int|nil  normDiffDeg
+    # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
+    #
+    _geWindLabelByDir: func(normDiffDeg) {
+             if (normDiffDeg == nil)                       return "n/a";
+        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return "Headwind";
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return "Crosswind";
+        else                                               return "Tailwind";
+    },
+
+    #
+    # @param  int|nil  normDiffDeg
+    # @return vector  RGB color.
+    #
+    _geWindColorByDir: func(normDiffDeg) {
+             if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
+        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
+        else                                               return Colors.DEFAULT_TEXT;
+    },
+
+    #
+    # @param  int|nil  normDiffDeg
+    # @return string  Font path.
+    #
+    _geWindFontByDir: func(normDiffDeg) {
+             if (normDiffDeg == nil)                       return Fonts.SANS_REGULAR;
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
+        else                                               return Fonts.SANS_REGULAR;
     },
 
     #
@@ -170,38 +205,6 @@ var DrawRunways = {
     },
 
     #
-    # @param  int|nil  normDiffDeg
-    # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
-    #
-    _geWindLabelByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                       return "n/a";
-        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return "Headwind";
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return "Crosswind";
-        else                                               return "Tailwind";
-    },
-
-    #
-    # @param  int|nil  normDiffDeg
-    # @return vector  RGB color.
-    #
-    _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
-        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
-        else                                               return Colors.DEFAULT_TEXT;
-    },
-
-    #
-    # @param  int|nil  normDiffDeg
-    # @return string  Font path.
-    #
-    _geWindFontByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                       return Fonts.SANS_REGULAR;
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
-        else                                               return Fonts.SANS_REGULAR;
-    },
-
-    #
     # @param  int  x  Init position of x.
     # @param  int  y  Init position of y.
     # @param  string  label  Label text.
@@ -251,5 +254,32 @@ var DrawRunways = {
         else if(surfaceId == 9)  return "dirt helipad";
         else if(surfaceId == 12) return "lakebed";
         else                     return "unknown";
+    },
+
+    #
+    # @param  hash  rwy  Runway hash with data.
+    # @param  int  rwyHdgTrue  True heading of runway.
+    # @param  int  rwyHdgMag  Magnetic heading of runway.
+    # @param  double  aptMagVar  Magnetic variation of airport.
+    # @return string
+    #
+    _getIlsValue: func(rwy, rwyHdgTrue, rwyHdgMag, aptMagVar) {
+        if (rwy.ils == nil) {
+            return "No";
+        }
+
+        # TODO: Here's the question: should we use the course from the ILS object, or should we take the runway heading?
+        # From what I've checked, the ILS course sometimes differs from the runway heading (assuming FG always uses true,
+        # which it does, which isn't entirely correct for ILS). So, to avoid any visual discrepancies of 1 degree,
+        # I just use the runway heading for now.
+        var ilsCourse = rwyHdgMag;
+
+        # var ilsCourse = math.round(rwy.ils.course);
+        # if (ilsCourse == rwyHdgTrue and ilsCourse != rwyHdgMag) {
+        #     # FG gives ILS course as true, what is incorrect, convert true to magnetic.
+        #     # ilsCourse = Utils.normalizeCourse(ilsCourse - aptMagVar);
+        # }
+
+        return sprintf("%s %.3f/%d°", rwy.ils.id, rwy.ils.frequency / 100, ilsCourse);
     },
 };

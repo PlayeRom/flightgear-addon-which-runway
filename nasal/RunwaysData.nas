@@ -54,7 +54,7 @@ var RunwaysData = {
             var runway = airport.runways[runwayName];
 
             var diff = windDir - runway.heading;
-            var normDiffDeg = math.round(math.mod((diff + 180), 360) - 180); # normalize to [-180, 180]
+            var normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
             var normDiffRad = normDiffDeg * globals.D2R;
 
             var headwind  = windSpeed * math.cos(normDiffRad);

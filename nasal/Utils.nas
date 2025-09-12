@@ -44,4 +44,22 @@ var Utils = {
 
         return !size(errors);
     },
+
+    #
+    # @param  int|double  course
+    # @param  int  min  Min value of result, default 0.
+    # @param  int  max  Max value of result, default 360.
+    # @return int
+    #
+    normalizeCourse: func(course, min = 0, max = 360) {
+        var range = max - min;
+        var result = math.round(math.mod(course - max, range) + min);
+
+        #  if the result is at the upper limit (eg. 360), we move back to the lower limit (0).
+        if (result == max) {
+            result = min;
+        }
+
+        return result;
+    },
 };
