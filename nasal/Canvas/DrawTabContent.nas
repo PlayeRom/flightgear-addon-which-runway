@@ -337,7 +337,12 @@ var DrawTabContent = {
     #
     _getWindInfoText: func(airport) {
         if (me._metar.canUseMETAR(airport)) {
-            return math.round(me._metar.getWindDir()) ~ "° at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
+            var windDir = me._metar.getWindDir(airport);
+            windDir = windDir == nil
+                ? "variable"
+                : math.round(windDir) ~ "°";
+
+            return windDir ~ " at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
         }
 
         return "n/a";

@@ -44,21 +44,21 @@ var RunwaysData = {
     getRunways: func(airport) {
         # TODO: it seems that the runway headings are "true", so there is no need to use magnetic variation?
         # var magVariation = magvar(airport);
-        # var windDir = me._metar.getWindDir() - magVariation;
-        var windDir   = me._metar.canUseMETAR(airport) ? me._metar.getWindDir() : 0;
-        var windSpeed = me._metar.canUseMETAR(airport) ? me._metar.getWindSpeedKt() : 0;
+        # var windDir = me._metar.getWindDir(airport) - magVariation;
+        var windDir   = me._metar.getWindDir(airport); # it can be nil
+        var windSpeed = me._metar.getWindSpeedKt();
 
         var runwaysData = [];
 
         foreach (var runwayName; keys(airport.runways)) {
             var runway = airport.runways[runwayName];
 
-            var diff = windDir - runway.heading;
-            var normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
-            var normDiffRad = normDiffDeg * globals.D2R;
+            var diff        = windDir == nil ? 0 : windDir - runway.heading;
+            var normDiffDeg = windDir == nil ? nil : Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
+            var normDiffRad = windDir == nil ? nil : normDiffDeg * globals.D2R;
 
-            var headwind  = windSpeed * math.cos(normDiffRad);
-            var crosswind = windSpeed * math.sin(normDiffRad);
+            var headwind  = windDir == nil ? nil : windSpeed * math.cos(normDiffRad);
+            var crosswind = windDir == nil ? nil : windSpeed * math.sin(normDiffRad);
 
             # The values ​​headwind and crosswind can be -0, so here we reduce -0 to 0
             if (headwind == 0) {
@@ -70,9 +70,9 @@ var RunwaysData = {
             }
 
             append(runwaysData, {
-                normDiffDeg: me._metar.canUseMETAR(airport) ? math.abs(normDiffDeg) : nil,
-                headwind   : me._metar.canUseMETAR(airport) ? headwind : nil,
-                crosswind  : me._metar.canUseMETAR(airport) ? crosswind : nil,
+                normDiffDeg: normDiffDeg == nil ? nil : math.abs(normDiffDeg),
+                headwind: headwind,
+                crosswind: crosswind,
                 rwyId: runway.id,
                 heading: runway.heading,
                 length: runway.length,
@@ -85,9 +85,9 @@ var RunwaysData = {
             });
         }
 
-        return me._metar.canUseMETAR(airport)
-            ? me._sortRunwaysByHeadwind(runwaysData)
-            : runwaysData;
+        return windDir == nil
+            ? runwaysData
+            : me._sortRunwaysByHeadwind(runwaysData);
     },
 
     #

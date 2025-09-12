@@ -43,12 +43,6 @@ var METAR = {
         me._listeners = Listeners.new();
         me._setListeners();
 
-        # me._metarWindDirNode   = props.globals.getNode("/environment/metar/base-wind-dir-deg");
-        # me._metarWindSpeedNode = props.globals.getNode("/environment/metar/base-wind-speed-kt");
-
-        # me._simWindDirNode   = props.globals.getNode("/environment/wind-from-heading-deg");
-        # me._simWindSpeedNode = props.globals.getNode("/environment/wind-speed-kt");
-
         return me;
     },
 
@@ -115,23 +109,15 @@ var METAR = {
     #
     # Get wind direction in true deg.
     #
-    # @return double
+    # @param  ghost  airport
+    # @return double|nil
     #
-    getWindDir: func() {
-        var dir = getprop(me._pathToMyMetar ~ "/base-wind-dir-deg");
-        if (dir != nil) {
-            return dir;
+    getWindDir: func(airport) {
+        if (!me.canUseMETAR(airport) or me.isVariableWind()) {
+            return nil;
         }
 
-        # if (me.isRealWeatherEnabled() and me._metarWindDirNode != nil) {
-        #     return me._metarWindDirNode.getValue();
-        # }
-
-        # if (me._simWindDirNode != nil) {
-        #     return me._simWindDirNode.getValue();
-        # }
-
-        return 0;
+        return getprop(me._pathToMyMetar ~ "/base-wind-dir-deg");
     },
 
     #
@@ -144,14 +130,6 @@ var METAR = {
         if (speed != nil) {
             return speed;
         }
-
-        # if (me.isRealWeatherEnabled() and me._metarWindSpeedNode != nil) {
-        #     return me._metarWindSpeedNode.getValue();
-        # }
-
-        # if (me._simWindSpeedNode != nil) {
-        #     return me._simWindSpeedNode.getValue();
-        # }
 
         return 0;
     },
@@ -229,5 +207,45 @@ var METAR = {
             math.round(pressQFE / 29.92 * 1013),  # hPa
             math.round(pressQFE, 0.01),           # inHg
         );
+    },
+
+    #
+    # Return true if wind is variable in METAR.
+    #
+    # @return bool
+    #
+    isVariableWind: func() {
+        var metar = me.getMETAR();
+        if (metar == nil) {
+            return false;
+        }
+
+        var pos = find(" VRB", metar);
+        if (pos == -1) {
+            return false;
+        }
+
+        # After VRB must be followed by at least 5 characters: 2 digits + max 3 unit
+        if (size(metar) < pos + 8) {
+            return false;
+        }
+
+        var digits = substr(metar, pos + 4, 2);  # 2 digits
+        if (!string.isdigit(digits[0]) or !string.isdigit(digits[1])) {
+            return false;
+        }
+
+        # Check units
+        var unit = substr(metar, pos + 6, 2);
+        if (unit == "KT") {
+            return true;
+        }
+
+        unit = substr(metar, pos + 6, 3);
+        if (unit == "MPS" or unit == "KMH" or unit == "MPH") {
+            return true;
+        }
+
+        return false;
     },
 };

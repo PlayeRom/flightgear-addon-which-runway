@@ -78,8 +78,8 @@ var DrawRunways = {
                 500,
                 y - 50, # -50 for move wind rose up.
                 roseRadius,
-                me._metar.canUseMETAR(airport) ? me._metar.getWindDir() : nil,
-                me._metar.canUseMETAR(airport) ? me._metar.getWindSpeedKt() : nil,
+                me._metar.getWindDir(airport),
+                me._metar.getWindSpeedKt(),
                 rwy,
             );
 

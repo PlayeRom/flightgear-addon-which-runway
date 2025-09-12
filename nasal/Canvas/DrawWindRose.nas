@@ -47,7 +47,7 @@ var DrawWindRose = {
     # @param  double  centerY  Y coordinate of center in pixels.
     # @param  double  radius  Radius in pixels.
     # @param  double|nil  windDir  Wind direction in degrees.
-    # @param  double|nil  windKt  Wind speed in knots.
+    # @param  double  windKt  Wind speed in knots.
     # @param  hash  runway  Object with runway data.
     # @return void
     #
@@ -204,11 +204,11 @@ var DrawWindRose = {
     # @param  double  centerX  Center of wind rose in pixels.
     # @param  double  centerY  Center of wind rose in pixels.
     # @param  double|nil  windDir  Wind direction in degrees.
-    # @param  double|nil  windKt  Wind speed in knots.
+    # @param  double  windKt  Wind speed in knots.
     # @return void
     #
     _drawWindArrow: func(centerX, centerY, windDir, windKt) {
-        if (windDir == nil or windKt == nil) {
+        if (windDir == nil) {
             return;
         }
 
