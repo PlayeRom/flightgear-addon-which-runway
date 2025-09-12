@@ -62,7 +62,7 @@ var METAR = {
     },
 
     #
-    # Set listeners
+    # Set listeners.
     #
     # @return void
     #

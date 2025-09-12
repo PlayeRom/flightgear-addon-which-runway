@@ -45,6 +45,8 @@ var Dialog = {
 
         me._windowPropIndex = nil;
 
+        me._listeners = Listeners.new();
+
         if (resize and onResize != nil) {
             me._windowPropIndex = me._getWindowPropertyIndex(title);
             if (me._windowPropIndex > -1) {
@@ -64,17 +66,23 @@ var Dialog = {
                 });
 
                 # Set listener for resize width of window
-                setlistener(me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[0]", func() {
-                    resizeTimer.isRunning
-                        ? resizeTimer.restart(0.1)
-                        : resizeTimer.start();
-                });
+                me._listeners.add(
+                    node: me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[0]",
+                    code: func() {
+                        resizeTimer.isRunning
+                            ? resizeTimer.restart(0.1)
+                            : resizeTimer.start();
+                    },
+                );
 
-                setlistener(me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[1]", func() {
-                    resizeTimer.isRunning
-                        ? resizeTimer.restart(0.1)
-                        : resizeTimer.start();
-                });
+                me._listeners.add(
+                    node: me.getPathToCanvas() ~ "/window[" ~ me._windowPropIndex ~ "]/content-size[1]",
+                    code: func() {
+                        resizeTimer.isRunning
+                            ? resizeTimer.restart(0.1)
+                            : resizeTimer.start();
+                    },
+                );
             }
         }
 
@@ -125,6 +133,7 @@ var Dialog = {
     # @return void
     #
     del: func() {
+        me._listeners.del();
         me.window.destroy();
     },
 
