@@ -36,7 +36,7 @@ var DrawTabContent = {
         me._icao = "";
         me._icaoEdit = nil;
 
-        if (me._isTabAlternate()) {
+        if (me._isTabNearest() or me._isTabAlternate()) {
             me._btnLoadICAOs = std.Vector.new();
             for (var i = 0; i < 5; i += 1) {
                 me._btnLoadICAOs.append(canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {}).setText("----"));
@@ -97,6 +97,10 @@ var DrawTabContent = {
                     if (node != nil) {
                         logprint(LOG_ALERT, "Which Runway ----- ", me._tabId, " got a new ICAO = ", node.getValue());
                         me._downloadMetar(node.getValue());
+                    }
+
+                    if (me._isTabNearest()) {
+                        me._updateNearestAirportButtons();
                     }
                 },
                 init: true, # if set to true, the listener will additionally be triggered when it is created.
@@ -456,7 +460,7 @@ var DrawTabContent = {
     #
     _getButtonBoxByTabId: func() {
              if (me._isTabNearest())                         return me._drawBottomBarForNearest();
-        else if (me._isTabDeparture() or me._isTabArrival()) return me._drawBottomBarForDepartureArrival();
+        else if (me._isTabDeparture() or me._isTabArrival()) return me._drawBottomBarForScheduledTab();
         else if (me._isTabAlternate())                       return me._drawBottomBarForAlternate();
 
         return nil;
@@ -467,6 +471,11 @@ var DrawTabContent = {
     #
     _drawBottomBarForNearest: func() {
         var buttonBox = canvas.HBoxLayout.new();
+
+        buttonBox.addStretch(1);
+        foreach (var btn; me._btnLoadICAOs.vector) {
+            buttonBox.addItem(btn);
+        }
 
         var label = canvas.gui.widgets.Label.new(me._tabsContent, canvas.style, {})
             .setText("ICAO:");
@@ -494,7 +503,7 @@ var DrawTabContent = {
     #
     # @return ghost  Canvas layout object with controls.
     #
-    _drawBottomBarForDepartureArrival: func() {
+    _drawBottomBarForScheduledTab: func() {
         var buttonBox = canvas.HBoxLayout.new();
 
         var btnLoad = me._getButton("Update METAR", func() {
@@ -506,43 +515,6 @@ var DrawTabContent = {
         buttonBox.addStretch(1);
 
         return buttonBox;
-    },
-
-    #
-    # Update buttons with nearest airports.
-    #
-    # @return void
-    #
-    _updateNearestAirportButtons: func() {
-        # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons call");
-        var airports = findAirportsWithinRange(50);
-        var airportSize = size(airports);
-
-        forindex (var index; me._btnLoadICAOs.vector) {
-            var airport = index < airportSize ? airports[index] : nil;
-
-            if (airport == nil) {
-                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " disable");
-
-                me._btnLoadICAOs.vector[index]
-                    .setText("----")
-                    .setVisible(false)
-                    .listen("clicked", nil);
-            } else {
-                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " enable with ICAO ", airport.id);
-
-                func() {
-                    var icao = airport.id;
-
-                    me._btnLoadICAOs.vector[index]
-                        .setText(icao)
-                        .setVisible(true)
-                        .listen("clicked", func() {
-                            me._downloadMetar(icao);
-                        });
-                }();
-            }
-        }
     },
 
     #
@@ -588,5 +560,42 @@ var DrawTabContent = {
         return canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
             .setText(text)
             .listen("clicked", callback);
+    },
+
+    #
+    # Update buttons with nearest airports.
+    #
+    # @return void
+    #
+    _updateNearestAirportButtons: func() {
+        # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons call");
+        var airports = findAirportsWithinRange(50);
+        var airportSize = size(airports);
+
+        forindex (var index; me._btnLoadICAOs.vector) {
+            var airport = index < airportSize ? airports[index] : nil;
+
+            if (airport == nil) {
+                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " disable");
+
+                me._btnLoadICAOs.vector[index]
+                    .setText("----")
+                    .setVisible(false)
+                    .listen("clicked", nil);
+            } else {
+                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " enable with ICAO ", airport.id);
+
+                func() {
+                    var icao = airport.id;
+
+                    me._btnLoadICAOs.vector[index]
+                        .setText(icao)
+                        .setVisible(true)
+                        .listen("clicked", func() {
+                            me._downloadMetar(icao);
+                        });
+                }();
+            }
+        }
     },
 };
