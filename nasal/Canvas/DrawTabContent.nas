@@ -292,7 +292,7 @@ var DrawTabContent = {
 
         y += text.getSize()[1] + DrawTabContent.MARGIN_Y;
 
-        y += me._drawRunways.printLineWithValue(x, y, "Lat, Lon:", sprintf("%.4f, %.4f", airport.lat, airport.lon));
+        y += me._drawRunways.printLineWithValue(x, y, "Lat, Lon:", me._getLatLonInfo(airport));
         y += me._drawRunways.printLineWithValue(x, y, "Elevation:", math.round(airport.elevation), "m");
         y += me._drawRunways.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", magvar(airport)));
         y += me._drawRunways.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No");
@@ -359,6 +359,31 @@ var DrawTabContent = {
             .setTranslation(0, 0)
             .setColor(isError ? Colors.ERROR_TEXT : Colors.DEFAULT_TEXT)
             .setFontSize(fontSize);
+    },
+
+    #
+    # Get string with airport geo coordinates in decimal and sexagesimal formats.
+    #
+    # @param  ghost  airport
+    # @return string
+    #
+    _getLatLonInfo: func(airport) {
+        var decimal = sprintf("%.4f, %.4f", airport.lat, airport.lon);
+
+        var signNS = airport.lat >= 0 ? "N" : "S";
+        var signEW = airport.lon >= 0 ? "E" : "W";
+        var sexagesimal = sprintf("%s %d°%02d'%.1f'', %s %d°%02d'%.1f''",
+            signNS,
+            math.abs(int(airport.lat)),
+            math.abs(int(airport.lat * 60 - int(airport.lat) * 60)),
+            math.abs(airport.lat * 3600 - int(airport.lat * 60) * 60),
+            signEW,
+            math.abs(int(airport.lon)),
+            math.abs(int(airport.lon * 60 - int(airport.lon) * 60)),
+            math.abs(airport.lon * 3600 - int(airport.lon * 60) * 60),
+        );
+
+        return decimal ~ "  /  " ~ sexagesimal;
     },
 
     #
