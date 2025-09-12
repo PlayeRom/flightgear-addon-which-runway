@@ -35,6 +35,7 @@ var DrawTabContent = {
         me._tabId = tabId;
         me._icao = "";
         me._icaoEdit = nil;
+        me._isHoldUpdateNearest = false;
 
         if (me._isTabNearest() or me._isTabAlternate()) {
             me._btnLoadICAOs = std.Vector.new();
@@ -94,13 +95,18 @@ var DrawTabContent = {
             me._listeners.add(
                 node: icaoProperty,
                 code: func(node) {
+                    if (me._isTabNearest()) {
+                        me._updateNearestAirportButtons();
+
+                        if (me._isHoldUpdateNearest) {
+                            # The ICAO code update is blocked by a checkbox, so we're leaving.
+                            return;
+                        }
+                    }
+
                     if (node != nil) {
                         logprint(LOG_ALERT, "Which Runway ----- ", me._tabId, " got a new ICAO = ", node.getValue());
                         me._downloadMetar(node.getValue());
-                    }
-
-                    if (me._isTabNearest()) {
-                        me._updateNearestAirportButtons();
                     }
                 },
                 init: true, # if set to true, the listener will additionally be triggered when it is created.
@@ -491,10 +497,24 @@ var DrawTabContent = {
             me._downloadMetar(me._icaoEdit.text());
         });
 
+        var holdUpdateCheckbox = canvas.gui.widgets.CheckBox.new(me._tabsContent, canvas.style, { wordWrap: false })
+            .setText("Hold update")
+            .setChecked(false)
+            .listen("toggled", func(e) {
+                me._isHoldUpdateNearest = e.detail.checked;
+
+                if (!me._isHoldUpdateNearest) {
+                    # If the option is unchecked, immediately update the nearest airport.
+                    me._downloadMetar(getprop("/sim/airport/closest-airport-id"));
+                }
+            });
+
         buttonBox.addStretch(1);
         buttonBox.addItem(label);
         buttonBox.addItem(me._icaoEdit);
         buttonBox.addItem(btnLoad);
+        buttonBox.addStretch(1);
+        buttonBox.addItem(holdUpdateCheckbox);
         buttonBox.addStretch(1);
 
         return buttonBox;
