@@ -121,7 +121,7 @@ var DrawRunways = {
         return text.getSize()[1] + DrawTabContent.MARGIN_Y;
     },
 
-        #
+    #
     # @param  int|nil  normDiffDeg
     # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
     #

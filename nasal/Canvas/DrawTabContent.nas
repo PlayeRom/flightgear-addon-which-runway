@@ -221,20 +221,6 @@ var DrawTabContent = {
     },
 
     #
-    # Return true if user can change ICAO code on this tab.
-    #
-    # @return bool
-    #
-    _canChangeICAO: func() {
-             if (me._isTabNearest())   return true;
-        else if (me._isTabDeparture()) return false;
-        else if (me._isTabArrival())   return false;
-        else if (me._isTabAlternate()) return true;
-
-        return true;
-    },
-
-    #
     # Get error message if ICAO is null or empty.
     #
     # @return string
@@ -635,7 +621,7 @@ var DrawTabContent = {
     #
     _updateNearestAirportButtons: func() {
         # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons call");
-        var airports = findAirportsWithinRange(50);
+        var airports = findAirportsWithinRange(50); # in NM
         var airportSize = size(airports);
 
         forindex (var index; me._btnLoadICAOs.vector) {

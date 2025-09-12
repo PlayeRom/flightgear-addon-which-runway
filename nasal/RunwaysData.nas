@@ -55,21 +55,7 @@ var RunwaysData = {
 
             var (normDiffDeg, headwind, crosswind) = me._calculateWinds(windDir, windSpeed, runway.heading);
 
-            append(runwaysData, {
-                type: "Runway",
-                normDiffDeg: normDiffDeg == nil ? nil : math.abs(normDiffDeg),
-                headwind: headwind,
-                crosswind: crosswind,
-                rwyId: runway.id,
-                heading: runway.heading,
-                length: runway.length,
-                width: runway.width,
-                reciprocalId: runway.reciprocal.id,
-                ils: runway.ils,
-                lat: runway.lat,
-                lon: runway.lon,
-                surface: runway.surface,
-            });
+            append(runwaysData, me._getRunwayData("Runway", normDiffDeg, headwind, crosswind, runway));
         }
 
         foreach (var name; keys(airport.helipads)) {
@@ -77,21 +63,7 @@ var RunwaysData = {
 
             var (normDiffDeg, headwind, crosswind) = me._calculateWinds(windDir, windSpeed, helipad.heading);
 
-            append(runwaysData, {
-                type: "Helipad",
-                normDiffDeg: normDiffDeg == nil ? nil : math.abs(normDiffDeg),
-                headwind: headwind,
-                crosswind: crosswind,
-                rwyId: helipad.id,
-                heading: helipad.heading,
-                length: helipad.length,
-                width: helipad.width,
-                reciprocalId: "n/a",
-                ils: nil,
-                lat: helipad.lat,
-                lon: helipad.lon,
-                surface: helipad.surface,
-            });
+            append(runwaysData, me._getRunwayData("Helipad", normDiffDeg, headwind, crosswind, helipad));
         }
 
         return windDir == nil
@@ -126,7 +98,37 @@ var RunwaysData = {
             crosswind = 0;
         }
 
-        return [normDiffDeg, headwind, crosswind];
+        return [math.abs(normDiffDeg), headwind, crosswind];
+    },
+
+    #
+    # Get hash object with runway or helipad data.
+    #
+    # @param  string  type  "Runway" or "Helipad".
+    # @param  int|nil  normDiffDeg  Angle between wind and runway heading from 0 do 180 deg or nil if no METAR/wind.
+    # @param  int|nil  headwind  Headwind in knots or nil if no METAR/wind.
+    # @param  int|nil  crosswind  Crosswind in knots or nil if no METAR/wind.
+    # @param  ghost  runway  Runway or Helipad data from FlightGear.
+    # @return hash
+    #
+    _getRunwayData: func(type, normDiffDeg, headwind, crosswind, runway) {
+        var isTypeRunway = type == "Runway";
+
+        return {
+            type        : type,
+            normDiffDeg : normDiffDeg,
+            headwind    : headwind,
+            crosswind   : crosswind,
+            rwyId       : runway.id,
+            heading     : runway.heading,
+            length      : runway.length,
+            width       : runway.width,
+            surface     : runway.surface,
+            reciprocalId: isTypeRunway ? runway.reciprocal.id : "n/a",
+            ils         : isTypeRunway ? runway.ils : nil,
+            lat         : runway.lat,
+            lon         : runway.lon,
+        };
     },
 
     #
@@ -136,7 +138,7 @@ var RunwaysData = {
     # @return vector  Sorted array of runways data.
     #
     _sortRunwaysByHeadwind: func(runwaysData) {
-        return sort(runwaysData, func(a, b) {
+        return globals.sort(runwaysData, func(a, b) {
                 if (a.normDiffDeg > b.normDiffDeg) return  1;
            else if (a.normDiffDeg < b.normDiffDeg) return -1;
 
