@@ -121,8 +121,6 @@ var RunwaysData = {
     _getRunwayData: func(type, normDiffDeg, hw, hwGust, xw, xwGust, runway) {
         var isTypeRunway = type == "Runway";
 
-        print(runway.id, " xwGust = ", xwGust);
-
         return {
             type         : type,
             normDiffDeg  : normDiffDeg,
