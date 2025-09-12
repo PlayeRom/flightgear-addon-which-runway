@@ -99,7 +99,7 @@ var DrawRunways = {
     #
     _printRunwayLabel: func(x, y, runway) {
         var text = me._canvas.createChild("text")
-            .setText("Runway: ")
+            .setText(runway.type ~ ":")
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT);
 

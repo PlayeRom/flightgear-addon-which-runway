@@ -50,26 +50,13 @@ var RunwaysData = {
 
         var runwaysData = [];
 
-        foreach (var runwayName; keys(airport.runways)) {
-            var runway = airport.runways[runwayName];
+        foreach (var name; keys(airport.runways)) {
+            var runway = airport.runways[name];
 
-            var diff        = windDir == nil ? 0 : windDir - runway.heading;
-            var normDiffDeg = windDir == nil ? nil : Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
-            var normDiffRad = windDir == nil ? nil : normDiffDeg * globals.D2R;
-
-            var headwind  = windDir == nil ? nil : windSpeed * math.cos(normDiffRad);
-            var crosswind = windDir == nil ? nil : windSpeed * math.sin(normDiffRad);
-
-            # The values ​​headwind and crosswind can be -0, so here we reduce -0 to 0
-            if (headwind == 0) {
-                headwind = 0;
-            }
-
-            if (crosswind == 0) {
-                crosswind = 0;
-            }
+            var (normDiffDeg, headwind, crosswind) = me._calculateWinds(windDir, windSpeed, runway.heading);
 
             append(runwaysData, {
+                type: "Runway",
                 normDiffDeg: normDiffDeg == nil ? nil : math.abs(normDiffDeg),
                 headwind: headwind,
                 crosswind: crosswind,
@@ -85,9 +72,61 @@ var RunwaysData = {
             });
         }
 
+        foreach (var name; keys(airport.helipads)) {
+            var helipad = airport.helipads[name];
+
+            var (normDiffDeg, headwind, crosswind) = me._calculateWinds(windDir, windSpeed, helipad.heading);
+
+            append(runwaysData, {
+                type: "Helipad",
+                normDiffDeg: normDiffDeg == nil ? nil : math.abs(normDiffDeg),
+                headwind: headwind,
+                crosswind: crosswind,
+                rwyId: helipad.id,
+                heading: helipad.heading,
+                length: helipad.length,
+                width: helipad.width,
+                reciprocalId: "n/a",
+                ils: nil,
+                lat: helipad.lat,
+                lon: helipad.lon,
+                surface: helipad.surface,
+            });
+        }
+
         return windDir == nil
             ? runwaysData
             : me._sortRunwaysByHeadwind(runwaysData);
+    },
+
+    #
+    # @param  double|nil  windDir
+    # @param  double  windSpeed
+    # @param  double  heading
+    # @return vector
+    #
+    _calculateWinds: func(windDir, windSpeed, heading) {
+        if (windDir == nil) {
+            return [nil, nil, nil];
+        }
+
+        var diff        = windDir - heading;
+        var normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
+        var normDiffRad = normDiffDeg * globals.D2R;
+
+        var headwind  = windSpeed * math.cos(normDiffRad);
+        var crosswind = windSpeed * math.sin(normDiffRad);
+
+        # The values ​​headwind and crosswind can be -0, so here we reduce -0 to 0
+        if (headwind == 0) {
+            headwind = 0;
+        }
+
+        if (crosswind == 0) {
+            crosswind = 0;
+        }
+
+        return [normDiffDeg, headwind, crosswind];
     },
 
     #
