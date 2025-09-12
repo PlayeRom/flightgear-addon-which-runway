@@ -338,7 +338,7 @@ var DrawTabContent = {
     # Draw airport and METAR information.
     #
     # @param  ghost  airport
-    # @return int  New position of y shifted by height of printed line.
+    # @return double  New position of y shifted by height of printed line.
     #
     _drawAirportAndMetar: func(airport) {
         var x = 0;
@@ -360,21 +360,7 @@ var DrawTabContent = {
         y += me._drawRunways.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No");
         y += DrawTabContent.MARGIN_Y;
 
-        # Airport METAR
-        if (me._metar.isRealWeatherEnabled()) {
-            var metar = airport.has_metar ? me._metar.getMETAR() : nil;
-            text = me._scrollContent.createChild("text")
-                .setText(metar == nil ? "No METAR" : metar ~ "  ") # <- add spaces at the end to add padding to a very long METAR
-                .setTranslation(x, y)
-                .setColor(Colors.DEFAULT_TEXT);
-        } else {
-            text = me._scrollContent.createChild("text")
-                .setText("For METAR, it is necessary to select the Live Data weather scenario!")
-                .setTranslation(x, y)
-                .setColor(Colors.ERROR_TEXT);
-        }
-
-        y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
+        y += me._drawMETAR(x, y, airport);
 
         y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._metar.getQNHValues(airport));
         y += me._drawRunways.printLineWithValue(x, y, "QFE:", me._metar.getQFEValues(airport));
@@ -391,6 +377,62 @@ var DrawTabContent = {
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 5);
 
         return y;
+    },
+
+    #
+    # Draw airport METAR
+    #
+    # @param  double  x  Init x position.
+    # @param  double  y  Init y position.
+    # @param  ghost  airport
+    # @return double  New position of y shifted by height of printed line.
+    #
+    _drawMETAR: func(x, y, airport) {
+        var text = me._scrollContent.createChild("text")
+                .setTranslation(x, y);
+
+        if (me._metar.isRealWeatherEnabled()) {
+            text.setColor(Colors.DEFAULT_TEXT);
+
+            var metar = airport.has_metar ? me._metar.getMETAR() : nil;
+
+            if (metar == nil) {
+                text.setText("No METAR");
+            } else {
+                var metarParts = globals.split(" ", metar);
+                var count = size(metarParts);
+                if (count <= 12) {
+                    # Draw by one line
+                    text.setText(metar ~ "  "); # <- add spaces at the end to add padding to a longer METAR
+                } else {
+                    # Draw by 2 lines - METAR is too long
+                    var half = int(count / 2);
+
+                    var line1 = "";
+                    for (var i = 0; i < half; i += 1) {
+                        line1 ~= metarParts[i] ~ " ";
+                    }
+
+                    text.setText(line1);
+                    y += text.getSize()[1] + 5;
+
+                    var line2 = "";
+                    for (var i = half; i < count; i += 1) {
+                        line2 ~= metarParts[i] ~ " ";
+                    }
+
+                    text = me._scrollContent.createChild("text")
+                        .setText(line2)
+                        .setTranslation(x, y)
+                        .setColor(Colors.DEFAULT_TEXT);
+                }
+            }
+        } else {
+            text.setText("For METAR, it is necessary to select the Live Data weather scenario!")
+                .setColor(Colors.ERROR_TEXT);
+        }
+
+        return y + text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
     },
 
     #
