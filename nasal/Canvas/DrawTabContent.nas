@@ -36,6 +36,13 @@ var DrawTabContent = {
         me._icao = "";
         me._icaoEdit = nil;
 
+        if (me._isTabAlternate()) {
+            me._btnLoadICAOs = std.Vector.new();
+            for (var i = 0; i < 5; i += 1) {
+                me._btnLoadICAOs.append(canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {}).setText("----"));
+            }
+        }
+
         me._scrollArea = me._createScrollArea();
 
         me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
@@ -92,6 +99,15 @@ var DrawTabContent = {
                         me._downloadMetar(node.getValue());
                     }
                 },
+                init: true, # if set to true, the listener will additionally be triggered when it is created.
+                type: Listeners.ON_CHANGE_ONLY, # the listener will only trigger when the property is changed.
+            );
+        }
+
+        if (me._isTabAlternate()) {
+            me._listeners.add(
+                node: "/sim/airport/closest-airport-id",
+                code: func { me._updateNearestAirportButtons(); },
                 init: true, # if set to true, the listener will additionally be triggered when it is created.
                 type: Listeners.ON_CHANGE_ONLY, # the listener will only trigger when the property is changed.
             );
@@ -423,52 +439,142 @@ var DrawTabContent = {
     },
 
     #
-    # @return ghost  HBoxLayout object with controls.
+    # @return ghost  Canvas layout object with controls.
     #
     _drawBottomBar: func() {
-        var buttonBox = canvas.HBoxLayout.new();
-
-        var label = nil;
-        var btnLoad = nil;
-
-        if (me._canChangeICAO()) {
-            label = canvas.gui.widgets.Label.new(me._tabsContent, canvas.style, {})
-                .setText("ICAO:");
-
-            me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent, canvas.style, {})
-                .setText(me._icao)
-                .setFixedSize(80, 26)
-                .listen("editingFinished", func(e) {
-                    me._downloadMetar(e.detail.text);
-                });
-
-            btnLoad = me._getButton("Load", func() {
-                me._downloadMetar(me._icaoEdit.text());
-            });
-        } else {
-            me._icaoEdit = nil;
-
-            btnLoad = me._getButton("Update METAR", func() {
-                me._downloadMetar(me._icao);
-            });
-        }
-
-        buttonBox.addStretch(1);
-
-        if (label != nil) {
-            buttonBox.addItem(label);
-        }
-
-        if (me._icaoEdit != nil) {
-            buttonBox.addItem(me._icaoEdit);
-        }
-
-        buttonBox.addItem(btnLoad);
-        buttonBox.addStretch(1);
+        var buttonBox = me._getButtonBoxByTabId();
 
         me._tabContent.addSpacing(10);
         me._tabContent.addItem(buttonBox);
         me._tabContent.addSpacing(10);
+
+        return buttonBox;
+    },
+
+    #
+    # @return ghost  Canvas layout object with controls.
+    #
+    _getButtonBoxByTabId: func() {
+             if (me._isTabNearest())                         return me._drawBottomBarForNearest();
+        else if (me._isTabDeparture() or me._isTabArrival()) return me._drawBottomBarForDepartureArrival();
+        else if (me._isTabAlternate())                       return me._drawBottomBarForAlternate();
+
+        return nil;
+    },
+
+    #
+    # @return ghost  Canvas layout object with controls.
+    #
+    _drawBottomBarForNearest: func() {
+        var buttonBox = canvas.HBoxLayout.new();
+
+        var label = canvas.gui.widgets.Label.new(me._tabsContent, canvas.style, {})
+            .setText("ICAO:");
+
+        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent, canvas.style, {})
+            .setText(me._icao)
+            .setFixedSize(80, 26)
+            .listen("editingFinished", func(e) {
+                me._downloadMetar(e.detail.text);
+            });
+
+        var btnLoad = me._getButton("Load", func() {
+            me._downloadMetar(me._icaoEdit.text());
+        });
+
+        buttonBox.addStretch(1);
+        buttonBox.addItem(label);
+        buttonBox.addItem(me._icaoEdit);
+        buttonBox.addItem(btnLoad);
+        buttonBox.addStretch(1);
+
+        return buttonBox;
+    },
+
+    #
+    # @return ghost  Canvas layout object with controls.
+    #
+    _drawBottomBarForDepartureArrival: func() {
+        var buttonBox = canvas.HBoxLayout.new();
+
+        var btnLoad = me._getButton("Update METAR", func() {
+            me._downloadMetar(me._icao);
+        });
+
+        buttonBox.addStretch(1);
+        buttonBox.addItem(btnLoad);
+        buttonBox.addStretch(1);
+
+        return buttonBox;
+    },
+
+    #
+    # Update buttons with nearest airports.
+    #
+    # @return void
+    #
+    _updateNearestAirportButtons: func() {
+        # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons call");
+        var airports = findAirportsWithinRange(50);
+        var airportSize = size(airports);
+
+        forindex (var index; me._btnLoadICAOs.vector) {
+            var airport = index < airportSize ? airports[index] : nil;
+
+            if (airport == nil) {
+                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " disable");
+
+                me._btnLoadICAOs.vector[index]
+                    .setText("----")
+                    .setVisible(false)
+                    .listen("clicked", nil);
+            } else {
+                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " enable with ICAO ", airport.id);
+
+                func() {
+                    var icao = airport.id;
+
+                    me._btnLoadICAOs.vector[index]
+                        .setText(icao)
+                        .setVisible(true)
+                        .listen("clicked", func() {
+                            me._downloadMetar(icao);
+                        });
+                }();
+            }
+        }
+    },
+
+    #
+    # @return ghost  Canvas layout object with controls.
+    #
+    _drawBottomBarForAlternate: func() {
+        var buttonBox = canvas.HBoxLayout.new();
+
+        buttonBox.addStretch(1);
+        foreach (var btn; me._btnLoadICAOs.vector) {
+            buttonBox.addItem(btn);
+        }
+
+        var label = canvas.gui.widgets.Label.new(me._tabsContent, canvas.style, {})
+            .setText("ICAO:");
+
+        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent, canvas.style, {})
+            .setText(me._icao)
+            .setFixedSize(80, 26)
+            .listen("editingFinished", func(e) {
+                me._downloadMetar(e.detail.text);
+            });
+
+        var btnLoad = me._getButton("Load", func() {
+            me._downloadMetar(me._icaoEdit.text());
+        });
+
+        buttonBox.addStretch(1);
+        buttonBox.addItem(label);
+        buttonBox.addItem(me._icaoEdit);
+        buttonBox.addItem(btnLoad);
+        buttonBox.addStretch(1);
 
         return buttonBox;
     },
