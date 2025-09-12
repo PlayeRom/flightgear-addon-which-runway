@@ -57,7 +57,7 @@ var DrawTabContent = {
         me._listeners = Listeners.new();
         me._setListeners();
 
-        if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) {
+        if (me._isTabAlternate()) {
             me._reDrawContentWithMessage("Enter the ICAO code of an airport below.");
         }
 
@@ -145,15 +145,51 @@ var DrawTabContent = {
     },
 
     #
+    # Return true if current tab it's "Nearest" tab
+    #
+    # @return bool
+    #
+    _isTabNearest: func() {
+        return me._tabId == WhichRwyDialog.TAB_NEAREST;
+    },
+
+    #
+    # Return true if current tab it's "Departure" tab
+    #
+    # @return bool
+    #
+    _isTabDeparture: func() {
+        return me._tabId == WhichRwyDialog.TAB_DEPARTURE;
+    },
+
+    #
+    # Return true if current tab it's "Arrival" tab
+    #
+    # @return bool
+    #
+    _isTabArrival: func() {
+        return me._tabId == WhichRwyDialog.TAB_ARRIVAL;
+    },
+
+    #
+    # Return true if current tab it's "Alternate" tab
+    #
+    # @return bool
+    #
+    _isTabAlternate: func() {
+        return me._tabId == WhichRwyDialog.TAB_ALTERNATE;
+    },
+
+    #
     # Get property path to auto update METAR.
     #
     # @return string|nil
     #
     _getICAOPropertyByTabId: func() {
-             if (me._tabId == WhichRwyDialog.TAB_NEAREST)   return "/sim/airport/closest-airport-id";
-        else if (me._tabId == WhichRwyDialog.TAB_DEPARTURE) return "/autopilot/route-manager/departure/airport";
-        else if (me._tabId == WhichRwyDialog.TAB_ARRIVAL)   return "/autopilot/route-manager/destination/airport";
-        else if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) return nil;
+             if (me._isTabNearest())   return "/sim/airport/closest-airport-id";
+        else if (me._isTabDeparture()) return "/autopilot/route-manager/departure/airport";
+        else if (me._isTabArrival())   return "/autopilot/route-manager/destination/airport";
+        else if (me._isTabAlternate()) return nil;
 
         return nil;
     },
@@ -164,10 +200,10 @@ var DrawTabContent = {
     # @return bool
     #
     _canChangeICAO: func() {
-             if (me._tabId == WhichRwyDialog.TAB_NEAREST)   return true;
-        else if (me._tabId == WhichRwyDialog.TAB_DEPARTURE) return false;
-        else if (me._tabId == WhichRwyDialog.TAB_ARRIVAL)   return false;
-        else if (me._tabId == WhichRwyDialog.TAB_ALTERNATE) return true;
+             if (me._isTabNearest())   return true;
+        else if (me._isTabDeparture()) return false;
+        else if (me._isTabArrival())   return false;
+        else if (me._isTabAlternate()) return true;
 
         return true;
     },
@@ -178,9 +214,9 @@ var DrawTabContent = {
     # @return string
     #
     _getNoIcaoMessage: func() {
-             if (me._tabId == WhichRwyDialog.TAB_NEAREST)   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
-        else if (me._tabId == WhichRwyDialog.TAB_DEPARTURE) return "No ICAO code. Enter the departure airport in Route Manager first.";
-        else if (me._tabId == WhichRwyDialog.TAB_ARRIVAL)   return "No ICAO code. Enter the arrival airport in Route Manager first.";
+             if (me._isTabNearest())   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
+        else if (me._isTabDeparture()) return "No ICAO code. Enter the departure airport in Route Manager first.";
+        else if (me._isTabArrival())   return "No ICAO code. Enter the arrival airport in Route Manager first.";
 
         return "No ICAO code.";
     },
