@@ -307,7 +307,7 @@ var DrawTabContent = {
         if (me._metar.isRealWeatherEnabled()) {
             var metar = airport.has_metar ? me._metar.getMETAR() : nil;
             text = me._scrollContent.createChild("text")
-                .setText(metar == nil ? "No METAR" : metar)
+                .setText(metar == nil ? "No METAR" : metar ~ "  ") # <- add spaces at the end to add padding to a very long METAR
                 .setTranslation(x, y)
                 .setColor(Colors.DEFAULT_TEXT);
         } else {
