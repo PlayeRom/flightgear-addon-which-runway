@@ -51,7 +51,7 @@ var DrawTabContent = {
 
 
 
-        me._metar = METAR.new(tabId, me, me._metarUpdatedCallback);
+        me._metar = METAR.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
         me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
 
         me._listeners = std.Vector.new();
@@ -238,6 +238,15 @@ var DrawTabContent = {
     #
     _metarUpdatedCallback: func() {
         me._reDrawContent();
+    },
+
+    #
+    # Callback function, called when real weather flag han been changed.
+    #
+    # @return void
+    #
+    _realWxUpdatedCallback: func() {
+        me._downloadMetar(me._icao);
     },
 
     #

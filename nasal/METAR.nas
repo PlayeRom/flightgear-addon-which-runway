@@ -23,21 +23,25 @@ var METAR = {
     # Constructor
     #
     # @param  string  tabId  Tab ID.
-    # @param  func  objUpdatedCallback
+    # @param  ghost  objCallbacks
     # @param  func  funcUpdatedCallback
+    # @param  func  funcRealWxCallback
     # @return me
     #
-    new: func(tabId, objUpdatedCallback, funcUpdatedCallback) {
+    new: func(tabId, objCallbacks, funcUpdatedCallback, funcRealWxCallback) {
         var me = { parents: [METAR] };
 
-        me._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ tabId ~ "/metar";
+        me._tabId = tabId;
+        me._objCallbacks = objCallbacks;
+        me._funcUpdatedCallback = funcUpdatedCallback;
+        me._funcRealWxCallback = funcRealWxCallback;
 
-        me._listener = setlistener(me._pathToMyMetar ~ "/data", func() {
-            logprint(LOG_ALERT, "Which Runway ----- METAR for ", tabId, " has been updated");
-            call(funcUpdatedCallback, [], objUpdatedCallback);
-        });
+        me._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ me._tabId ~ "/metar";
 
         me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
+
+        me._listeners = std.Vector.new();
+        me._setListeners();
 
         # me._metarWindDirNode   = props.globals.getNode("/environment/metar/base-wind-dir-deg");
         # me._metarWindSpeedNode = props.globals.getNode("/environment/metar/base-wind-speed-kt");
@@ -54,7 +58,38 @@ var METAR = {
     # @return void
     #
     del: func() {
-        removelistener(me._listener);
+        me._removeListeners();
+    },
+
+    #
+    # Set listeners
+    #
+    # @return void
+    #
+    _setListeners: func() {
+        # Redraw canvas if METAR has been changed.
+        me._listeners.append(setlistener(me._pathToMyMetar ~ "/data", func() {
+            logprint(LOG_ALERT, "Which Runway ----- METAR for ", me._tabId, " has been updated");
+            call(me._funcUpdatedCallback, [], me._objCallbacks);
+        }));
+
+        # Redraw canvas if Live Data is enabled/disabled.
+        me._listeners.append(setlistener("/environment/realwx/enabled", func(node) {
+            call(me._funcRealWxCallback, [], me._objCallbacks);
+        }, false, 0)); # 0 - trigger listener callback only when value has been changed.
+    },
+
+    #
+    # Remove all listeners created by _setListeners
+    #
+    # @return void
+    #
+    _removeListeners: func() {
+        foreach (var listener; me._listeners.vector) {
+            removelistener(listener);
+        }
+
+        me._listeners.clear();
     },
 
     #
