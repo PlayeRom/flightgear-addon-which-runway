@@ -245,17 +245,21 @@ var DrawRunways = {
     # @return string
     #
     _getSurface: func(surfaceId) {
-             if(surfaceId == 1)  return "asphalt";
-        else if(surfaceId == 2)  return "concrete";
-        else if(surfaceId == 3)  return "turf";
-        else if(surfaceId == 4)  return "dirt";
-        else if(surfaceId == 5)  return "gravel";
-        else if(surfaceId == 6)  return "asphalt helipad";
-        else if(surfaceId == 7)  return "concrete helipad";
-        else if(surfaceId == 8)  return "turf helipad";
-        else if(surfaceId == 9)  return "dirt helipad";
-        else if(surfaceId == 12) return "lakebed";
-        else                     return "unknown";
+             if (surfaceId == 1 or (surfaceId >= 20 and surfaceId <= 38)) return "asphalt";
+        else if (surfaceId == 2 or (surfaceId >= 50 and surfaceId <= 57)) return "concrete";
+        else if (surfaceId == 3)  return "turf";
+        else if (surfaceId == 4)  return "dirt";
+        else if (surfaceId == 5)  return "gravel";
+        else if (surfaceId == 6)  return "asphalt helipad";
+        else if (surfaceId == 7)  return "concrete helipad";
+        else if (surfaceId == 8)  return "turf helipad";
+        else if (surfaceId == 9)  return "dirt helipad";
+        else if (surfaceId == 12) return "lakebed";
+        else if (surfaceId == 13) return "water";
+        else if (surfaceId == 14) return "ice"; # also snow
+        else if (surfaceId == 15) return "transparent"; # Hard surface, but no texture/markings (use in custom scenery)
+
+        return "unknown";
     },
 
     #
