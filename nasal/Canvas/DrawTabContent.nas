@@ -360,7 +360,7 @@ var DrawTabContent = {
         y += me._drawRunways.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No");
         y += DrawTabContent.MARGIN_Y;
 
-        y += me._drawMETAR(x, y, airport);
+        y = me._drawMETAR(x, y, airport);
 
         y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._metar.getQNHValues(airport));
         y += me._drawRunways.printLineWithValue(x, y, "QFE:", me._metar.getQFEValues(airport));
