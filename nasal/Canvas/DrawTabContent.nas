@@ -504,8 +504,12 @@ var DrawTabContent = {
                 me._isHoldUpdateNearest = e.detail.checked;
 
                 if (!me._isHoldUpdateNearest) {
-                    # If the option is unchecked, immediately update the nearest airport.
-                    me._downloadMetar(getprop("/sim/airport/closest-airport-id"));
+                    # If the option is unchecked, immediately update the airport
+                    # with the nearest one if it has changed from the current one.
+                    var newICAO = getprop("/sim/airport/closest-airport-id");
+                    if (newICAO != me._icao) {
+                        me._downloadMetar(newICAO);
+                    }
                 }
             });
 
