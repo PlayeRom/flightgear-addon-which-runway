@@ -340,7 +340,7 @@ var DrawTabContent = {
 
         # Airport ICAO and name
         var text = me._scrollContent.createChild("text")
-            .setText(airport.id ~ ", " ~ airport.name)
+            .setText(airport.id ~ " – " ~ airport.name)
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFontSize(24)
