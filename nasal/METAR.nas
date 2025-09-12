@@ -113,7 +113,7 @@ var METAR = {
     # @return double|nil
     #
     getWindDir: func(airport) {
-        if (!me.canUseMETAR(airport) or me.isVariableWind()) {
+        if (!me.canUseMETAR(airport) or me.isWindVariable()) {
             return nil;
         }
 
@@ -127,6 +127,20 @@ var METAR = {
     #
     getWindSpeedKt: func() {
         var speed = getprop(me._pathToMyMetar ~ "/base-wind-speed-kt");
+        if (speed != nil) {
+            return speed;
+        }
+
+        return 0;
+    },
+
+    #
+    # Get wind speed in knots.
+    #
+    # @return double
+    #
+    getWindGustSpeedKt: func() {
+        var speed = getprop(me._pathToMyMetar ~ "/gust-wind-speed-kt");
         if (speed != nil) {
             return speed;
         }
@@ -214,7 +228,7 @@ var METAR = {
     #
     # @return bool
     #
-    isVariableWind: func() {
+    isWindVariable: func() {
         var metar = me.getMETAR();
         if (metar == nil) {
             return false;

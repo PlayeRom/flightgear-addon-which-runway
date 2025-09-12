@@ -58,7 +58,7 @@ var DrawRunways = {
 
             y += me.printLineWithValue(0, y,
                 me._getMainWindLabel(rwy.headwind),
-                me._getMainWindValue(rwy.headwind),
+                me._getMainWindValue(rwy.headwind, rwy.headwindGust),
                 rwy.headwind == nil ? nil : "kts",
                 true,
             );
@@ -66,7 +66,7 @@ var DrawRunways = {
             var rwyHdgTrue = math.round(rwy.heading);
             var rwyHdgMag = Utils.normalizeCourse(rwy.heading - aptMagVar);
 
-            y += me.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind), me._crosswindUnit(rwy.crosswind), true);
+            y += me.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind, rwy.crosswindGust), me._crosswindUnit(rwy.crosswind), true);
             y += me.printLineWithValue(0, y, "Heading true:", rwyHdgTrue ~ "°");
             y += me.printLineWithValue(0, y, "Heading mag:", rwyHdgMag ~ "°");
             y += me.printLineWithValue(0, y, "Length:", math.round(rwy.length), "m");
@@ -165,26 +165,44 @@ var DrawRunways = {
 
     #
     # @param  double|nil  headwind
+    # @param  double|nil  headwindGust
     # @return string|decimal
     #
-    _getMainWindValue: func(headwind) {
+    _getMainWindValue: func(headwind, headwindGust) {
         if (headwind == nil) {
             return "n/a";
         }
 
-        return math.round(math.abs(headwind));
+        var result =  math.round(math.abs(headwind));
+        if (headwindGust != nil) {
+            headwindGust = math.round(math.abs(headwindGust));
+            if (headwindGust > 0) {
+                result ~= "-" ~ headwindGust;
+            }
+        }
+
+        return result;
     },
 
     #
     # @param  double|nil  crosswind
-    # @return string|double
+    # @param  double|nil  crosswindGust
+    # @return string
     #
-    _crosswindValue: func(crosswind) {
+    _crosswindValue: func(crosswind, crosswindGust) {
         if (crosswind == nil) {
             return "n/a";
         }
 
-        return math.round(math.abs(crosswind));
+        var result = math.round(math.abs(crosswind));
+        if (crosswindGust != nil) {
+            crosswindGust = math.round(math.abs(crosswindGust));
+            if (crosswindGust > 0) {
+                result ~= "-" ~ crosswindGust;
+            }
+        }
+
+        return result;
     },
 
     #

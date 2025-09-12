@@ -47,23 +47,24 @@ var RunwaysData = {
         # var windDir = me._metar.getWindDir(airport) - magVariation;
         var windDir   = me._metar.getWindDir(airport); # it can be nil
         var windSpeed = me._metar.getWindSpeedKt();
+        var windGust  = me._metar.getWindGustSpeedKt();
 
         var runwaysData = [];
 
         foreach (var name; keys(airport.runways)) {
             var runway = airport.runways[name];
 
-            var (normDiffDeg, headwind, crosswind) = me._calculateWinds(windDir, windSpeed, runway.heading);
+            var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, runway.heading);
 
-            append(runwaysData, me._getRunwayData("Runway", normDiffDeg, headwind, crosswind, runway));
+            append(runwaysData, me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway));
         }
 
         foreach (var name; keys(airport.helipads)) {
             var helipad = airport.helipads[name];
 
-            var (normDiffDeg, headwind, crosswind) = me._calculateWinds(windDir, windSpeed, helipad.heading);
+            var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, helipad.heading);
 
-            append(runwaysData, me._getRunwayData("Helipad", normDiffDeg, headwind, crosswind, helipad));
+            append(runwaysData, me._getRunwayData("Helipad", normDiffDeg, hw, hwGust, xw, xwGust, helipad));
         }
 
         return windDir == nil
@@ -74,31 +75,35 @@ var RunwaysData = {
     #
     # @param  double|nil  windDir
     # @param  double  windSpeed
+    # @param  double  windGust
     # @param  double  heading
     # @return vector
     #
-    _calculateWinds: func(windDir, windSpeed, heading) {
+    _calculateWinds: func(windDir, windSpeed, windGust, heading) {
         if (windDir == nil) {
-            return [nil, nil, nil];
+            return [nil, nil, nil, nil, nil];
         }
 
         var diff        = windDir - heading;
         var normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
         var normDiffRad = normDiffDeg * globals.D2R;
 
-        var headwind  = windSpeed * math.cos(normDiffRad);
-        var crosswind = windSpeed * math.sin(normDiffRad);
+        var cosNormDiffRad = math.cos(normDiffRad);
+        var sinNormDiffRad = math.sin(normDiffRad);
+
+        var headwind = windSpeed * cosNormDiffRad;
+        var headwindGust = windGust * cosNormDiffRad;
+
+        var crosswind = windSpeed * sinNormDiffRad;
+        var crosswindGust = windGust * sinNormDiffRad;
 
         # The values ​​headwind and crosswind can be -0, so here we reduce -0 to 0
-        if (headwind == 0) {
-            headwind = 0;
-        }
+        if (headwind == 0) headwind = 0;
+        if (headwindGust == 0) headwindGust = 0;
+        if (crosswind == 0) crosswind = 0;
+        if (crosswindGust == 0) crosswindGust = 0;
 
-        if (crosswind == 0) {
-            crosswind = 0;
-        }
-
-        return [math.abs(normDiffDeg), headwind, crosswind];
+        return [math.abs(normDiffDeg), headwind, headwindGust, crosswind, crosswindGust];
     },
 
     #
@@ -106,28 +111,34 @@ var RunwaysData = {
     #
     # @param  string  type  "Runway" or "Helipad".
     # @param  int|nil  normDiffDeg  Angle between wind and runway heading from 0 do 180 deg or nil if no METAR/wind.
-    # @param  int|nil  headwind  Headwind in knots or nil if no METAR/wind.
-    # @param  int|nil  crosswind  Crosswind in knots or nil if no METAR/wind.
+    # @param  double|nil  hw  Headwind in knots or nil if no METAR/wind.
+    # @param  double|nil  hwGust  Headwind for gust in knots or nil if no METAR/wind.
+    # @param  double|nil  xw  Crosswind in knots or nil if no METAR/wind.
+    # @param  double|nil  xwGust  Crosswind for gust in knots or nil if no METAR/wind.
     # @param  ghost  runway  Runway or Helipad data from FlightGear.
     # @return hash
     #
-    _getRunwayData: func(type, normDiffDeg, headwind, crosswind, runway) {
+    _getRunwayData: func(type, normDiffDeg, hw, hwGust, xw, xwGust, runway) {
         var isTypeRunway = type == "Runway";
 
+        print(runway.id, " xwGust = ", xwGust);
+
         return {
-            type        : type,
-            normDiffDeg : normDiffDeg,
-            headwind    : headwind,
-            crosswind   : crosswind,
-            rwyId       : runway.id,
-            heading     : runway.heading,
-            length      : runway.length,
-            width       : runway.width,
-            surface     : runway.surface,
-            reciprocalId: isTypeRunway ? runway.reciprocal.id : "n/a",
-            ils         : isTypeRunway ? runway.ils : nil,
-            lat         : runway.lat,
-            lon         : runway.lon,
+            type         : type,
+            normDiffDeg  : normDiffDeg,
+            headwind     : hw,
+            headwindGust : hwGust,
+            crosswind    : xw,
+            crosswindGust: xwGust,
+            rwyId        : runway.id,
+            heading      : runway.heading,
+            length       : runway.length,
+            width        : runway.width,
+            surface      : runway.surface,
+            reciprocalId : isTypeRunway ? runway.reciprocal.id : "n/a",
+            ils          : isTypeRunway ? runway.ils : nil,
+            lat          : runway.lat,
+            lon          : runway.lon,
         };
     },
 

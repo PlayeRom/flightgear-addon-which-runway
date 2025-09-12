@@ -432,7 +432,14 @@ var DrawTabContent = {
                 ? "variable"
                 : math.round(windDir) ~ "°";
 
-            return windDir ~ " at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
+            var result = windDir ~ " at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
+
+            var gust = math.round(me._metar.getWindGustSpeedKt());
+            if (gust > 0) {
+                result ~= " with gust at " ~ gust ~ " kts";
+            }
+
+            return result;
         }
 
         return "n/a";
