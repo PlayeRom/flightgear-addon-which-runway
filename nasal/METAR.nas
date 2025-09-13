@@ -281,7 +281,13 @@ var METAR = {
             return false;
         }
 
-        # Check units
+        # Check gust
+        var gust = substr(metar, pos + 6, 1);
+        if (gust == "G") {
+            return true;
+        }
+
+        # Check units (if no gust)
         var unit = substr(metar, pos + 6, 2);
         if (unit == "KT") {
             return true;
