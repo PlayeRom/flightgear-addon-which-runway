@@ -252,20 +252,21 @@ var DrawTabContent = {
             me._icaoEdit.setText(me._icao);
         }
 
-        var airport = airportinfo(me._icao);
+        var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
             me._reDrawContentWithMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
             return;
         }
 
         if (!me._metar.isRealWeatherEnabled()) {
-            # Draw without METAR data.
+            # Redraw without METAR data.
             me._metar.disableMetarFromNearestAirport();
             me._reDrawContent();
             return;
         }
 
         if (airport.has_metar) {
+            # Download METAR from current airport.
             me._reDrawContentWithMessage("Loading...");
             me._metar.download(icao: me._icao, force: true);
             return;
@@ -274,7 +275,7 @@ var DrawTabContent = {
         # Try downloading a METAR from the nearest airport.
         var nearestAirport = me._getNearestAirportWithMetar(airport);
         if (nearestAirport == nil) {
-            # Not found, draw without METAR data.
+            # Not found, redraw without METAR data.
             me._metar.disableMetarFromNearestAirport();
             me._reDrawContent();
             return;
@@ -291,7 +292,7 @@ var DrawTabContent = {
     # @param  airport|nil  Airport or nil if not found.
     #
     _getNearestAirportWithMetar: func(airport) {
-        var airports = findAirportsWithinRange(airport, DrawTabContent.METAR_RANGE_NM);
+        var airports = globals.findAirportsWithinRange(airport, DrawTabContent.METAR_RANGE_NM);
         foreach (var nearest; airports) {
             if (nearest.has_metar) {
                 return nearest;
@@ -343,7 +344,7 @@ var DrawTabContent = {
     _reDrawContent: func() {
         me._scrollContent.removeAllChildren();
 
-        var airport = airportinfo(me._icao);
+        var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
             me._printMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
         } else {
@@ -677,7 +678,7 @@ var DrawTabContent = {
     #
     _updateNearestAirportButtons: func() {
         # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons call");
-        var airports = findAirportsWithinRange(50); # range in NM
+        var airports = globals.findAirportsWithinRange(50); # range in NM
         var airportSize = size(airports);
 
         forindex (var index; me._btnLoadICAOs.vector) {
