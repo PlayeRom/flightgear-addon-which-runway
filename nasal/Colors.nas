@@ -13,9 +13,9 @@
 # Colors static declarations
 #
 var Colors = {
-    HEADWIND    : [0.0, 0.5, 0.0],
-    CROSSWIND   : [0.9, 0.5, 0.0],
     DEFAULT_TEXT: [0.3, 0.3, 0.3],
-    ERROR_TEXT  : [0.8, 0.3, 0.3],
-    WIND        : [0.0, 0.5, 1.0],
+    RED         : [0.8, 0.3, 0.3],
+    GREEN       : [0.0, 0.5, 0.0],
+    BLUE        : [0.0, 0.5, 1.0],
+    AMBER       : [0.9, 0.5, 0.0],
 };

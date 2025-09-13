@@ -138,8 +138,8 @@ var DrawRunways = {
     #
     _geWindColorByDir: func(normDiffDeg) {
              if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
-        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
+        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.GREEN;
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.AMBER;
         else                                               return Colors.DEFAULT_TEXT;
     },
 
@@ -236,13 +236,13 @@ var DrawRunways = {
         var text = me._canvas.createChild("text")
             .setText(label)
             .setTranslation(x, y)
-            .setColor(isWindColor ? Colors.WIND : Colors.DEFAULT_TEXT);
+            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
 
         x += 110;
         text = me._canvas.createChild("text")
             .setText(value)
             .setTranslation(x, y)
-            .setColor(isWindColor ? Colors.WIND : Colors.DEFAULT_TEXT)
+            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD);
 
         if (unit != nil) {
@@ -250,7 +250,7 @@ var DrawRunways = {
             text = me._canvas.createChild("text")
                 .setText(unit)
                 .setTranslation(x, y)
-                .setColor(isWindColor ? Colors.WIND : Colors.DEFAULT_TEXT);
+                .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
         }
 
         return text.getSize()[1] + DrawTabContent.MARGIN_Y;

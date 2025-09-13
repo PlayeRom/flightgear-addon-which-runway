@@ -18,6 +18,7 @@ var DrawTabContent = {
     #
     PADDING  : 10,
     MARGIN_Y : 10,
+    METAR_RANGE_NM: 30,
 
     #
     # Constructor
@@ -57,7 +58,7 @@ var DrawTabContent = {
 
         me._drawBottomBar();
 
-
+        ########################################################################
 
         me._metar = METAR.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
         me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
@@ -257,12 +258,47 @@ var DrawTabContent = {
             return;
         }
 
-        if (me._metar.canUseMETAR(airport)) {
-            me._reDrawContentWithMessage("Loading...");
-            me._metar.download(me._icao, true);
-        } else {
+        if (!me._metar.isRealWeatherEnabled()) {
+            # Draw without METAR data.
+            me._metar.disableMetarFromNearestAirport();
             me._reDrawContent();
+            return;
         }
+
+        if (airport.has_metar) {
+            me._reDrawContentWithMessage("Loading...");
+            me._metar.download(icao: me._icao, force: true);
+            return;
+        }
+
+        # Try downloading a METAR from the nearest airport.
+        var nearestAirport = me._getNearestAirportWithMetar(airport);
+        if (nearestAirport == nil) {
+            # Not found, draw without METAR data.
+            me._metar.disableMetarFromNearestAirport();
+            me._reDrawContent();
+            return;
+        }
+
+        me._reDrawContentWithMessage("Loading...");
+        me._metar.download(icao: nearestAirport.id, force: true, isNearest: true);
+    },
+
+    #
+    # Get nearest airport which has a METAR.
+    #
+    # @param  ghost  airport  The airport we are searching around.
+    # @param  airport|nil  Airport or nil if not found.
+    #
+    _getNearestAirportWithMetar: func(airport) {
+        var airports = findAirportsWithinRange(airport, DrawTabContent.METAR_RANGE_NM);
+        foreach (var nearest; airports) {
+            if (nearest.has_metar) {
+                return nearest;
+            }
+        }
+
+        return nil;
     },
 
     #
@@ -356,7 +392,7 @@ var DrawTabContent = {
         text = me._scrollContent.createChild("text")
             .setText("Wind " ~ me._getWindInfoText(airport))
             .setTranslation(x, y)
-            .setColor(Colors.WIND)
+            .setColor(Colors.BLUE)
             .setFontSize(20)
             .setFont(Fonts.SANS_BOLD);
 
@@ -374,16 +410,27 @@ var DrawTabContent = {
     # @return double  New position of y shifted by height of printed line.
     #
     _drawMETAR: func(x, y, airport) {
-        var text = me._scrollContent.createChild("text")
-                .setTranslation(x, y);
+        var text = nil;
 
         if (me._metar.isRealWeatherEnabled()) {
-            text.setColor(Colors.DEFAULT_TEXT);
+            if (me._metar.isMetarFromNearestAirport()) {
+                var distance = me._metar.getDistanceToStation(airport);
+                text = me._scrollContent.createChild("text")
+                    .setText(sprintf("METAR comes from %s, %.1f NM away:", me._metar.getICAO(), distance))
+                    .setTranslation(x, y)
+                    .setColor(Colors.AMBER);
 
-            var metar = airport.has_metar ? me._metar.getMETAR() : nil;
+                y += text.getSize()[1] + DrawTabContent.MARGIN_Y;
+            }
+
+            text = me._scrollContent.createChild("text")
+                .setTranslation(x, y)
+                .setColor(me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT);
+
+            var metar = me._metar.getMETAR(airport);
 
             if (metar == nil) {
-                text.setText("No METAR");
+                text.setText("No METAR within " ~ DrawTabContent.METAR_RANGE_NM ~ " NM");
             } else {
                 var metarParts = globals.split(" ", metar);
                 var count = size(metarParts);
@@ -410,12 +457,14 @@ var DrawTabContent = {
                     text = me._scrollContent.createChild("text")
                         .setText(line2)
                         .setTranslation(x, y)
-                        .setColor(Colors.DEFAULT_TEXT);
+                        .setColor(me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT);
                 }
             }
         } else {
-            text.setText("For METAR, it is necessary to select the Live Data weather scenario!")
-                .setColor(Colors.ERROR_TEXT);
+            text = me._scrollContent.createChild("text")
+                .setTranslation(x, y)
+                .setText("For METAR, it is necessary to select the Live Data weather scenario!")
+                .setColor(Colors.RED);
         }
 
         return y + text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
@@ -454,7 +503,7 @@ var DrawTabContent = {
         me._scrollContent.createChild("text")
             .setText(message)
             .setTranslation(0, 0)
-            .setColor(isError ? Colors.ERROR_TEXT : Colors.DEFAULT_TEXT)
+            .setColor(isError ? Colors.RED : Colors.DEFAULT_TEXT)
             .setFontSize(fontSize);
     },
 
@@ -628,7 +677,7 @@ var DrawTabContent = {
     #
     _updateNearestAirportButtons: func() {
         # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons call");
-        var airports = findAirportsWithinRange(50); # in NM
+        var airports = findAirportsWithinRange(50); # range in NM
         var airportSize = size(airports);
 
         forindex (var index; me._btnLoadICAOs.vector) {

@@ -36,6 +36,12 @@ var METAR = {
         me._funcUpdatedCallback = funcUpdatedCallback;
         me._funcRealWxCallback = funcRealWxCallback;
 
+        # If we download a METAR from an airport other than the current one,
+        # because the current one does not have a META, we set this variable to true.
+        # Therefore, if this variable is set, it means we have a METAR,
+        # even if the current airport doesn't have a METAR.
+        me._isMetarFromNearestAirport = false;
+
         me._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ me._tabId ~ "/metar";
 
         me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
@@ -84,15 +90,19 @@ var METAR = {
     #
     # Run FGCommand to download METAR for given ICAO code.
     #
-    # @param  string  icao  ICAO code of airport.
+    # @param  string  icao  ICAO code of the airport whose METAR we want to download.
     # @param  bool  force
+    # @param  bool  isNearest  True if it's ICAO from nearest airport.
     # @return void
     #
-    download: func(icao, force = false) {
+    download: func(icao, force = false, isNearest = false) {
         # TIP 1: the "request-metar" command is set "station-id" property immediately.
         # TIP 2: the fgcommand method will not download the METAR if time-to-live > 0,
         #        and if time-to-live passes, the METAR will update automatically!
+        #        After download METAR the time-to-live is set to 900 seconds (15 min.)
         # TIP 3: METAR will not be downloaded if the Live Data weather scenario is disabled.
+
+        me._isMetarFromNearestAirport = isNearest;
 
         if (force) {
             # The fgcommand will only trigger a METAR download when the time-to-live expires.
@@ -107,13 +117,31 @@ var METAR = {
     },
 
     #
+    # Turns off the indication that we have a METAR from a nearby airport.
+    #
+    # @return void
+    #
+    disableMetarFromNearestAirport: func() {
+        me._isMetarFromNearestAirport = false;
+    },
+
+    #
+    # Return true if downloaded METAR is from nearest airport.
+    #
+    # @return bool
+    #
+    isMetarFromNearestAirport: func() {
+        return me._isMetarFromNearestAirport;
+    },
+
+    #
     # Get wind direction in true deg.
     #
     # @param  ghost  airport
     # @return double|nil
     #
     getWindDir: func(airport) {
-        if (!me.canUseMETAR(airport) or me.isWindVariable()) {
+        if (!me.canUseMETAR(airport) or me._isWindVariable(airport)) {
             return nil;
         }
 
@@ -160,17 +188,21 @@ var METAR = {
     #
     # @return string|nil
     #
-    getMETAR: func() {
-        return getprop(me._pathToMyMetar ~ "/data");
+    getMETAR: func(airport) {
+        if (airport.has_metar or me._isMetarFromNearestAirport) {
+            return getprop(me._pathToMyMetar ~ "/data");
+        }
+
+        return nil;
     },
 
     #
-    # Return true if live METAR can be using.
+    # Return true if we can use the downloaded METAR.
     #
     # @return bool
     #
     canUseMETAR: func(airport) {
-        return airport.has_metar and me.isRealWeatherEnabled();
+        return me.isRealWeatherEnabled() and (airport.has_metar or me._isMetarFromNearestAirport);
     },
 
     #
@@ -228,8 +260,8 @@ var METAR = {
     #
     # @return bool
     #
-    isWindVariable: func() {
-        var metar = me.getMETAR();
+    _isWindVariable: func(airport) {
+        var metar = me.getMETAR(airport);
         if (metar == nil) {
             return false;
         }
@@ -261,5 +293,25 @@ var METAR = {
         }
 
         return false;
+    },
+
+    #
+    # Get ICAO code of downloaded METAR.
+    #
+    # @return string|nil
+    #
+    getICAO: func() {
+        return getprop(me._pathToMyMetar ~ "/station-id");
+    },
+
+    #
+    # Return distance in NM from given airport to METAR station.
+    #
+    # @param  ghost  airport  The airport from which we measure the distance.
+    # @return double  Distance in NM.
+    #
+    getDistanceToStation: func(airport) {
+        var (course, dist) = courseAndDistance(airport, airportinfo(me.getICAO()));
+        return dist;
     },
 };

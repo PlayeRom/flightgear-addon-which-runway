@@ -191,8 +191,8 @@ var DrawWindRose = {
     #
     _geWindColorByDir: func(normDiffDeg) {
              if (normDiffDeg == nil)                       return [0, 0, 0];
-        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.HEADWIND;
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.CROSSWIND;
+        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.GREEN;
+        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.AMBER;
         else                                               return [0, 0, 0];
     },
 
@@ -221,9 +221,9 @@ var DrawWindRose = {
         me._canvas.createChild("path")
             .moveTo(xStart, yStart)
             .lineTo(xEnd, yEnd)
-            .setColor(Colors.WIND)
-            .setFill(Colors.WIND)
-            .setStroke(Colors.WIND)
+            .setColor(Colors.BLUE)
+            .setFill(Colors.BLUE)
+            .setStroke(Colors.BLUE)
             .setStrokeLineWidth(me._windLineWidth);
 
         # Arrowhead
@@ -269,7 +269,7 @@ var DrawWindRose = {
         me._canvas.createChild("text")
             .setText(info)
             .setTranslation(xLabel, yLabel)
-            .setColor(Colors.WIND)
+            .setColor(Colors.BLUE)
             .setFontSize(11)
             .setAlignment("center-center");
     },
@@ -288,18 +288,18 @@ var DrawWindRose = {
         me._canvas.createChild("path")
             .moveTo(x, y)
             .lineTo(x - math.cos(left) * arrowLength, y - math.sin(left) * arrowLength)
-            .setColor(Colors.WIND)
-            .setFill(Colors.WIND)
-            .setStroke(Colors.WIND)
+            .setColor(Colors.BLUE)
+            .setFill(Colors.BLUE)
+            .setStroke(Colors.BLUE)
             .setStrokeLineWidth(me._windLineWidth);
 
         # Right arrowhead line
         me._canvas.createChild("path")
             .moveTo(x, y)
             .lineTo(x - math.cos(right) * arrowLength, y - math.sin(right) * arrowLength)
-            .setColor(Colors.WIND)
-            .setFill(Colors.WIND)
-            .setStroke(Colors.WIND)
+            .setColor(Colors.BLUE)
+            .setFill(Colors.BLUE)
+            .setStroke(Colors.BLUE)
             .setStrokeLineWidth(me._windLineWidth);
     },
 };
