@@ -412,7 +412,7 @@ var DrawTabContent = {
         if (me._metar.isRealWeatherEnabled()) {
             if (me._metar.isMetarFromNearestAirport()) {
                 var distNm = me._metar.getDistanceToStation(airport);
-                var distKm = (distanceNm * globals.NM2M) / 1000;
+                var distKm = (distNm * globals.NM2M) / 1000;
                 var label = sprintf("METAR comes from %s, %.1f NM (%.1f km) away:", me._metar.getIcao(), distNm, distKm);
 
                 text = me._draw.createText(label)
