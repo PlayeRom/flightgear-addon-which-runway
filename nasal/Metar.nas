@@ -207,7 +207,7 @@ var Metar = {
     },
 
     #
-    # Get QNH with 3 values: mmHg, hPa and inHg.
+    # Get QNH with 3 values: inHg, hPa and mmHg.
     #
     # @param  ghost  airport  Airport object.
     # @return hash|nil
@@ -223,14 +223,14 @@ var Metar = {
         }
 
         return {
-            mmHg: math.round(me._inHgToMmHg(pressQnh)),
-            hPa : math.round(me._inHgToHPa(pressQnh)),
             inHg: math.round(pressQnh, 0.01),
+            hPa : math.round(me._inHgToHPa(pressQnh)),
+            mmHg: math.round(me._inHgToMmHg(pressQnh)),
         };
     },
 
     #
-    # Get QFE with 3 values: mmHg, hPa and inHg.
+    # Get QFE with 3 values: inHg, hPa and mmHg.
     #
     # @param  ghost  airport  Airport object.
     # @return hash|nil
@@ -248,9 +248,9 @@ var Metar = {
         var pressQfe = pressQnh - airport.elevation * M2FT / 1000 * Metar.QNH_TO_QFE_FACTOR;
 
         return {
-            mmHg: math.round(me._inHgToMmHg(pressQfe)),
-            hPa : math.round(me._inHgToHPa(pressQfe)),
             inHg: math.round(pressQfe, 0.01),
+            hPa : math.round(me._inHgToHPa(pressQfe)),
+            mmHg: math.round(me._inHgToMmHg(pressQfe)),
         };
     },
 

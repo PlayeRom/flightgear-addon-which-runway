@@ -238,7 +238,7 @@ var DrawRunways = {
             .setTranslation(x, y)
             .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
 
-        x += 110;
+        x += DrawTabContent.VALUE_MARGIN_X;
         text = me._canvas.createChild("text")
             .setText(value)
             .setTranslation(x, y)

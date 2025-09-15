@@ -18,6 +18,7 @@ var DrawTabContent = {
     #
     PADDING  : 10,
     MARGIN_Y : 10,
+    VALUE_MARGIN_X: 110,
     METAR_RANGE_NM: 30,
 
     #
@@ -427,20 +428,21 @@ var DrawTabContent = {
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT);
 
-        x += 110;
+        x += DrawTabContent.VALUE_MARGIN_X;
         text = me._scrollContent.createChild("text")
-            .setText(pressValues.mmHg)
+            .setText(pressValues.inHg)
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD);
 
         x += text.getSize()[0] + 5;
         text = me._scrollContent.createChild("text")
-            .setText("mmHg /")
+            .setText("inHg /")
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT);
 
-        x += 97;
+
+        x += 82;
         text = me._scrollContent.createChild("text")
             .setText(pressValues.hPa)
             .setTranslation(x, y)
@@ -454,16 +456,17 @@ var DrawTabContent = {
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT);
 
+
         x += 42;
         text = me._scrollContent.createChild("text")
-            .setText(pressValues.inHg)
+            .setText(pressValues.mmHg)
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD);
 
         x += text.getSize()[0] + 5;
         text = me._scrollContent.createChild("text")
-            .setText("inHg")
+            .setText("mmHg")
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT);
 
