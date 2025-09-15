@@ -16,7 +16,7 @@ var RunwaysData = {
     #
     # Constructor
     #
-    # @param  ghost  metar  METAR object.
+    # @param  hash  metar  METAR object.
     # @return me
     #
     new: func(metar) {

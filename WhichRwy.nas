@@ -33,7 +33,7 @@ var g_AboutDialog = nil;
 #
 # Initialize Which Runway
 #
-# @param  ghost  addon  addons.Addon object
+# @param  ghost  addon  The addons.Addon object.
 # @return void
 #
 var init = func(addon) {

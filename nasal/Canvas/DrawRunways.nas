@@ -17,7 +17,7 @@ var DrawRunways = {
     # Constructor
     #
     # @param  ghost  canvasContent  Canvas object where runways will be drawn.
-    # @param  ghost  metar  METAR object.
+    # @param  hash  metar  METAR object.
     # @return me
     #
     new: func(canvasContent, metar) {

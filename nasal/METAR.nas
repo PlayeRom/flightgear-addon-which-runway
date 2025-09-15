@@ -23,7 +23,7 @@ var METAR = {
     # Constructor
     #
     # @param  string  tabId  Tab ID.
-    # @param  ghost  objCallbacks
+    # @param  hash  objCallbacks
     # @param  func  funcUpdatedCallback
     # @param  func  funcRealWxCallback
     # @return me
@@ -137,7 +137,7 @@ var METAR = {
     #
     # Get wind direction in true deg.
     #
-    # @param  ghost  airport
+    # @param  ghost  airport  Airport object.
     # @return double|nil
     #
     getWindDir: func(airport) {
