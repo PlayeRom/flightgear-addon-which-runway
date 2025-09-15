@@ -217,7 +217,7 @@ var Metar = {
             return nil;
         }
 
-        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-inhg");
         if (pressQnh == nil) {
             return nil;
         }
@@ -240,7 +240,7 @@ var Metar = {
             return nil;
         }
 
-        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-inhg");
         if (pressQnh == nil) {
             return nil;
         }
