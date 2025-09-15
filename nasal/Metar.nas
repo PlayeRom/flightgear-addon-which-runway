@@ -336,7 +336,12 @@ var Metar = {
     # @return double|nil  Distance in NM or nil if failed.
     #
     getDistanceToStation: func(airport) {
-        var station = globals.airportinfo(me.getIcao());
+        var icao = me.getIcao();
+        if (icao == nil) {
+            return nil;
+        }
+
+        var station = globals.airportinfo(icao);
         if (station == nil) {
             return nil;
         }
