@@ -12,7 +12,7 @@
 #
 # Class to handle METAR
 #
-var METAR = {
+var Metar = {
     #
     # Static constants
     #
@@ -30,7 +30,7 @@ var METAR = {
     # @return me
     #
     new: func(tabId, objCallbacks, funcUpdatedCallback, funcRealWxCallback) {
-        var me = { parents: [METAR] };
+        var me = { parents: [Metar] };
 
         me._tabId = tabId;
         me._objCallbacks = objCallbacks;
@@ -142,7 +142,7 @@ var METAR = {
     # @return double|nil
     #
     getWindDir: func(airport) {
-        if (!me.canUseMETAR(airport) or me._isWindVariable(airport)) {
+        if (!me.canUseMetar(airport) or me._isWindVariable(airport)) {
             return nil;
         }
 
@@ -189,7 +189,7 @@ var METAR = {
     #
     # @return string|nil
     #
-    getMETAR: func(airport) {
+    getMetar: func(airport) {
         if (airport.has_metar or me._isMetarFromNearestAirport) {
             return getprop(me._pathToMyMetar ~ "/data");
         }
@@ -202,7 +202,7 @@ var METAR = {
     #
     # @return bool
     #
-    canUseMETAR: func(airport) {
+    canUseMetar: func(airport) {
         return me.isRealWeatherEnabled() and (airport.has_metar or me._isMetarFromNearestAirport);
     },
 
@@ -210,48 +210,48 @@ var METAR = {
     # Get QNH with 3 values: mmHg, hPa and inHg.
     #
     # @param  ghost  airport  Airport object.
-    # @return vector
+    # @return hash|nil
     #
     getQnhValues: func(airport) {
-        if (!me.canUseMETAR(airport)) {
-            return "n/a";
+        if (!me.canUseMetar(airport)) {
+            return nil;
         }
 
-        var pressQNH = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
-        if (pressQNH == nil) {
-            return "n/a";
+        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+        if (pressQnh == nil) {
+            return nil;
         }
 
-        return [
-            math.round(me._inHgToMmHg(pressQNH)), # mmHg
-            math.round(me._inHgToHPa(pressQNH)),  # hPa
-            math.round(pressQNH, 0.01),           # inHg
-        ];
+        return {
+            mmHg: math.round(me._inHgToMmHg(pressQnh)),
+            hPa : math.round(me._inHgToHPa(pressQnh)),
+            inHg: math.round(pressQnh, 0.01),
+        };
     },
 
     #
     # Get QFE with 3 values: mmHg, hPa and inHg.
     #
     # @param  ghost  airport  Airport object.
-    # @return vector
+    # @return hash|nil
     #
     getQfeValues: func(airport) {
-        if (!me.canUseMETAR(airport)) {
-            return "n/a";
+        if (!me.canUseMetar(airport)) {
+            return nil;
         }
 
-        var pressQNH = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
-        if (pressQNH == nil) {
-            return "n/a";
+        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-sea-level-inhg");
+        if (pressQnh == nil) {
+            return nil;
         }
 
-        var pressQFE = pressQNH - airport.elevation * M2FT / 1000 * METAR.QNH_TO_QFE_FACTOR;
+        var pressQfe = pressQnh - airport.elevation * M2FT / 1000 * Metar.QNH_TO_QFE_FACTOR;
 
-        return [
-            math.round(me._inHgToMmHg(pressQFE)), # mmHg
-            math.round(me._inHgToHPa(pressQFE)),  # hPa
-            math.round(pressQFE, 0.01),           # inHg
-        ];
+        return {
+            mmHg: math.round(me._inHgToMmHg(pressQfe)),
+            hPa : math.round(me._inHgToHPa(pressQfe)),
+            inHg: math.round(pressQfe, 0.01),
+        };
     },
 
     #
@@ -280,7 +280,7 @@ var METAR = {
     # @return bool
     #
     _isWindVariable: func(airport) {
-        var metar = me.getMETAR(airport);
+        var metar = me.getMetar(airport);
         if (metar == nil) {
             return false;
         }
@@ -325,7 +325,7 @@ var METAR = {
     #
     # @return string|nil
     #
-    getICAO: func() {
+    getIcao: func() {
         return getprop(me._pathToMyMetar ~ "/station-id");
     },
 
@@ -336,7 +336,7 @@ var METAR = {
     # @return double|nil  Distance in NM or nil if failed.
     #
     getDistanceToStation: func(airport) {
-        var station = globals.airportinfo(me.getICAO());
+        var station = globals.airportinfo(me.getIcao());
         if (station == nil) {
             return nil;
         }

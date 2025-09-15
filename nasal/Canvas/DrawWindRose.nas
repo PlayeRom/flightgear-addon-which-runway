@@ -191,8 +191,8 @@ var DrawWindRose = {
     #
     _geWindColorByDir: func(normDiffDeg) {
              if (normDiffDeg == nil)                       return [0, 0, 0];
-        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.GREEN;
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.AMBER;
+        else if (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
+        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
         else                                               return [0, 0, 0];
     },
 

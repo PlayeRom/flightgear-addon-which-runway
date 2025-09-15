@@ -127,8 +127,8 @@ var DrawRunways = {
     #
     _geWindLabelByDir: func(normDiffDeg) {
              if (normDiffDeg == nil)                       return "n/a";
-        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return "Headwind";
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return "Crosswind";
+        else if (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return "Headwind";
+        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return "Crosswind";
         else                                               return "Tailwind";
     },
 
@@ -138,8 +138,8 @@ var DrawRunways = {
     #
     _geWindColorByDir: func(normDiffDeg) {
              if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
-        else if (normDiffDeg <= METAR.HEADWIND_THRESHOLD)  return Colors.GREEN;
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Colors.AMBER;
+        else if (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
+        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
         else                                               return Colors.DEFAULT_TEXT;
     },
 
@@ -149,7 +149,7 @@ var DrawRunways = {
     #
     _geWindFontByDir: func(normDiffDeg) {
              if (normDiffDeg == nil)                       return Fonts.SANS_REGULAR;
-        else if (normDiffDeg <= METAR.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
+        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
         else                                               return Fonts.SANS_REGULAR;
     },
 

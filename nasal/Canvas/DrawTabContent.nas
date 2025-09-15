@@ -39,9 +39,9 @@ var DrawTabContent = {
         me._isHoldUpdateNearest = false;
 
         if (me._isTabNearest() or me._isTabAlternate()) {
-            me._btnLoadICAOs = std.Vector.new();
+            me._btnLoadIcaos = std.Vector.new();
             for (var i = 0; i < 5; i += 1) {
-                me._btnLoadICAOs.append(canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {}).setText("----"));
+                me._btnLoadIcaos.append(canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {}).setText("----"));
             }
         }
 
@@ -60,7 +60,7 @@ var DrawTabContent = {
 
         ########################################################################
 
-        me._metar = METAR.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
+        me._metar = Metar.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
         me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
 
         me._listeners = Listeners.new();
@@ -383,13 +383,21 @@ var DrawTabContent = {
         y += me._drawRunways.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No");
         y += DrawTabContent.MARGIN_Y;
 
-        y = me._drawMETAR(x, y, airport);
+        y = me._drawMetar(x, y, airport);
 
-        var (mmHg, hPa, inHg) = me._metar.getQnhValues(airport);
-        y += me._printLineAtmosphericPressure(x, y, "QNH:", mmHg, hPa, inHg);
+        var qnhValues = me._metar.getQnhValues(airport);
+        if (qnhValues == nil) {
+            y += me._drawRunways.printLineWithValue(x, y, "QNH:", "n/a");
+        } else {
+            y += me._printLineAtmosphericPressure(x, y, "QNH:", qnhValues);
+        }
 
-        var (mmHg, hPa, inHg) = me._metar.getQfeValues(airport);
-        y += me._printLineAtmosphericPressure(x, y, "QFE:", mmHg, hPa, inHg);
+        var qfeValues = me._metar.getQfeValues(airport);
+        if (qfeValues == nil) {
+            y += me._drawRunways.printLineWithValue(x, y, "QFE:", "n/a");
+        } else {
+            y += me._printLineAtmosphericPressure(x, y, "QFE:", qfeValues);
+        }
 
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
 
@@ -410,12 +418,10 @@ var DrawTabContent = {
     # @param  double  x  Init position of x.
     # @param  double  y  Init position of y.
     # @param  string  label  Label text.
-    # @param  double  mmHg  Atmospheric pressure in mmHg.
-    # @param  double  hPa  Atmospheric pressure in hPa.
-    # @param  double  inHg  Atmospheric pressure in inHg.
+    # @param  hash  pressValues  Atmospheric pressure with 3 value: mmHg, hPa, inHg.
     # @return double  New position of y shifted by height of printed line.
     #
-    _printLineAtmosphericPressure: func(x, y, label, mmHg, hPa, inHg) {
+    _printLineAtmosphericPressure: func(x, y, label, pressValues) {
         var text = me._scrollContent.createChild("text")
             .setText(label)
             .setTranslation(x, y)
@@ -423,7 +429,7 @@ var DrawTabContent = {
 
         x += 110;
         text = me._scrollContent.createChild("text")
-            .setText(mmHg)
+            .setText(pressValues.mmHg)
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD);
@@ -436,7 +442,7 @@ var DrawTabContent = {
 
         x += 97;
         text = me._scrollContent.createChild("text")
-            .setText(hPa)
+            .setText(pressValues.hPa)
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD)
@@ -450,7 +456,7 @@ var DrawTabContent = {
 
         x += 42;
         text = me._scrollContent.createChild("text")
-            .setText(inHg)
+            .setText(pressValues.inHg)
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD);
@@ -472,14 +478,14 @@ var DrawTabContent = {
     # @param  ghost  airport
     # @return double  New position of y shifted by height of printed line.
     #
-    _drawMETAR: func(x, y, airport) {
+    _drawMetar: func(x, y, airport) {
         var text = nil;
 
         if (me._metar.isRealWeatherEnabled()) {
             if (me._metar.isMetarFromNearestAirport()) {
                 var distance = me._metar.getDistanceToStation(airport);
                 text = me._scrollContent.createChild("text")
-                    .setText(sprintf("METAR comes from %s, %.1f NM away:", me._metar.getICAO(), distance))
+                    .setText(sprintf("METAR comes from %s, %.1f NM away:", me._metar.getIcao(), distance))
                     .setTranslation(x, y)
                     .setColor(Colors.AMBER);
 
@@ -490,7 +496,7 @@ var DrawTabContent = {
                 .setTranslation(x, y)
                 .setColor(me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT);
 
-            var metar = me._metar.getMETAR(airport);
+            var metar = me._metar.getMetar(airport);
 
             if (metar == nil) {
                 text.setText("No METAR within " ~ DrawTabContent.METAR_RANGE_NM ~ " NM");
@@ -538,7 +544,7 @@ var DrawTabContent = {
     # @return string
     #
     _getWindInfoText: func(airport) {
-        if (me._metar.canUseMETAR(airport)) {
+        if (me._metar.canUseMetar(airport)) {
             var windDir = me._metar.getWindDir(airport);
             windDir = windDir == nil
                 ? "variable"
@@ -626,7 +632,7 @@ var DrawTabContent = {
         var buttonBox = canvas.HBoxLayout.new();
 
         buttonBox.addStretch(1);
-        foreach (var btn; me._btnLoadICAOs.vector) {
+        foreach (var btn; me._btnLoadIcaos.vector) {
             buttonBox.addItem(btn);
         }
 
@@ -653,9 +659,9 @@ var DrawTabContent = {
                 if (!me._isHoldUpdateNearest) {
                     # If the option is unchecked, immediately update the airport
                     # with the nearest one if it has changed from the current one.
-                    var newICAO = getprop("/sim/airport/closest-airport-id");
-                    if (newICAO != me._icao) {
-                        me._downloadMetar(newICAO);
+                    var newIcao = getprop("/sim/airport/closest-airport-id");
+                    if (newIcao != me._icao) {
+                        me._downloadMetar(newIcao);
                     }
                 }
             });
@@ -695,7 +701,7 @@ var DrawTabContent = {
         var buttonBox = canvas.HBoxLayout.new();
 
         buttonBox.addStretch(1);
-        foreach (var btn; me._btnLoadICAOs.vector) {
+        foreach (var btn; me._btnLoadIcaos.vector) {
             buttonBox.addItem(btn);
         }
 
@@ -743,13 +749,13 @@ var DrawTabContent = {
         var airports = globals.findAirportsWithinRange(50); # range in NM
         var airportSize = size(airports);
 
-        forindex (var index; me._btnLoadICAOs.vector) {
+        forindex (var index; me._btnLoadIcaos.vector) {
             var airport = index < airportSize ? airports[index] : nil;
 
             if (airport == nil) {
                 # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " disable");
 
-                me._btnLoadICAOs.vector[index]
+                me._btnLoadIcaos.vector[index]
                     .setText("----")
                     .setVisible(false)
                     .listen("clicked", nil);
@@ -759,7 +765,7 @@ var DrawTabContent = {
                 func() {
                     var icao = airport.id;
 
-                    me._btnLoadICAOs.vector[index]
+                    me._btnLoadIcaos.vector[index]
                         .setText(icao)
                         .setVisible(true)
                         .listen("clicked", func() {
