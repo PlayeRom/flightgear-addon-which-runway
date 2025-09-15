@@ -81,8 +81,8 @@ var DrawMetar = {
     #
     _printNoteLiveDataDisabled: func(x, y) {
         var text = me._draw.createText("For METAR, it is necessary to select the \"Live Data\" weather scenario!")
-                .setTranslation(x, y)
-                .setColor(Colors.RED);
+            .setTranslation(x, y)
+            .setColor(Colors.RED);
 
         return y + text.getSize()[1] + (Draw.MARGIN_Y * 2);
     },

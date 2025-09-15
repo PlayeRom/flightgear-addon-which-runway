@@ -257,7 +257,7 @@ var DrawTabContent = {
 
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
-            me._reDrawContentWithMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
+            me._reDrawContentWithMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
             return;
         }
 
@@ -349,7 +349,7 @@ var DrawTabContent = {
 
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
-            me._draw.printMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
+            me._draw.printMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
         } else {
             var y = me._drawAirportAndMetar(airport);
 
