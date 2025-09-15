@@ -385,8 +385,12 @@ var DrawTabContent = {
 
         y = me._drawMETAR(x, y, airport);
 
-        y += me._drawRunways.printLineWithValue(x, y, "QNH:", me._metar.getQNHValues(airport));
-        y += me._drawRunways.printLineWithValue(x, y, "QFE:", me._metar.getQFEValues(airport));
+        var (mmHg, hPa, inHg) = me._metar.getQnhValues(airport);
+        y += me._printLineAtmosphericPressure(x, y, "QNH:", mmHg, hPa, inHg);
+
+        var (mmHg, hPa, inHg) = me._metar.getQfeValues(airport);
+        y += me._printLineAtmosphericPressure(x, y, "QFE:", mmHg, hPa, inHg);
+
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
 
         # Wind
@@ -400,6 +404,64 @@ var DrawTabContent = {
         y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 5);
 
         return y;
+    },
+
+    #
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
+    # @param  string  label  Label text.
+    # @param  double  mmHg  Atmospheric pressure in mmHg.
+    # @param  double  hPa  Atmospheric pressure in hPa.
+    # @param  double  inHg  Atmospheric pressure in inHg.
+    # @return double  New position of y shifted by height of printed line.
+    #
+    _printLineAtmosphericPressure: func(x, y, label, mmHg, hPa, inHg) {
+        var text = me._scrollContent.createChild("text")
+            .setText(label)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        x += 110;
+        text = me._scrollContent.createChild("text")
+            .setText(mmHg)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD);
+
+        x += text.getSize()[0] + 5;
+        text = me._scrollContent.createChild("text")
+            .setText("mmHg /")
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        x += 97;
+        text = me._scrollContent.createChild("text")
+            .setText(hPa)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD)
+            .setAlignment("right-baseline");
+
+        x += 5;
+        text = me._scrollContent.createChild("text")
+            .setText("hPa /")
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        x += 42;
+        text = me._scrollContent.createChild("text")
+            .setText(inHg)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD);
+
+        x += text.getSize()[0] + 5;
+        text = me._scrollContent.createChild("text")
+            .setText("inHg")
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        return text.getSize()[1] + DrawTabContent.MARGIN_Y;
     },
 
     #

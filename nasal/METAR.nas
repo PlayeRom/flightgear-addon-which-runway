@@ -18,6 +18,7 @@ var METAR = {
     #
     HEADWIND_THRESHOLD : 45, # Headwind from 0 to 45
     CROSSWIND_THRESHOLD: 90, # Crosswind from 46 to 90, tailwind from 91
+    QNH_TO_QFE_FACTOR  : 1.06,
 
     #
     # Constructor
@@ -209,9 +210,9 @@ var METAR = {
     # Get QNH with 3 values: mmHg, hPa and inHg.
     #
     # @param  ghost  airport  Airport object.
-    # @return string
+    # @return vector
     #
-    getQNHValues: func(airport) {
+    getQnhValues: func(airport) {
         if (!me.canUseMETAR(airport)) {
             return "n/a";
         }
@@ -221,21 +222,20 @@ var METAR = {
             return "n/a";
         }
 
-        return sprintf(
-            "%d / %4d / %.2f",
-            math.round(pressQNH / 29.92 * 760),  # mmHg
-            math.round(pressQNH / 29.92 * 1013), # hPa
-            math.round(pressQNH, 0.01),          # inHg
-        );
+        return [
+            math.round(me._inHgToMmHg(pressQNH)), # mmHg
+            math.round(me._inHgToHPa(pressQNH)),  # hPa
+            math.round(pressQNH, 0.01),           # inHg
+        ];
     },
 
     #
     # Get QFE with 3 values: mmHg, hPa and inHg.
     #
     # @param  ghost  airport  Airport object.
-    # @return string
+    # @return vector
     #
-    getQFEValues: func(airport) {
+    getQfeValues: func(airport) {
         if (!me.canUseMETAR(airport)) {
             return "n/a";
         }
@@ -245,14 +245,33 @@ var METAR = {
             return "n/a";
         }
 
-        var pressQFE = pressQNH - airport.elevation * M2FT / 1000 * 1.06;
+        var pressQFE = pressQNH - airport.elevation * M2FT / 1000 * METAR.QNH_TO_QFE_FACTOR;
 
-        return sprintf(
-            "%d / %4d / %.2f",
-            math.round(pressQFE / 29.92 * 760),   # mmHg
-            math.round(pressQFE / 29.92 * 1013),  # hPa
+        return [
+            math.round(me._inHgToMmHg(pressQFE)), # mmHg
+            math.round(me._inHgToHPa(pressQFE)),  # hPa
             math.round(pressQFE, 0.01),           # inHg
-        );
+        ];
+    },
+
+    #
+    # Convert given inHg pressure to mmHg.
+    #
+    # @param  double  pressInHg
+    # @return double
+    #
+    _inHgToMmHg: func(pressInHg) {
+        return (pressInHg / 29.92) * 760;
+    },
+
+    #
+    # Convert given inHg pressure to hPa.
+    #
+    # @param  double  pressInHg
+    # @return double
+    #
+    _inHgToHPa: func(pressInHg) {
+        return (pressInHg / 29.92) * 1013;
     },
 
     #
