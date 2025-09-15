@@ -61,6 +61,7 @@ var DrawTabContent = {
 
         me._metar = Metar.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
         me._draw = Draw.new(me._scrollContent);
+        me._drawMetar = DrawMetar.new(me._draw, me._metar);
         me._drawRunways = DrawRunways.new(me._draw, me._metar);
 
         me._listeners = Listeners.new();
@@ -81,6 +82,7 @@ var DrawTabContent = {
     del: func() {
         me._listeners.del();
         me._drawRunways.del();
+        me._drawMetar.del();
         me._draw.del();
         me._metar.del();
     },
@@ -375,7 +377,7 @@ var DrawTabContent = {
         y += me._draw.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No").y;
         y += Draw.MARGIN_Y;
 
-        y = me._drawMetar(x, y, airport);
+        y = me._drawMetar.drawMetar(x, y, airport);
 
         var qnhValues = me._metar.getQnhValues(airport);
         var qfeValues = me._metar.getQfeValues(airport);
@@ -396,78 +398,6 @@ var DrawTabContent = {
         y += (Draw.MARGIN_Y * 4);
 
         return y;
-    },
-
-    #
-    # Draw airport METAR
-    #
-    # @param  double  x  Init x position.
-    # @param  double  y  Init y position.
-    # @param  ghost  airport
-    # @return double  New position of y shifted by height of printed line.
-    #
-    _drawMetar: func(x, y, airport) {
-        var text = nil;
-
-        if (me._metar.isRealWeatherEnabled()) {
-            if (me._metar.isMetarFromNearestAirport()) {
-                var distNm = me._metar.getDistanceToStation(airport);
-                var distKm = (distNm * globals.NM2M) / 1000;
-                var label = sprintf("METAR comes from %s, %.1f NM (%.1f km) away:", me._metar.getIcao(), distNm, distKm);
-
-                text = me._draw.createText(label)
-                    .setTranslation(x, y)
-                    .setColor(Colors.AMBER);
-
-                y += text.getSize()[1] + Draw.MARGIN_Y;
-            }
-
-            text = me._draw.createText()
-                .setTranslation(x, y)
-                .setColor(me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT);
-
-            var metar = me._metar.getMetar(airport);
-
-            if (metar == nil) {
-                text.setText(sprintf("No METAR within %d NM (%.1f km)",
-                    DrawTabContent.METAR_RANGE_NM,
-                    (DrawTabContent.METAR_RANGE_NM * globals.NM2M) / 1000,
-                ));
-            } else {
-                var metarParts = globals.split(" ", metar);
-                var count = size(metarParts);
-                if (count <= 12) {
-                    # Draw by one line
-                    text.setText(metar ~ "  "); # <- add spaces at the end to add padding to a longer METAR
-                } else {
-                    # Draw by 2 lines - METAR is too long
-                    var half = int(count / 2);
-
-                    var line1 = "";
-                    for (var i = 0; i < half; i += 1) {
-                        line1 ~= metarParts[i] ~ " ";
-                    }
-
-                    text.setText(line1);
-                    y += text.getSize()[1] + 5;
-
-                    var line2 = "";
-                    for (var i = half; i < count; i += 1) {
-                        line2 ~= metarParts[i] ~ " ";
-                    }
-
-                    text = me._draw.createText(line2)
-                        .setTranslation(x, y)
-                        .setColor(me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT);
-                }
-            }
-        } else {
-            text = me._draw.createText("For METAR, it is necessary to select the \"Live Data\" weather scenario!")
-                .setTranslation(x, y)
-                .setColor(Colors.RED);
-        }
-
-        return y + text.getSize()[1] + (Draw.MARGIN_Y * 2);
     },
 
     #
