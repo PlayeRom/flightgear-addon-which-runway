@@ -333,7 +333,7 @@ var Metar = {
     # Return distance in NM from given airport to METAR station.
     #
     # @param  ghost  airport  The airport from which we measure the distance.
-    # @return double|nil  Distance in NM or nil if failed.
+    # @return double|nil  Distance in meters or nil if failed.
     #
     getDistanceToStation: func(airport) {
         var icao = me.getIcao();
@@ -348,6 +348,6 @@ var Metar = {
 
         var coordStation = geo.Coord.new().set_latlon(station.lat, station.lon);
         var coordAirport = geo.Coord.new().set_latlon(airport.lat, airport.lon);
-        return coordAirport.distance_to(coordStation) * globals.M2NM;
+        return coordAirport.distance_to(coordStation);
     },
 };

@@ -96,9 +96,14 @@ var DrawMetar = {
     # @return double  New position of y shifted by height of printed line.
     #
     _printWarningForeignMetar: func(x, y, airport) {
-        var distNm = me._metar.getDistanceToStation(airport);
-        var distKm = (distNm * globals.NM2M) / 1000;
-        var label = sprintf("METAR comes from %s, %.1f NM (%.1f km) away:", me._metar.getIcao(), distNm, distKm);
+        var distM = me._metar.getDistanceToStation(airport);
+
+        var label = sprintf(
+            "METAR comes from %s, %.1f NM (%.1f km) away:",
+            me._metar.getIcao(),
+            distM * globals.M2NM,
+            distM / 1000,
+        );
 
         var text = me._draw.createText(label)
             .setTranslation(x, y)
