@@ -16,17 +16,18 @@ var DrawRunways = {
     #
     # Constructor
     #
-    # @param  ghost  canvasContent  Canvas object where runways will be drawn.
-    # @param  hash  metar  METAR object.
+    # @param  hash  draw  Draw object.
+    # @param  hash  metar  Metar object.
     # @return me
     #
-    new: func(canvasContent, metar) {
+    new: func(draw, metar) {
         var me = { parents: [DrawRunways] };
 
-        me._canvas = canvasContent;
+        me._draw = draw;
         me._metar = metar;
+
         me._runwaysData = RunwaysData.new(metar);
-        me._drawWindRose = DrawWindRose.new(canvasContent);
+        me._drawWindRose = DrawWindRose.new(draw);
 
         return me;
     },
@@ -56,24 +57,26 @@ var DrawRunways = {
         foreach (var rwy; runwaysData) {
             y += me._printRunwayLabel(0, y, rwy);
 
-            y += me.printLineWithValue(0, y,
-                me._getMainWindLabel(rwy.headwind),
-                me._getMainWindValue(rwy.headwind, rwy.headwindGust),
-                rwy.headwind == nil ? nil : "kts",
-                true,
-            );
+            y += me._draw.printLineWithValue(
+                x: 0,
+                y: y,
+                label: me._getMainWindLabel(rwy.headwind),
+                value: me._getMainWindValue(rwy.headwind, rwy.headwindGust),
+                unit: rwy.headwind == nil ? nil : "kts",
+                isWindColor: true,
+            ).y;
 
             var rwyHdgTrue = math.round(rwy.heading);
             var rwyHdgMag = Utils.normalizeCourse(rwy.heading - aptMagVar);
 
-            y += me.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind, rwy.crosswindGust), me._crosswindUnit(rwy.crosswind), true);
-            y += me.printLineWithValue(0, y, "Heading true:", rwyHdgTrue ~ "°");
-            y += me.printLineWithValue(0, y, "Heading mag:", rwyHdgMag ~ "°");
-            y += me.printLineWithValue(0, y, "Length:", math.round(rwy.length), "m");
-            y += me.printLineWithValue(0, y, "Width:", math.round(rwy.width), "m");
-            y += me.printLineWithValue(0, y, "Surface:", me._getSurface(rwy.surface));
-            y += me.printLineWithValue(0, y, "Reciprocal:", rwy.reciprocalId);
-            y += me.printLineWithValue(0, y, "ILS:", me._getIlsValue(rwy, rwyHdgTrue, rwyHdgMag, aptMagVar));
+            y += me._draw.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind, rwy.crosswindGust), me._crosswindUnit(rwy.crosswind), true).y;
+            y += me._draw.printLineWithValue(0, y, "Heading true:", rwyHdgTrue ~ "°").y;
+            y += me._draw.printLineWithValue(0, y, "Heading mag:", rwyHdgMag ~ "°").y;
+            y += me._draw.printLineWith2Values(0, y, "Length:", math.round(rwy.length * globals.M2FT), "ft", math.round(rwy.length), "m").y;
+            y += me._draw.printLineWith2Values(0, y, "Width:", math.round(rwy.width * globals.M2FT), "ft", math.round(rwy.width), "m").y;
+            y += me._draw.printLineWithValue(0, y, "Surface:", me._getSurface(rwy.surface)).y;
+            y += me._draw.printLineWithValue(0, y, "Reciprocal:", rwy.reciprocalId).y;
+            y += me._draw.printLineWithValue(0, y, "ILS:", me._getIlsValue(rwy, rwyHdgTrue, rwyHdgMag, aptMagVar)).y;
 
             me._drawWindRose.drawWindRose(
                 500,
@@ -98,27 +101,24 @@ var DrawRunways = {
     # @return double  New position of y shifted by height of printed runway label.
     #
     _printRunwayLabel: func(x, y, runway) {
-        var text = me._canvas.createChild("text")
-            .setText(runway.type ~ ":")
+        var text = me._draw.createText(runway.type ~ ":")
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT);
 
         x += text.getSize()[0] + 5;
-        text = me._canvas.createChild("text")
-            .setText(runway.rwyId)
+        text = me._draw.createText(runway.rwyId)
             .setTranslation(x, y)
             .setColor([0.0, 0.0, 0.0])
             .setFontSize(20)
             .setFont(Fonts.SANS_BOLD);
 
         x += text.getSize()[0] + 10;
-        text = me._canvas.createChild("text")
-            .setText(me._geWindLabelByDir(runway.normDiffDeg))
+        text = me._draw.createText(me._geWindLabelByDir(runway.normDiffDeg))
             .setTranslation(x, y)
             .setColor(me._geWindColorByDir(runway.normDiffDeg))
             .setFont(me._geWindFontByDir(runway.normDiffDeg));
 
-        return text.getSize()[1] + DrawTabContent.MARGIN_Y;
+        return text.getSize()[1] + Draw.MARGIN_Y;
     },
 
     #
@@ -126,10 +126,10 @@ var DrawRunways = {
     # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
     #
     _geWindLabelByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                       return "n/a";
-        else if (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return "Headwind";
-        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return "Crosswind";
-        else                                               return "Tailwind";
+           if (normDiffDeg == nil)                       return "n/a";
+        elsif (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return "Headwind";
+        elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return "Crosswind";
+        else                                             return "Tailwind";
     },
 
     #
@@ -137,10 +137,10 @@ var DrawRunways = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
-        else if (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
-        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
-        else                                               return Colors.DEFAULT_TEXT;
+           if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
+        elsif (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
+        elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
+        else                                             return Colors.DEFAULT_TEXT;
     },
 
     #
@@ -148,9 +148,9 @@ var DrawRunways = {
     # @return string  Font path.
     #
     _geWindFontByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                       return Fonts.SANS_REGULAR;
-        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
-        else                                               return Fonts.SANS_REGULAR;
+           if (normDiffDeg == nil)                       return Fonts.SANS_REGULAR;
+        elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
+        else                                             return Fonts.SANS_REGULAR;
     },
 
     #
@@ -158,9 +158,9 @@ var DrawRunways = {
     # @return string
     #
     _getMainWindLabel: func(headwind) {
-             if (headwind == nil) return "Wind:";
-        else if (headwind < 0)    return "Tailwind:";
-        else                      return "Headwind:";
+           if (headwind == nil) return "Wind:";
+        elsif (headwind < 0)    return "Tailwind:";
+        else                    return "Headwind:";
     },
 
     #
@@ -224,58 +224,25 @@ var DrawRunways = {
     },
 
     #
-    # @param  double  x  Init position of x.
-    # @param  double  y  Init position of y.
-    # @param  string  label  Label text.
-    # @param  string|int|double  value  Value to display.
-    # @param  string|nil  unit  Unit to display.
-    # @param  bool  isWindColor
-    # @return double  New position of y shifted by height of printed line.
-    #
-    printLineWithValue: func(x, y, label, value, unit = nil, isWindColor = false) {
-        var text = me._canvas.createChild("text")
-            .setText(label)
-            .setTranslation(x, y)
-            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
-
-        x += DrawTabContent.VALUE_MARGIN_X;
-        text = me._canvas.createChild("text")
-            .setText(value)
-            .setTranslation(x, y)
-            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD);
-
-        if (unit != nil) {
-            x += text.getSize()[0] + 5;
-            text = me._canvas.createChild("text")
-                .setText(unit)
-                .setTranslation(x, y)
-                .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
-        }
-
-        return text.getSize()[1] + DrawTabContent.MARGIN_Y;
-    },
-
-    #
     # Get surface name by ID.
     #
     # @param  int  surfaceId
     # @return string
     #
     _getSurface: func(surfaceId) {
-             if (surfaceId == 1 or (surfaceId >= 20 and surfaceId <= 38)) return "asphalt";
-        else if (surfaceId == 2 or (surfaceId >= 50 and surfaceId <= 57)) return "concrete";
-        else if (surfaceId == 3)  return "turf";
-        else if (surfaceId == 4)  return "dirt";
-        else if (surfaceId == 5)  return "gravel";
-        else if (surfaceId == 6)  return "asphalt helipad";
-        else if (surfaceId == 7)  return "concrete helipad";
-        else if (surfaceId == 8)  return "turf helipad";
-        else if (surfaceId == 9)  return "dirt helipad";
-        else if (surfaceId == 12) return "lakebed";
-        else if (surfaceId == 13) return "water";
-        else if (surfaceId == 14) return "ice"; # also snow
-        else if (surfaceId == 15) return "transparent"; # Hard surface, but no texture/markings (use in custom scenery)
+           if (surfaceId == 1 or (surfaceId >= 20 and surfaceId <= 38)) return "asphalt";
+        elsif (surfaceId == 2 or (surfaceId >= 50 and surfaceId <= 57)) return "concrete";
+        elsif (surfaceId == 3)  return "turf";
+        elsif (surfaceId == 4)  return "dirt";
+        elsif (surfaceId == 5)  return "gravel";
+        elsif (surfaceId == 6)  return "asphalt helipad";
+        elsif (surfaceId == 7)  return "concrete helipad";
+        elsif (surfaceId == 8)  return "turf helipad";
+        elsif (surfaceId == 9)  return "dirt helipad";
+        elsif (surfaceId == 12) return "lakebed";
+        elsif (surfaceId == 13) return "water";
+        elsif (surfaceId == 14) return "ice"; # also snow
+        elsif (surfaceId == 15) return "transparent"; # Hard surface, but no texture/markings (use in custom scenery)
 
         return "unknown";
     },

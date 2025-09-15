@@ -1,0 +1,242 @@
+#
+# Which runway - Add-on for FlightGear
+#
+# Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
+#
+# Copyright (C) 2025 Roman Ludwicki
+#
+# Which Runway is an Open Source project and it is licensed
+# under the GNU Public License v3 (GPLv3)
+#
+
+#
+# Helper class for draw in canvas content.
+#
+var Draw = {
+    #
+    # Constants:
+    #
+    MARGIN_Y      : 10,
+    VALUE_MARGIN_X: 110,
+
+    #
+    # Constructor.
+    #
+    # @param  ghost  canvasContent  Canvas object where we will be drawn.
+    # @return hash
+    #
+    new: func(canvasContent) {
+        var me = { parents: [Draw] };
+
+        me._canvas = canvasContent;
+
+        return me;
+    },
+
+    #
+    # Destructor.
+    #
+    # @return void
+    #
+    del: func() {
+    },
+
+    #
+    # Create and return canvas text element.
+    #
+    # @param  string|nil  text
+    # @return ghost  Canvas text element.
+    #
+    createText: func(text = nil) {
+        var element = me._canvas.createChild("text");
+
+        if (text != nil) {
+            element.setText(text);
+        }
+
+        return element;
+    },
+
+    #
+    # Create and return canvas path element.
+    #
+    # @return ghost  Canvas path element.
+    #
+    createPath: func() {
+        return me._canvas.createChild("path");
+    },
+
+    #
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
+    # @param  ghost  airport  Airport object from airportinfo.
+    # @return hash  New position of x, y and last used canvas text element.
+    #
+    printLineAirportName: func(x, y, airport) {
+        var text = me.createText(airport.id ~ " – " ~ airport.name)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFontSize(24)
+            .setFont(Fonts.SANS_BOLD);
+
+        return {
+            x: x,
+            y: text.getSize()[1] + Draw.MARGIN_Y,
+            text: text,
+        };
+    },
+
+    #
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
+    # @param  string  label  Label text.
+    # @param  string|int|double  value  Value to display.
+    # @param  string|nil  unit  Unit to display.
+    # @param  bool  isWindColor
+    # @return hash  New position of x, y and last used canvas text element.
+    #
+    printLineWithValue: func(x, y, label, value, unit = nil, isWindColor = false) {
+        var text = me.createText(label)
+            .setTranslation(x, y)
+            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
+
+        x += Draw.VALUE_MARGIN_X;
+        text = me.createText(value)
+            .setTranslation(x, y)
+            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD);
+
+        if (unit != nil) {
+            x += text.getSize()[0] + 5;
+            text = me.createText(unit)
+                .setTranslation(x, y)
+                .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
+        }
+
+        return {
+            x: x,
+            y: text.getSize()[1] + Draw.MARGIN_Y,
+            text: text,
+        };
+    },
+
+    #
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
+    # @param  string  label  Label text.
+    # @param  string|int|double  value1  First value to display.
+    # @param  string  unit1  First unit to display.
+    # @param  string|int|double  value2  Second value to display.
+    # @param  string  unit2  Second unit to display.
+    # @return hash  New position of x, y and last used canvas text element.
+    #
+    printLineWith2Values: func(x, y, label, value1, unit1, value2, unit2) {
+        var res = me.printLineWithValue(x, y, label, value1, unit1 ~ " /");
+
+        x = res.x + res.text.getSize()[0] + 5;
+        text = me.createText(value2)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD);
+
+        x += text.getSize()[0] + 5;
+        text = me.createText(unit2)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        return {
+            x: x,
+            y: text.getSize()[1] + Draw.MARGIN_Y,
+            text: text,
+        };
+    },
+
+    #
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
+    # @param  string  label  Label text.
+    # @param  hash  pressValues  Atmospheric pressure with 3 value: mmHg, hPa, inHg.
+    # @return hash  New position of x, y and last used canvas text element.
+    #
+    printLineAtmosphericPressure: func(x, y, label, pressValues) {
+        var text = me.createText(label)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        # inHg
+        x += Draw.VALUE_MARGIN_X;
+        text = me.createText(pressValues.inHg)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD);
+
+        x += text.getSize()[0] + 5;
+        text = me.createText("inHg /")
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        # hPa
+        x += 82;
+        text = me.createText(pressValues.hPa)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD)
+            .setAlignment("right-baseline");
+
+        x += 5;
+        text = me.createText("hPa /")
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        # mmHg
+        x += 42;
+        text = me.createText(pressValues.mmHg)
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT)
+            .setFont(Fonts.SANS_BOLD);
+
+        x += text.getSize()[0] + 5;
+        text = me.createText("mmHg")
+            .setTranslation(x, y)
+            .setColor(Colors.DEFAULT_TEXT);
+
+        return {
+            x: x,
+            y: text.getSize()[1] + Draw.MARGIN_Y,
+            text: text,
+        };
+    },
+
+    #
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
+    # @param  string  label  Label text.
+    # @return hash  New position of x, y and last used canvas text element.
+    #
+    printLineWind: func(x, y, label) {
+        var text = me.createText(label)
+            .setTranslation(x, y)
+            .setColor(Colors.BLUE)
+            .setFontSize(20)
+            .setFont(Fonts.SANS_BOLD);
+
+        return {
+            x: x,
+            y: text.getSize()[1] + Draw.MARGIN_Y,
+            text: text,
+        };
+    },
+
+    #
+    # @param  string  message  Message text.
+    # @param  bool  isError  If true then message is error message (red color).
+    # @param  int  fontSize
+    # @return ghost  Canvas text element.
+    #
+    printMessage: func(message, isError = false, fontSize = 20) {
+        return me.createText(message)
+            .setTranslation(0, 0)
+            .setColor(isError ? Colors.RED : Colors.DEFAULT_TEXT)
+            .setFontSize(fontSize);
+    },
+};

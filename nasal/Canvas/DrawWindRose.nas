@@ -16,15 +16,14 @@ var DrawWindRose = {
     #
     # Constructor
     #
-    # @param  ghost  canvasContent  Canvas object where wind rose will be drawn.
+    # @param  hash  draw  Draw object.
     # @return me
     #
-    new: func(canvasContent) {
+    new: func(draw) {
         var me = { parents: [DrawWindRose] };
 
-        me._canvas = canvasContent;
+        me._draw = draw;
 
-        me._textColor = [0.1, 0.1, 0.1];
         me._windLineWidth = 2;
         me._radius = 0;
 
@@ -57,51 +56,41 @@ var DrawWindRose = {
         var colorStroke = [0.2, 0.2, 0.2];
 
         # Draw spokes every spokeStepDeg
-        for (var a = 0; a < 360; a += spokeStepDeg) {
-            var rad = (a - 90) * globals.D2R;
+        for (var deg = 0; deg < 360; deg += spokeStepDeg) {
+            var rad = (deg - 90) * globals.D2R;
             var x1 = centerX + math.cos(rad) * (me._radius * 0.9);
             var y1 = centerY + math.sin(rad) * (me._radius * 0.9);
             var x2 = centerX + math.cos(rad) * me._radius;
             var y2 = centerY + math.sin(rad) * me._radius;
 
-            me._canvas.createChild("path")
+            me._draw.createPath()
                 .moveTo(x1, y1)
                 .lineTo(x2, y2)
                 .setColor(colorStroke)
                 .setFill(colorStroke)
                 .setStroke(colorStroke)
-                .setStrokeLineWidth(math.mod(a, 30) == 0 ? 2 : 1);
+                .setStrokeLineWidth(math.mod(deg, 30) == 0 ? 2 : 1);
 
             var markPadding = 20;
 
-            if (math.mod(a, 90) == 0) {
+            if (math.mod(deg, 90) == 0) {
                 # Directional descriptions (N, E, S, W) every 90°
-
-                var label = "";
-                     if (a == 0)   label = "N";
-                else if (a == 90)  label = "E";
-                else if (a == 180) label = "S";
-                else               label = "W";
-
-                me._canvas.createChild("text")
-                    .setAlignment("center-center")
-                    .setText(label)
+                me._draw.createText(me._getGeoDirMark(deg))
                     .setTranslation(
                         centerX + math.cos(rad) * (me._radius + markPadding),
                         centerY + math.sin(rad) * (me._radius + markPadding),
                     )
-                    .setColor(me._textColor)
+                    .setAlignment("center-center")
+                    .setColor([0.1, 0.1, 0.1])
                     .setFontSize(18);
-            } else if (math.mod(a, 30) == 0) {
+            } elsif (math.mod(deg, 30) == 0) {
                 # Direction numbers every 30°
-
-                me._canvas.createChild("text")
-                    .setAlignment("center-center")
-                    .setText(sprintf("%d", a))
+                me._draw.createText(Utils.toString(deg))
                     .setTranslation(
                         centerX + math.cos(rad) * (me._radius + markPadding),
                         centerY + math.sin(rad) * (me._radius + markPadding),
                     )
+                    .setAlignment("center-center")
                     .setColor([0.4, 0.4, 0.4])
                     .setFontSize(16);
             }
@@ -119,6 +108,19 @@ var DrawWindRose = {
         me._drawRunway(centerX, centerY, runway);
 
         me._drawWindArrow(centerX, centerY, windDir, windKt);
+    },
+
+    #
+    # @param  int  deg
+    # @return string
+    #
+    _getGeoDirMark: func(deg) {
+           if (deg == 0)   return "N";
+        elsif (deg == 90)  return "E";
+        elsif (deg == 180) return "S";
+        elsif (deg == 270) return "W";
+
+        return "?";
     },
 
     #
@@ -146,7 +148,7 @@ var DrawWindRose = {
         var yEnd   = centerY + math.sin(angleRad) * (lenPix / 2);
 
         # Runway
-        me._canvas.createChild("path")
+        me._draw.createPath()
             .moveTo(xStart, yStart)
             .lineTo(xEnd, yEnd)
             .setColor([0,0,0])
@@ -170,8 +172,7 @@ var DrawWindRose = {
     # @return void
     #
     _drawRunwayId: func(x, y, rwyId, normDiffDeg, angleRad, lenPix, isHighlighted = false) {
-        var text = me._canvas.createChild("text")
-            .setText(rwyId)
+        var text = me._draw.createText(rwyId)
             .setFontSize(isHighlighted ? 16 : 12)
             .setColor(isHighlighted ? me._geWindColorByDir(normDiffDeg) : [0, 0, 0])
             .setAlignment("center-center")
@@ -190,10 +191,11 @@ var DrawWindRose = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-             if (normDiffDeg == nil)                       return [0, 0, 0];
-        else if (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
-        else if (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
-        else                                               return [0, 0, 0];
+           if (normDiffDeg == nil)                       return [0, 0, 0];
+        elsif (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
+        elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
+
+        return [0, 0, 0];
     },
 
     #
@@ -218,7 +220,7 @@ var DrawWindRose = {
         var xEnd   = centerX + math.cos(windRad) * me._radius;
         var yEnd   = centerY + math.sin(windRad) * me._radius;
 
-        me._canvas.createChild("path")
+        me._draw.createPath()
             .moveTo(xStart, yStart)
             .lineTo(xEnd, yEnd)
             .setColor(Colors.BLUE)
@@ -265,9 +267,7 @@ var DrawWindRose = {
         var xLabel = xEnd + (dx / len) * margin;
         var yLabel = yEnd + (dy / len) * margin;
 
-        var info = sprintf("%03d° %d kt", windDir, math.round(windKt));
-        me._canvas.createChild("text")
-            .setText(info)
+        me._draw.createText(sprintf("%03d° %d kt", windDir, math.round(windKt)))
             .setTranslation(xLabel, yLabel)
             .setColor(Colors.BLUE)
             .setFontSize(11)
@@ -285,7 +285,7 @@ var DrawWindRose = {
         var arrowLength = 12;
 
         # Left arrowhead line
-        me._canvas.createChild("path")
+        me._draw.createPath()
             .moveTo(x, y)
             .lineTo(x - math.cos(left) * arrowLength, y - math.sin(left) * arrowLength)
             .setColor(Colors.BLUE)
@@ -294,7 +294,7 @@ var DrawWindRose = {
             .setStrokeLineWidth(me._windLineWidth);
 
         # Right arrowhead line
-        me._canvas.createChild("path")
+        me._draw.createPath()
             .moveTo(x, y)
             .lineTo(x - math.cos(right) * arrowLength, y - math.sin(right) * arrowLength)
             .setColor(Colors.BLUE)

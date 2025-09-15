@@ -16,9 +16,7 @@ var DrawTabContent = {
     #
     # Statics:
     #
-    PADDING  : 10,
-    MARGIN_Y : 10,
-    VALUE_MARGIN_X: 110,
+    PADDING       : 10,
     METAR_RANGE_NM: 30,
 
     #
@@ -62,7 +60,8 @@ var DrawTabContent = {
         ########################################################################
 
         me._metar = Metar.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
-        me._drawRunways = DrawRunways.new(me._scrollContent, me._metar);
+        me._draw = Draw.new(me._scrollContent);
+        me._drawRunways = DrawRunways.new(me._draw, me._metar);
 
         me._listeners = Listeners.new();
         me._setListeners();
@@ -81,8 +80,9 @@ var DrawTabContent = {
     #
     del: func() {
         me._listeners.del();
-        me._metar.del();
         me._drawRunways.del();
+        me._draw.del();
+        me._metar.del();
     },
 
     #
@@ -214,10 +214,10 @@ var DrawTabContent = {
     # @return string|nil
     #
     _getICAOPropertyByTabId: func() {
-             if (me._isTabNearest())   return "/sim/airport/closest-airport-id";
-        else if (me._isTabDeparture()) return "/autopilot/route-manager/departure/airport";
-        else if (me._isTabArrival())   return "/autopilot/route-manager/destination/airport";
-        else if (me._isTabAlternate()) return nil;
+           if (me._isTabNearest())   return "/sim/airport/closest-airport-id";
+        elsif (me._isTabDeparture()) return "/autopilot/route-manager/departure/airport";
+        elsif (me._isTabArrival())   return "/autopilot/route-manager/destination/airport";
+        elsif (me._isTabAlternate()) return nil;
 
         return nil;
     },
@@ -228,9 +228,9 @@ var DrawTabContent = {
     # @return string
     #
     _getNoIcaoMessage: func() {
-             if (me._isTabNearest())   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
-        else if (me._isTabDeparture()) return "No ICAO code. Enter the departure airport in Route Manager first.";
-        else if (me._isTabArrival())   return "No ICAO code. Enter the arrival airport in Route Manager first.";
+           if (me._isTabNearest())   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
+        elsif (me._isTabDeparture()) return "No ICAO code. Enter the departure airport in Route Manager first.";
+        elsif (me._isTabArrival())   return "No ICAO code. Enter the arrival airport in Route Manager first.";
 
         return "No ICAO code.";
     },
@@ -331,7 +331,7 @@ var DrawTabContent = {
     _reDrawContentWithMessage: func(message, isError = false) {
         me._scrollContent.removeAllChildren();
 
-        me._printMessage(message, isError);
+        me._draw.printMessage(message, isError);
 
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
@@ -347,7 +347,7 @@ var DrawTabContent = {
 
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
-            me._printMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
+            me._draw.printMessage("ICAO code `" ~ me._icao ~ "` not found!", true);
         } else {
             var y = me._drawAirportAndMetar(airport);
 
@@ -368,109 +368,34 @@ var DrawTabContent = {
         var x = 0;
         var y = 0;
 
-        # Airport ICAO and name
-        var text = me._scrollContent.createChild("text")
-            .setText(airport.id ~ " – " ~ airport.name)
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFontSize(24)
-            .setFont(Fonts.SANS_BOLD);
-
-        y += text.getSize()[1] + DrawTabContent.MARGIN_Y;
-
-        y += me._drawRunways.printLineWithValue(x, y, "Lat, Lon:", me._getLatLonInfo(airport));
-        y += me._drawRunways.printLineWithValue(x, y, "Elevation:", math.round(airport.elevation), "m");
-        y += me._drawRunways.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", magvar(airport)));
-        y += me._drawRunways.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No");
-        y += DrawTabContent.MARGIN_Y;
+        y += me._draw.printLineAirportName(x, y, airport).y;
+        y += me._draw.printLineWithValue(x, y, "Lat, Lon:", me._getLatLonInfo(airport)).y;
+        y += me._draw.printLineWith2Values(x, y, "Elevation:", math.round(airport.elevation * globals.M2FT), "ft", math.round(airport.elevation), "m").y;
+        y += me._draw.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", magvar(airport))).y;
+        y += me._draw.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No").y;
+        y += Draw.MARGIN_Y;
 
         y = me._drawMetar(x, y, airport);
 
         var qnhValues = me._metar.getQnhValues(airport);
-        if (qnhValues == nil) {
-            y += me._drawRunways.printLineWithValue(x, y, "QNH:", "n/a");
-        } else {
-            y += me._printLineAtmosphericPressure(x, y, "QNH:", qnhValues);
-        }
-
         var qfeValues = me._metar.getQfeValues(airport);
-        if (qfeValues == nil) {
-            y += me._drawRunways.printLineWithValue(x, y, "QFE:", "n/a");
-        } else {
-            y += me._printLineAtmosphericPressure(x, y, "QFE:", qfeValues);
-        }
 
-        y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
+        y += qnhValues == nil
+            ? me._draw.printLineWithValue(x, y, "QNH:", "n/a").y
+            : me._draw.printLineAtmosphericPressure(x, y, "QNH:", qnhValues).y;
+
+        y += qfeValues == nil
+            ? me._draw.printLineWithValue(x, y, "QFE:", "n/a").y
+            : me._draw.printLineAtmosphericPressure(x, y, "QFE:", qfeValues).y;
+
+        y += (Draw.MARGIN_Y * 2);
 
         # Wind
-        text = me._scrollContent.createChild("text")
-            .setText("Wind " ~ me._getWindInfoText(airport))
-            .setTranslation(x, y)
-            .setColor(Colors.BLUE)
-            .setFontSize(20)
-            .setFont(Fonts.SANS_BOLD);
+        y += me._draw.printLineWind(x, y, "Wind " ~ me._getWindInfoText(airport)).y;
 
-        y += text.getSize()[1] + (DrawTabContent.MARGIN_Y * 5);
+        y += (Draw.MARGIN_Y * 4);
 
         return y;
-    },
-
-    #
-    # @param  double  x  Init position of x.
-    # @param  double  y  Init position of y.
-    # @param  string  label  Label text.
-    # @param  hash  pressValues  Atmospheric pressure with 3 value: mmHg, hPa, inHg.
-    # @return double  New position of y shifted by height of printed line.
-    #
-    _printLineAtmosphericPressure: func(x, y, label, pressValues) {
-        var text = me._scrollContent.createChild("text")
-            .setText(label)
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
-
-        x += DrawTabContent.VALUE_MARGIN_X;
-        text = me._scrollContent.createChild("text")
-            .setText(pressValues.inHg)
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD);
-
-        x += text.getSize()[0] + 5;
-        text = me._scrollContent.createChild("text")
-            .setText("inHg /")
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
-
-
-        x += 82;
-        text = me._scrollContent.createChild("text")
-            .setText(pressValues.hPa)
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD)
-            .setAlignment("right-baseline");
-
-        x += 5;
-        text = me._scrollContent.createChild("text")
-            .setText("hPa /")
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
-
-
-        x += 42;
-        text = me._scrollContent.createChild("text")
-            .setText(pressValues.mmHg)
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD);
-
-        x += text.getSize()[0] + 5;
-        text = me._scrollContent.createChild("text")
-            .setText("mmHg")
-            .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
-
-        return text.getSize()[1] + DrawTabContent.MARGIN_Y;
     },
 
     #
@@ -486,23 +411,28 @@ var DrawTabContent = {
 
         if (me._metar.isRealWeatherEnabled()) {
             if (me._metar.isMetarFromNearestAirport()) {
-                var distance = me._metar.getDistanceToStation(airport);
-                text = me._scrollContent.createChild("text")
-                    .setText(sprintf("METAR comes from %s, %.1f NM away:", me._metar.getIcao(), distance))
+                var distNm = me._metar.getDistanceToStation(airport);
+                var distKm = (distanceNm * globals.NM2M) / 1000;
+                var label = sprintf("METAR comes from %s, %.1f NM (%.1f km) away:", me._metar.getIcao(), distNm, distKm);
+
+                text = me._draw.createText(label)
                     .setTranslation(x, y)
                     .setColor(Colors.AMBER);
 
-                y += text.getSize()[1] + DrawTabContent.MARGIN_Y;
+                y += text.getSize()[1] + Draw.MARGIN_Y;
             }
 
-            text = me._scrollContent.createChild("text")
+            text = me._draw.createText()
                 .setTranslation(x, y)
                 .setColor(me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT);
 
             var metar = me._metar.getMetar(airport);
 
             if (metar == nil) {
-                text.setText("No METAR within " ~ DrawTabContent.METAR_RANGE_NM ~ " NM");
+                text.setText(sprintf("No METAR within %d NM (%.1f km)",
+                    DrawTabContent.METAR_RANGE_NM,
+                    (DrawTabContent.METAR_RANGE_NM * globals.NM2M) / 1000,
+                ));
             } else {
                 var metarParts = globals.split(" ", metar);
                 var count = size(metarParts);
@@ -526,20 +456,18 @@ var DrawTabContent = {
                         line2 ~= metarParts[i] ~ " ";
                     }
 
-                    text = me._scrollContent.createChild("text")
-                        .setText(line2)
+                    text = me._draw.createText(line2)
                         .setTranslation(x, y)
                         .setColor(me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT);
                 }
             }
         } else {
-            text = me._scrollContent.createChild("text")
+            text = me._draw.createText("For METAR, it is necessary to select the \"Live Data\" weather scenario!")
                 .setTranslation(x, y)
-                .setText("For METAR, it is necessary to select the Live Data weather scenario!")
                 .setColor(Colors.RED);
         }
 
-        return y + text.getSize()[1] + (DrawTabContent.MARGIN_Y * 2);
+        return y + text.getSize()[1] + (Draw.MARGIN_Y * 2);
     },
 
     #
@@ -564,19 +492,6 @@ var DrawTabContent = {
         }
 
         return "n/a";
-    },
-
-    #
-    # @param  string  message  Error message.
-    # @param  bool  isError  If true then message is error message (red color).
-    # @return void
-    #
-    _printMessage: func(message, isError = false, fontSize = 20) {
-        me._scrollContent.createChild("text")
-            .setText(message)
-            .setTranslation(0, 0)
-            .setColor(isError ? Colors.RED : Colors.DEFAULT_TEXT)
-            .setFontSize(fontSize);
     },
 
     #
@@ -621,9 +536,9 @@ var DrawTabContent = {
     # @return ghost  Canvas layout object with controls.
     #
     _getButtonBoxByTabId: func() {
-             if (me._isTabNearest())                         return me._drawBottomBarForNearest();
-        else if (me._isTabDeparture() or me._isTabArrival()) return me._drawBottomBarForScheduledTab();
-        else if (me._isTabAlternate())                       return me._drawBottomBarForAlternate();
+           if (me._isTabNearest())                         return me._drawBottomBarForNearest();
+        elsif (me._isTabDeparture() or me._isTabArrival()) return me._drawBottomBarForScheduledTab();
+        elsif (me._isTabAlternate())                       return me._drawBottomBarForAlternate();
 
         return nil;
     },

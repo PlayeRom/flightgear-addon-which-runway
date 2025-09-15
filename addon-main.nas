@@ -36,6 +36,7 @@ var loadExtraNasalFiles = func(addon) {
         "nasal/Metar",
         "nasal/Utils",
         "nasal/Fonts",
+        "nasal/Canvas/Draw",
         "nasal/Canvas/DrawTabContent",
         "nasal/Canvas/DrawWindRose",
         "nasal/Canvas/DrawRunways",

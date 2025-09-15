@@ -16,7 +16,7 @@ var RunwaysData = {
     #
     # Constructor
     #
-    # @param  hash  metar  METAR object.
+    # @param  hash  metar  Metar object.
     # @return me
     #
     new: func(metar) {
@@ -42,9 +42,6 @@ var RunwaysData = {
     # @return vector  Array of runways data.
     #
     getRunways: func(airport) {
-        # TODO: it seems that the runway headings are "true", so there is no need to use magnetic variation?
-        # var magVariation = magvar(airport);
-        # var windDir = me._metar.getWindDir(airport) - magVariation;
         var windDir   = me._metar.getWindDir(airport); # it can be nil
         var windSpeed = me._metar.getWindSpeedKt();
         var windGust  = me._metar.getWindGustSpeedKt();
@@ -148,8 +145,8 @@ var RunwaysData = {
     #
     _sortRunwaysByHeadwind: func(runwaysData) {
         return globals.sort(runwaysData, func(a, b) {
-                if (a.normDiffDeg > b.normDiffDeg) return  1;
-           else if (a.normDiffDeg < b.normDiffDeg) return -1;
+              if (a.normDiffDeg > b.normDiffDeg) return  1;
+           elsif (a.normDiffDeg < b.normDiffDeg) return -1;
 
            return 0;
         });
