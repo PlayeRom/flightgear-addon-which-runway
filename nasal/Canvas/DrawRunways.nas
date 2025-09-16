@@ -84,7 +84,7 @@ var DrawRunways = {
             y += me._draw.printLineWith2Values(0, y, "Length:", math.round(rwy.length * globals.M2FT), "ft", math.round(rwy.length), "m").y;
             y += me._draw.printLineWith2Values(0, y, "Width:", math.round(rwy.width * globals.M2FT), "ft", math.round(rwy.width), "m").y;
             y += me._draw.printLineWithValue(0, y, "Surface:", me._getSurface(rwy.surface)).y;
-            y += me._draw.printLineWithValue(0, y, "Reciprocal:", rwy.reciprocalId).y;
+            y += me._draw.printLineWithValue(0, y, "Reciprocal:", rwy.reciprocal == nil ? "n/a" : rwy.reciprocal.id).y;
             y += me._draw.printLineWithValue(0, y, "ILS:", me._getIlsValue(rwy, rwyHdgTrue, rwyHdgMag, aptMagVar)).y;
 
             me._drawWindRose.drawWindRose(
@@ -94,6 +94,7 @@ var DrawRunways = {
                 me._metar.getWindDir(airport),
                 me._metar.getWindSpeedKt(),
                 rwy,
+                runwaysData,
             );
 
             # Margin between runways

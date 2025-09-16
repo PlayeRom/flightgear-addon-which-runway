@@ -47,9 +47,18 @@ var DrawWindRose = {
     # @param  double|nil  windDir  Wind direction in degrees.
     # @param  double  windKt  Wind speed in knots.
     # @param  hash  runway  Object with runway data.
+    # @param  vector  runwaysData  All runways.
     # @return void
     #
-    drawWindRose: func(centerX, centerY, radius, windDir, windKt, runway) {
+    drawWindRose: func(centerX, centerY, radius, windDir, windKt, runway, runwaysData) {
+        me._draw.createClipContent(
+            top   : centerY - (radius * 1.45),
+            right : centerX + (radius * 1.45),
+            bottom: centerY + (radius * 1.45),
+            left  : centerX - (radius * 1.45),
+        );
+        me._draw.enableClipContent();
+
         me._radius = radius;
 
         var spokeStepDeg = 10; # graduation lines every 10°
@@ -99,18 +108,29 @@ var DrawWindRose = {
             }
         }
 
-        # var drawn = []; # array of drawn runway ids to avoid drawing reciprocal twice
-        # foreach (var rwy; runwaysData) {
-        #     if (contains(drawn, rwy.rwyId)) {
-        #         continue; # already drawn
-        #     }
-        #     me._drawRunway(centerX, centerY, me._radius, airport, rwy);
+        var drawn = [runway.rwyId]; # array of drawn runway ids to avoid drawing reciprocal twice
+        if (runway.reciprocal != nil) {
+            append(drawn, runway.reciprocal.id);
+        }
 
-        #     append(drawn, rwy.reciprocalId);
-        # }
+        foreach (var rwy; runwaysData) {
+            if (contains(drawn, rwy.rwyId)) {
+                continue; # already drawn
+            }
+
+            me._drawRunway(centerX, centerY, rwy, runway);
+
+            if (rwy.reciprocal != nil) {
+                append(drawn, rwy.reciprocal.id);
+            }
+        }
+
+        # Draw main runway in center of wind rose
         me._drawRunway(centerX, centerY, runway);
 
         me._drawWindArrow(centerX, centerY, windDir, windKt);
+
+        me._draw.disableClipContent();
     },
 
     #
@@ -131,41 +151,102 @@ var DrawWindRose = {
     #
     # @param  double  centerX  X coordinate of center in pixels.
     # @param  double  centerY  Y coordinate of center in pixels.
-    # @param  hash  runway  Object with runway data.
+    # @param  hash  rwy  Runway object to draw in center.
+    # @param  hash|nil  refRwy  Reference runway as main runway when draw another runway around.
     # @return void
     #
-    _drawRunway: func(centerX, centerY, runway) {
-        # Scaling the length and width of the strip to the rose pixels
-        # Length in pixels - proportion to the largest stripe or radius of the rose
-        var maxRwyLength = 5000.0;  # e.g. the largest runway in meters at your airport
-        var lenPix = (runway.length / maxRwyLength) * me._radius * 2;
-        var widthPix = (runway.width / 60.0) * 8; # width, 60 m = max 8 px
+    _drawRunway: func(centerX, centerY, rwy, refRwy = nil) {
+        var isMainRwy = refRwy == nil;
 
-        # Calculating the runway angle in radians
-        var angleRad = (runway.heading - 90) * globals.D2R;
+        # Scale: meters → pixels
+        var MAX_RWY_LENGTH = 5000.0;
+        var scale = (me._radius * 2) / MAX_RWY_LENGTH;
 
+        # Runway length and width in pixels
+        var lenPix   = rwy.length * scale;
+        var widthPix = rwy.width  * scale;
+
+        var METERS_PER_DEG_LAT   = 111320.0;
+        var EARTH_EQUATOR_METERS = 40075000.0;
+
+        var xStart = 0;
+        var yStart = 0;
+        var xEnd   = 0;
+        var yEnd   = 0;
+
+        var angleRad = (rwy.heading - 90) * globals.D2R;
         var cosRad = math.cos(angleRad);
         var sinRad = math.sin(angleRad);
 
-        # Ends of the lines (the center of the rose as a reference point)
-        var xStart = centerX - cosRad * (lenPix / 2);
-        var yStart = centerY - sinRad * (lenPix / 2);
-        var xEnd   = centerX + cosRad * (lenPix / 2);
-        var yEnd   = centerY + sinRad * (lenPix / 2);
+        if (isMainRwy) {
+            # The main runway in the center of the wind rose
+            xStart = centerX - cosRad * (lenPix / 2);
+            yStart = centerY - sinRad * (lenPix / 2);
+            xEnd   = centerX + cosRad * (lenPix / 2);
+            yEnd   = centerY + sinRad * (lenPix / 2);
+        } else {
+            # Convert runway center to meters relative to refRwy.
+            var refRwyReciprocal = me._getReciprocalLatLon(refRwy);
+            var refCenterLat = (refRwy.lat + refRwyReciprocal.lat()) / 2.0;
+            var refCenterLon = (refRwy.lon + refRwyReciprocal.lon()) / 2.0;
 
-        # Runway
+            var rwyReciprocal = me._getReciprocalLatLon(rwy);
+            var thisCenterLat = (rwy.lat + rwyReciprocal.lat()) / 2.0;
+            var thisCenterLon = (rwy.lon + rwyReciprocal.lon()) / 2.0;
+
+            # Difference in meters.
+            var lat0 = (refCenterLat + thisCenterLat) / 2.0;
+            var mPerLon = (EARTH_EQUATOR_METERS * math.cos(lat0 * globals.D2R)) / 360.0;
+
+            var dXM = (thisCenterLat - refCenterLat) * METERS_PER_DEG_LAT;
+            var dYM = (thisCenterLon - refCenterLon) * mPerLon;
+
+            # Translation to pixels relative to the center of the wind rose.
+            centerX = centerX + dYM * scale;
+            centerY = centerY - dXM * scale;
+
+            # The ends of the runway along the runway heading.
+            xStart = centerX - cosRad * (lenPix / 2);
+            yStart = centerY - sinRad * (lenPix / 2);
+            xEnd   = centerX + cosRad * (lenPix / 2);
+            yEnd   = centerY + sinRad * (lenPix / 2);
+        }
+
+        # Draw runway
         me._draw.createPath()
             .moveTo(xStart, yStart)
             .lineTo(xEnd, yEnd)
-            .setColor([0,0,0])
-            .setFill([0,0,0])
-            .setStroke([0.5, 0.5, 0.5])
+            .setColor(isMainRwy ? [0, 0, 0] : [0.8, 0.8, 0.8])
+            .setFill(isMainRwy ? [0, 0, 0] : [0.8, 0.8, 0.8])
             .setStrokeLineWidth(widthPix);
 
-        # Add runway labels
-        me._drawRunwayId(centerX, centerY, runway.reciprocalId, runway.normDiffDeg, angleRad, lenPix);
-        angleRad = (runway.heading + 90) * globals.D2R;
-        me._drawRunwayId(centerX, centerY, runway.rwyId, runway.normDiffDeg, angleRad, lenPix, true);
+        # Threshold markings
+        if (rwy.reciprocal != nil) {
+            # For reciprocal
+            me._drawRunwayId(centerX, centerY, rwy.reciprocal.id, rwy.normDiffDeg, angleRad, lenPix, false, isMainRwy);
+        }
+
+        angleRad = (rwy.heading + 90) * globals.D2R;
+        me._drawRunwayId(centerX, centerY, rwy.rwyId, rwy.normDiffDeg, angleRad, lenPix, isMainRwy, isMainRwy);
+    },
+
+    #
+    # @param  hash  runway
+    # @return hash  The geo.Coord object.
+    #
+    _getReciprocalLatLon: func(runway) {
+        var coord = geo.Coord.new();
+
+        if (runway.reciprocal == nil) {
+            # Helipads do not have reciprocal, so we calculate them by shifting
+            # by the heading and the length of the helipad.
+            coord.set_latlon(runway.lat, runway.lon);
+            coord.apply_course_distance(runway.heading, runway.length);
+        } else {
+            coord.set_latlon(runway.reciprocal.lat, runway.reciprocal.lon);
+        }
+
+        return coord;
     },
 
     #
@@ -175,19 +256,28 @@ var DrawWindRose = {
     # @param  string  rwyId  Runway id to draw.
     # @param  double  angleRad  Angle of runway in radians.
     # @param  double  lenPix  Length of runway in pixels.
+    # @param  bool  isMainThreshold
+    # @param  bool  isMainRwy
     # @return void
     #
-    _drawRunwayId: func(x, y, rwyId, normDiffDeg, angleRad, lenPix, isHighlighted = false) {
+    _drawRunwayId: func(x, y, rwyId, normDiffDeg, angleRad, lenPix, isMainThreshold, isMainRwy) {
+        var color = Colors.DEFAULT_TEXT;
+        if (isMainThreshold) {
+            color = me._geWindColorByDir(normDiffDeg);
+        } elsif (!isMainRwy) {
+            color = [0.7, 0.7, 0.7];
+        }
+
         var text = me._draw.createText(rwyId)
-            .setFontSize(isHighlighted ? 16 : 12)
-            .setColor(isHighlighted ? me._geWindColorByDir(normDiffDeg) : Colors.DEFAULT_TEXT)
+            .setFontSize(isMainThreshold ? 16 : 12)
+            .setColor(color)
             .setAlignment("center-center")
             .setTranslation(
-                x + math.cos(angleRad) * (lenPix / 2 + 12),
-                y + math.sin(angleRad) * (lenPix / 2 + 12),
+                x + math.cos(angleRad) * (lenPix / 2 + (isMainThreshold ? 16 : 12)),
+                y + math.sin(angleRad) * (lenPix / 2 + (isMainThreshold ? 16 : 12)),
             );
 
-        if (isHighlighted) {
+        if (isMainThreshold) {
             text.setFont(Fonts.SANS_BOLD);
         }
     },

@@ -28,7 +28,10 @@ var Draw = {
     new: func(canvasContent) {
         var me = { parents: [Draw] };
 
-        me._canvas = canvasContent;
+        me._mainContent = canvasContent;
+        me._clipContent = nil;
+
+        me._isUsingClipContent = false;
 
         return me;
     },
@@ -42,13 +45,47 @@ var Draw = {
     },
 
     #
+    # Create clip context.
+    #
+    # @param  int  top  Top border of the cropping area
+    # @param  int  right  Right border of the cropping area
+    # @param  int  bottom  Bottom border of the cropping area
+    # @param  int  left  Left border of the cropping area
+    # @return void
+    #
+    createClipContent: func(top, right, bottom, left) {
+        me._clipContent = me._mainContent.createChild("group", "clip-content")
+            .set("clip-frame", canvas.Element.PARENT)
+            .set("clip", sprintf("rect(%d, %d, %d, %d)", top, right, bottom, left));
+    },
+
+    enableClipContent: func() {
+        me._isUsingClipContent = true;
+    },
+
+    disableClipContent: func() {
+        me._isUsingClipContent = false;
+    },
+
+    #
+    # @return ghost  Canvas content.
+    #
+    _getContent: func() {
+        if (me._isUsingClipContent and me._clipContent != nil) {
+            return me._clipContent;
+        }
+
+        return me._mainContent;
+    },
+
+    #
     # Create and return canvas text element.
     #
     # @param  string|nil  text
     # @return ghost  Canvas text element.
     #
     createText: func(text = nil) {
-        var element = me._canvas.createChild("text");
+        var element = me._getContent().createChild("text");
 
         if (text != nil) {
             element.setText(text);
@@ -63,7 +100,7 @@ var Draw = {
     # @return ghost  Canvas path element.
     #
     createPath: func() {
-        return me._canvas.createChild("path");
+        return me._getContent().createChild("path");
     },
 
     #

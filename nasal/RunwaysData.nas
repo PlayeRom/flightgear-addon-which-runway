@@ -130,7 +130,7 @@ var RunwaysData = {
             length       : runway.length,
             width        : runway.width,
             surface      : runway.surface,
-            reciprocalId : isTypeRunway ? runway.reciprocal.id : "n/a",
+            reciprocal   : isTypeRunway ? runway.reciprocal : nil,
             ils          : isTypeRunway ? runway.ils : nil,
             lat          : runway.lat,
             lon          : runway.lon,
