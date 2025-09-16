@@ -27,7 +27,7 @@ var Metar = {
     # @param  hash  objCallbacks
     # @param  func  funcUpdatedCallback
     # @param  func  funcRealWxCallback
-    # @return me
+    # @return hash
     #
     new: func(tabId, objCallbacks, funcUpdatedCallback, funcRealWxCallback) {
         var me = { parents: [Metar] };

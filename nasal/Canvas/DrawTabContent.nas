@@ -25,7 +25,7 @@ var DrawTabContent = {
     # @param  ghost  tabsContent  Tabs canvas content.
     # @param  ghost  tabContent  Single tab canvas content.
     # @param  string  tabId
-    # @return me
+    # @return hash
     #
     new: func(tabsContent, tabContent, tabId) {
         var me = { parents: [DrawTabContent] };

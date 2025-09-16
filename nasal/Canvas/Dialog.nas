@@ -21,7 +21,7 @@ var Dialog = {
     # @param  string  title  Title of window in the top bar
     # @param  bool  resize  If true then user will be possible to resize the window
     # @param  func|nil  onResize  Callback call when width or height of window was changed
-    # @return me
+    # @return hash
     #
     new: func(width, height, title, resize = false, onResize = nil) {
         var me = { parents: [Dialog] };

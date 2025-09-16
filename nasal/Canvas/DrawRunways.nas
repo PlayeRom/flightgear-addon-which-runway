@@ -18,7 +18,7 @@ var DrawRunways = {
     #
     # @param  hash  draw  Draw object.
     # @param  hash  metar  Metar object.
-    # @return me
+    # @return hash
     #
     new: func(draw, metar) {
         var me = { parents: [DrawRunways] };

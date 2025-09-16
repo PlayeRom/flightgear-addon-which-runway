@@ -17,7 +17,7 @@ var DrawWindRose = {
     # Constructor
     #
     # @param  hash  draw  Draw object.
-    # @return me
+    # @return hash
     #
     new: func(draw) {
         var me = { parents: [DrawWindRose] };

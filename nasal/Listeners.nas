@@ -23,7 +23,7 @@ var Listeners = {
     #
     # Constructor
     #
-    # @return me
+    # @return hash
     #
     new: func() {
         var me = { parents: [Listeners] };
@@ -57,7 +57,7 @@ var Listeners = {
     # @return void
     #
     add: func(node, code, init = false, type = 1) {
-        var handler = setlistener(node, code, init, type);
+        var handler = globals.setlistener(node, code, init, type);
         me._listeners.append(handler);
     },
 
@@ -68,7 +68,7 @@ var Listeners = {
     #
     _removeListeners: func() {
         foreach (var listener; me._listeners.vector) {
-            removelistener(listener);
+            globals.removelistener(listener);
         }
 
         me._listeners.clear();

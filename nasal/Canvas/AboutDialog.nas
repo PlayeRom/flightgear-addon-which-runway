@@ -23,7 +23,7 @@ var AboutDialog = {
     #
     # Constructor
     #
-    # @return me
+    # @return hash
     #
     new: func() {
         var me = { parents: [
@@ -88,7 +88,7 @@ var AboutDialog = {
     # @param  bool  wordWrap  If true then text will be wrapped.
     # @return ghost  Label widget.
     #
-    _getLabel: func(text, wordWrap = 0) {
+    _getLabel: func(text, wordWrap = false) {
         var label = canvas.gui.widgets.Label.new(me.group, canvas.style, {wordWrap: wordWrap})
             .setText(text);
 

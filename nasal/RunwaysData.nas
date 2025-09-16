@@ -17,7 +17,7 @@ var RunwaysData = {
     # Constructor
     #
     # @param  hash  metar  Metar object.
-    # @return me
+    # @return hash
     #
     new: func(metar) {
         var me = { parents: [RunwaysData] };
