@@ -58,10 +58,13 @@ var DrawWindRose = {
         # Draw spokes every spokeStepDeg
         for (var deg = 0; deg < 360; deg += spokeStepDeg) {
             var rad = (deg - 90) * globals.D2R;
-            var x1 = centerX + math.cos(rad) * (me._radius * 0.9);
-            var y1 = centerY + math.sin(rad) * (me._radius * 0.9);
-            var x2 = centerX + math.cos(rad) * me._radius;
-            var y2 = centerY + math.sin(rad) * me._radius;
+            var cosRad = math.cos(rad);
+            var sinRad = math.sin(rad);
+
+            var x1 = centerX + cosRad * (me._radius * 0.9);
+            var y1 = centerY + sinRad * (me._radius * 0.9);
+            var x2 = centerX + cosRad * me._radius;
+            var y2 = centerY + sinRad * me._radius;
 
             me._draw.createPath()
                 .moveTo(x1, y1)
@@ -77,18 +80,18 @@ var DrawWindRose = {
                 # Directional descriptions (N, E, S, W) every 90°
                 me._draw.createText(me._getGeoDirMark(deg))
                     .setTranslation(
-                        centerX + math.cos(rad) * (me._radius + markPadding),
-                        centerY + math.sin(rad) * (me._radius + markPadding),
+                        centerX + cosRad * (me._radius + markPadding),
+                        centerY + sinRad * (me._radius + markPadding),
                     )
                     .setAlignment("center-center")
-                    .setColor([0.1, 0.1, 0.1])
+                    .setColor(Colors.DEFAULT_TEXT)
                     .setFontSize(18);
             } elsif (math.mod(deg, 30) == 0) {
                 # Direction numbers every 30°
                 me._draw.createText(Utils.toString(deg))
                     .setTranslation(
-                        centerX + math.cos(rad) * (me._radius + markPadding),
-                        centerY + math.sin(rad) * (me._radius + markPadding),
+                        centerX + cosRad * (me._radius + markPadding),
+                        centerY + sinRad * (me._radius + markPadding),
                     )
                     .setAlignment("center-center")
                     .setColor([0.4, 0.4, 0.4])
@@ -141,11 +144,14 @@ var DrawWindRose = {
         # Calculating the runway angle in radians
         var angleRad = (runway.heading - 90) * globals.D2R;
 
+        var cosRad = math.cos(angleRad);
+        var sinRad = math.sin(angleRad);
+
         # Ends of the lines (the center of the rose as a reference point)
-        var xStart = centerX - math.cos(angleRad) * (lenPix / 2);
-        var yStart = centerY - math.sin(angleRad) * (lenPix / 2);
-        var xEnd   = centerX + math.cos(angleRad) * (lenPix / 2);
-        var yEnd   = centerY + math.sin(angleRad) * (lenPix / 2);
+        var xStart = centerX - cosRad * (lenPix / 2);
+        var yStart = centerY - sinRad * (lenPix / 2);
+        var xEnd   = centerX + cosRad * (lenPix / 2);
+        var yEnd   = centerY + sinRad * (lenPix / 2);
 
         # Runway
         me._draw.createPath()
@@ -174,7 +180,7 @@ var DrawWindRose = {
     _drawRunwayId: func(x, y, rwyId, normDiffDeg, angleRad, lenPix, isHighlighted = false) {
         var text = me._draw.createText(rwyId)
             .setFontSize(isHighlighted ? 16 : 12)
-            .setColor(isHighlighted ? me._geWindColorByDir(normDiffDeg) : [0, 0, 0])
+            .setColor(isHighlighted ? me._geWindColorByDir(normDiffDeg) : Colors.DEFAULT_TEXT)
             .setAlignment("center-center")
             .setTranslation(
                 x + math.cos(angleRad) * (lenPix / 2 + 12),
@@ -191,11 +197,11 @@ var DrawWindRose = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                       return [0, 0, 0];
+           if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
         elsif (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
         elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
 
-        return [0, 0, 0];
+        return Colors.DEFAULT_TEXT;
     },
 
     #
@@ -214,11 +220,14 @@ var DrawWindRose = {
 
         var windRad = (windDir - 90) * globals.D2R;  # direction in radians
 
+        var cosRad = math.cos(windRad);
+        var sinRad = math.sin(windRad);
+
         # Line from opposite side to end (full diameter)
-        var xStart = centerX - math.cos(windRad) * me._radius;
-        var yStart = centerY - math.sin(windRad) * me._radius;
-        var xEnd   = centerX + math.cos(windRad) * me._radius;
-        var yEnd   = centerY + math.sin(windRad) * me._radius;
+        var xStart = centerX - cosRad * me._radius;
+        var yStart = centerY - sinRad * me._radius;
+        var xEnd   = centerX + cosRad * me._radius;
+        var yEnd   = centerY + sinRad * me._radius;
 
         me._draw.createPath()
             .moveTo(xStart, yStart)

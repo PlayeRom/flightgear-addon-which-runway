@@ -137,17 +137,15 @@ var DrawTabContent = {
     # @return ghost  ScrollArea widget.
     #
     _createScrollArea: func() {
-        var margins = {
-            left   : DrawTabContent.PADDING,
-            top    : DrawTabContent.PADDING,
-            right  : 1,
-            bottom : DrawTabContent.PADDING,
-        };
-
         var scrollArea = canvas.gui.widgets.ScrollArea.new(me._tabsContent, canvas.style, {});
 
         scrollArea.setColorBackground(canvas.style.getColor("bg_color"));
-        scrollArea.setContentsMargins(margins.left, margins.top, margins.right, margins.bottom);
+        scrollArea.setContentsMargins(
+            DrawTabContent.PADDING, # left
+            DrawTabContent.PADDING, # top
+            1,                      # right
+            DrawTabContent.PADDING, # bottom
+        );
 
         return scrollArea;
     },

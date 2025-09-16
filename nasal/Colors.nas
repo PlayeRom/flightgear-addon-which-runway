@@ -13,9 +13,9 @@
 # Colors static declarations
 #
 var Colors = {
-    DEFAULT_TEXT: [0.3, 0.3, 0.3],
-    RED         : [0.8, 0.3, 0.3],
-    GREEN       : [0.0, 0.5, 0.0],
-    BLUE        : [0.0, 0.5, 1.0],
-    AMBER       : [0.9, 0.5, 0.0],
+    DEFAULT_TEXT: [0.235, 0.235, 0.235], # same as canvas.style.getColor("text_color")
+    RED         : [0.8,   0.3,   0.3],
+    GREEN       : [0.0,   0.5,   0.0],
+    BLUE        : [0.0,   0.5,   1.0],
+    AMBER       : [0.9,   0.5,   0.0],
 };

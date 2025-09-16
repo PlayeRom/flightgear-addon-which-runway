@@ -117,7 +117,7 @@ var DrawRunways = {
         x += text.getSize()[0] + 5;
         text = me._draw.createText(runway.rwyId)
             .setTranslation(x, y)
-            .setColor([0.0, 0.0, 0.0])
+            .setColor(Colors.DEFAULT_TEXT)
             .setFontSize(20)
             .setFont(Fonts.SANS_BOLD);
 
