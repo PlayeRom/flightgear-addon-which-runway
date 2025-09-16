@@ -40,7 +40,10 @@ var DrawTabContent = {
         if (me._isTabNearest() or me._isTabAlternate()) {
             me._btnLoadIcaos = std.Vector.new();
             for (var i = 0; i < 5; i += 1) {
-                me._btnLoadIcaos.append(canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {}).setText("----"));
+                var btn = canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
+                    .setText("----");
+
+                me._btnLoadIcaos.append(btn);
             }
         }
 
@@ -351,7 +354,7 @@ var DrawTabContent = {
         if (airport == nil) {
             me._draw.printMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
         } else {
-            var aptMagVar = magvar(airport);
+            var aptMagVar = globals.magvar(airport);
             var y = me._drawAirportAndMetar(airport, aptMagVar);
 
             me._drawRunways.drawRunways(y, airport, aptMagVar);
@@ -372,9 +375,12 @@ var DrawTabContent = {
         var x = 0;
         var y = 0;
 
+        var elevationFt = math.round(airport.elevation * globals.M2FT);
+        var elevationM  = math.round(airport.elevation);
+
         y += me._draw.printLineAirportName(x, y, airport).y;
         y += me._draw.printLineWithValue(x, y, "Lat, Lon:", me._getLatLonInfo(airport)).y;
-        y += me._draw.printLineWith2Values(x, y, "Elevation:", math.round(airport.elevation * globals.M2FT), "ft", math.round(airport.elevation), "m").y;
+        y += me._draw.printLineWith2Values(x, y, "Elevation:", elevationFt, "ft", elevationM, "m").y;
         y += me._draw.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", aptMagVar)).y;
         y += me._draw.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No").y;
         y += Draw.MARGIN_Y;
@@ -407,23 +413,23 @@ var DrawTabContent = {
     # @return string
     #
     _getWindInfoText: func(airport) {
-        if (me._metar.canUseMetar(airport)) {
-            var windDir = me._metar.getWindDir(airport);
-            windDir = windDir == nil
-                ? "variable"
-                : math.round(windDir) ~ "°";
-
-            var result = windDir ~ " at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
-
-            var gust = math.round(me._metar.getWindGustSpeedKt());
-            if (gust > 0) {
-                result ~= " with gust at " ~ gust ~ " kts";
-            }
-
-            return result;
+        if (!me._metar.canUseMetar(airport)) {
+            return "n/a";
         }
 
-        return "n/a";
+        var windDir = me._metar.getWindDir(airport);
+        windDir = windDir == nil
+            ? "variable"
+            : math.round(windDir) ~ "°";
+
+        var result = windDir ~ " at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
+
+        var gust = math.round(me._metar.getWindGustSpeedKt());
+        if (gust > 0) {
+            result ~= " with gust at " ~ gust ~ " kts";
+        }
+
+        return result;
     },
 
     #
@@ -437,7 +443,8 @@ var DrawTabContent = {
 
         var signNS = airport.lat >= 0 ? "N" : "S";
         var signEW = airport.lon >= 0 ? "E" : "W";
-        var sexagesimal = sprintf("%s %d°%02d'%.1f'', %s %d°%02d'%.1f''",
+        var sexagesimal = sprintf(
+            "%s %d°%02d'%.1f'', %s %d°%02d'%.1f''",
             signNS,
             math.abs(int(airport.lat)),
             math.abs(int(airport.lat * 60 - int(airport.lat) * 60)),
