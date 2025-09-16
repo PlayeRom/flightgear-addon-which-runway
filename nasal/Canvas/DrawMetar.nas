@@ -137,24 +137,27 @@ var DrawMetar = {
         # Draw by 2 lines - METAR is too long
         var half = int(count / 2);
 
-        var line1 = me._mergePartsToLine(metarParts, 0, half);
-        var line2 = me._mergePartsToLine(metarParts, half, count);
-
-        return [line1, line2];
+        return me._mergePartsIntoLines(metarParts, count, half);
     },
 
     #
-    # @param  int  begin
-    # @param  int  end
     # @param  vector  parts
-    # @return string
+    # @param  int  count  Quantity of all parts.
+    # @param  int  half  Part index where the first line ends.
+    # @return vector  Two lines of text.
     #
-    _mergePartsToLine: func(parts, begin, end) {
-        var line = "";
-        for (var i = begin; i < end; i += 1) {
-            line ~= parts[i] ~ " ";
+    _mergePartsIntoLines: func(parts, count, half) {
+        var line1 = "";
+        var line2 = "";
+
+        for (var i = 0; i < count; i += 1) {
+            if (i < half) {
+                line1 ~= parts[i] ~ " ";
+            } else {
+                line2 ~= parts[i] ~ " ";
+            }
         }
 
-        return line;
+        return [line1, line2];
     },
 };
