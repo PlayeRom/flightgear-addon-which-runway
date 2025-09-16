@@ -92,25 +92,25 @@ var Draw = {
     # @param  string  label  Label text.
     # @param  string|int|double  value  Value to display.
     # @param  string|nil  unit  Unit to display.
-    # @param  bool  isWindColor
+    # @param  vector|nil  color  RGB color or default if nil.
     # @return hash  New position of x, y and last used canvas text element.
     #
-    printLineWithValue: func(x, y, label, value, unit = nil, isWindColor = false) {
+    printLineWithValue: func(x, y, label, value, unit = nil, color = nil) {
         var text = me.createText(label)
             .setTranslation(x, y)
-            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
+            .setColor(color == nil ? Colors.DEFAULT_TEXT : color);
 
         x += Draw.VALUE_MARGIN_X;
         text = me.createText(value)
             .setTranslation(x, y)
-            .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT)
+            .setColor(color == nil ? Colors.DEFAULT_TEXT : color)
             .setFont(Fonts.SANS_BOLD);
 
         if (unit != nil) {
             x += text.getSize()[0] + 5;
             text = me.createText(unit)
                 .setTranslation(x, y)
-                .setColor(isWindColor ? Colors.BLUE : Colors.DEFAULT_TEXT);
+                .setColor(color == nil ? Colors.DEFAULT_TEXT : color);
         }
 
         return {

@@ -351,9 +351,10 @@ var DrawTabContent = {
         if (airport == nil) {
             me._draw.printMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
         } else {
-            var y = me._drawAirportAndMetar(airport);
+            var aptMagVar = magvar(airport);
+            var y = me._drawAirportAndMetar(airport, aptMagVar);
 
-            me._drawRunways.drawRunways(y, airport);
+            me._drawRunways.drawRunways(y, airport, aptMagVar);
         }
 
         me._scrollArea.scrollToTop();
@@ -364,16 +365,17 @@ var DrawTabContent = {
     # Draw airport and METAR information.
     #
     # @param  ghost  airport
+    # @param  double  aptMagVar  Airport magnetic variation.
     # @return double  New position of y shifted by height of printed line.
     #
-    _drawAirportAndMetar: func(airport) {
+    _drawAirportAndMetar: func(airport, aptMagVar) {
         var x = 0;
         var y = 0;
 
         y += me._draw.printLineAirportName(x, y, airport).y;
         y += me._draw.printLineWithValue(x, y, "Lat, Lon:", me._getLatLonInfo(airport)).y;
         y += me._draw.printLineWith2Values(x, y, "Elevation:", math.round(airport.elevation * globals.M2FT), "ft", math.round(airport.elevation), "m").y;
-        y += me._draw.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", magvar(airport))).y;
+        y += me._draw.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", aptMagVar)).y;
         y += me._draw.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No").y;
         y += Draw.MARGIN_Y;
 

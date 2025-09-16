@@ -47,29 +47,38 @@ var DrawRunways = {
     #
     # @param  double  y  Init position of y.
     # @param  ghost  airport
+    # @param  double  aptMagVar  Airport magnetic variation.
     # @return double  New position of y shifted by height of printed line.
     #
-    drawRunways: func(y, airport) {
+    drawRunways: func(y, airport, aptMagVar) {
         var runwaysData = me._runwaysData.getRunways(airport);
         var roseRadius = 175;
-        var aptMagVar = magvar(airport);
 
         foreach (var rwy; runwaysData) {
             y += me._printRunwayLabel(0, y, rwy);
 
+            # Headwind or Tailwind:
             y += me._draw.printLineWithValue(
                 x: 0,
                 y: y,
                 label: me._getMainWindLabel(rwy.headwind),
                 value: me._getMainWindValue(rwy.headwind, rwy.headwindGust),
                 unit: rwy.headwind == nil ? nil : "kts",
-                isWindColor: true,
+                color: Colors.BLUE,
+            ).y;
+
+            y += me._draw.printLineWithValue(
+                x: 0,
+                y: y,
+                label: "Crosswind:",
+                value: me._crosswindValue(rwy.crosswind, rwy.crosswindGust),
+                unit: me._crosswindUnit(rwy.crosswind),
+                color: Colors.BLUE,
             ).y;
 
             var rwyHdgTrue = math.round(rwy.heading);
             var rwyHdgMag = Utils.normalizeCourse(rwy.heading - aptMagVar);
 
-            y += me._draw.printLineWithValue(0, y, "Crosswind:", me._crosswindValue(rwy.crosswind, rwy.crosswindGust), me._crosswindUnit(rwy.crosswind), true).y;
             y += me._draw.printLineWithValue(0, y, "Heading true:", rwyHdgTrue ~ "°").y;
             y += me._draw.printLineWithValue(0, y, "Heading mag:", rwyHdgMag ~ "°").y;
             y += me._draw.printLineWith2Values(0, y, "Length:", math.round(rwy.length * globals.M2FT), "ft", math.round(rwy.length), "m").y;
@@ -166,7 +175,7 @@ var DrawRunways = {
     #
     # @param  double|nil  headwind
     # @param  double|nil  headwindGust
-    # @return string|decimal
+    # @return string|double
     #
     _getMainWindValue: func(headwind, headwindGust) {
         if (headwind == nil) {
