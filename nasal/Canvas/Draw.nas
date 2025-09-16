@@ -165,7 +165,7 @@ var Draw = {
 
         # inHg
         x += Draw.VALUE_MARGIN_X;
-        text = me.createText(pressValues.inHg)
+        text = me.createText(sprintf("%.02f", pressValues.inHg))
             .setTranslation(x, y)
             .setColor(Colors.DEFAULT_TEXT)
             .setFont(Fonts.SANS_BOLD);
