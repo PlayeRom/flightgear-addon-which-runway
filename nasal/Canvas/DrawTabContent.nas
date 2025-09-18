@@ -461,13 +461,13 @@ var DrawTabContent = {
 
             var rwy = runways[index];
 
-            var runwayInfoView = widgets.runwayInfoView
+            widgets.runwayInfoView
                 .setRunwayData(rwy)
                 .setAirportMagVar(aptMagVar)
                 .setVisible(true)
                 .updateView();
 
-            var windRoseView = widgets.windRoseView
+            widgets.windRoseView
                 .setRadius(175)
                 .setWind(
                     me._metar.getWindDir(airport),

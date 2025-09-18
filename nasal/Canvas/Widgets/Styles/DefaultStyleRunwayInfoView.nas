@@ -158,7 +158,7 @@ DefaultStyle.widgets["runway-info-view"] = {
 
         # Headwind or Tailwind:
         me._hdTw[me._LABEL].setText(me._getMainWindLabel(rwy.headwind));
-        me._hdTw[me._VAL].setText(me._getMainWindValue(rwy.headwind, rwy.headwindGust));
+        me._hdTw[me._VAL].setText(me._getWindValue(rwy.headwind, rwy.headwindGust));
         if (rwy.headwind == nil) {
             me._hdTw[me._UNIT].setVisible(false);
         } else {
@@ -171,7 +171,7 @@ DefaultStyle.widgets["runway-info-view"] = {
 
         # Crosswind:
         var xwUnit = me._crosswindUnit(rwy.crosswind);
-        me._crosswind[me._VAL].setText(me._crosswindValue(rwy.crosswind, rwy.crosswindGust));
+        me._crosswind[me._VAL].setText(me._getWindValue(rwy.crosswind, rwy.crosswindGust));
         if (xwUnit == nil) {
             me._crosswind[me._UNIT].setVisible(false);
         } else {
@@ -265,41 +265,20 @@ DefaultStyle.widgets["runway-info-view"] = {
     },
 
     #
-    # @param  double|nil  headwind
-    # @param  double|nil  headwindGust
+    # @param  double|nil  wind
+    # @param  double|nil  gust
     # @return string
     #
-    _getMainWindValue: func(headwind, headwindGust) {
-        if (headwind == nil) {
+    _getWindValue: func(wind, gust) {
+        if (wind == nil) {
             return "n/a";
         }
 
-        var result = sprintf("%d", math.round(math.abs(headwind)));
-        if (headwindGust != nil) {
-            headwindGust = sprintf("%d", math.round(math.abs(headwindGust)));
-            if (headwindGust > 0) {
-                result ~= "-" ~ headwindGust;
-            }
-        }
-
-        return result;
-    },
-
-    #
-    # @param  double|nil  crosswind
-    # @param  double|nil  crosswindGust
-    # @return string
-    #
-    _crosswindValue: func(crosswind, crosswindGust) {
-        if (crosswind == nil) {
-            return "n/a";
-        }
-
-        var result = sprintf("%d", math.round(math.abs(crosswind)));
-        if (crosswindGust != nil) {
-            crosswindGust = sprintf("%d", math.round(math.abs(crosswindGust)));
-            if (crosswindGust > 0) {
-                result ~= "-" ~ crosswindGust;
+        var result = sprintf("%d", math.round(math.abs(wind)));
+        if (gust != nil) {
+            gust = sprintf("%d", math.round(math.abs(gust)));
+            if (gust > 0) {
+                result ~= "-" ~ gust;
             }
         }
 

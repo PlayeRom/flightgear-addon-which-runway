@@ -106,7 +106,7 @@ DefaultStyle.widgets["metar-info-view"] = {
         y += me._drawWeatherData(x, y, model);
 
         # model.setLayoutMaximumSize([MAX_SIZE, y]);
-        model.setLayoutMinimumSize([model._size[0], 162.375]); # <- min height when METAR has one line.
+        model.setLayoutMinimumSize([model._size[0], y]);
         model.setLayoutSizeHint([model._size[0], y]);
     },
 
@@ -270,12 +270,14 @@ DefaultStyle.widgets["metar-info-view"] = {
     _printWarningForeignMetar: func(x, y, model) {
         var distM = model._distanceToStation;
 
-        var label = sprintf(
-            "METAR comes from %s, %.1f NM (%.1f km) away:",
-            model._metarIcao,
-            distM * globals.M2NM,
-            distM / 1000,
-        );
+        var label = distM == nil
+            ? sprintf("METAR comes from %s, ? NM (? km) away:", model._metarIcao)
+            : sprintf(
+                "METAR comes from %s, %.1f NM (%.1f km) away:",
+                model._metarIcao,
+                distM * globals.M2NM,
+                distM / 1000,
+            );
 
         me._foreignMetarText.setText(label)
             .setTranslation(x, y)
