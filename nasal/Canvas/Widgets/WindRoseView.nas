@@ -30,11 +30,12 @@ gui.widgets.WindRoseView = {
         me._focus_policy = me.NoFocus;
         me._setView(style.createWidget(parent, "wind-rose-view", me._cfg));
 
-        me._radius = 0;
+        me._radius = 175;
         me._windDir = nil;
         me._windKt = 0;
         me._runway = nil;
         me._runways = [];
+        me._maxRwyLength = 5000.0;
 
         return me;
     },
@@ -74,7 +75,25 @@ gui.widgets.WindRoseView = {
     #
     setRunways: func(runways) {
         me._runways = runways;
+        me._maxRwyLength = me._findMaxLengthRunway();
         return me;
+    },
+
+    #
+    # @return double  Max runway length in meters.
+    #
+    _findMaxLengthRunway: func() {
+        var maxLen = 0;
+        foreach (var rwy; me._runways) {
+            if (rwy.length > maxLen) {
+                maxLen = rwy.length;
+            }
+        }
+
+        # We artificially enlarge the runway so that the runway numbers can still fit within the wind rose.
+        # For rose radius of 175 px the ratio 1.35 looks good.
+        var ratio = (me._radius / 175) * 1.35;
+        return maxLen * ratio;
     },
 
     #

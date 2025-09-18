@@ -177,8 +177,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
         var isMainRwy = refRwy == nil;
 
         # Scale: meters → pixels
-        var MAX_RWY_LENGTH = 5000.0;
-        var scale = (model._radius * 2) / MAX_RWY_LENGTH;
+        var scale = (model._radius * 2) / model._maxRwyLength;
 
         # Runway length and width in pixels
         var lenPix   = rwy.length * scale;
