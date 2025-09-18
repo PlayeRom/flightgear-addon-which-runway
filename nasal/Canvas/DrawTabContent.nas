@@ -28,11 +28,13 @@ var DrawTabContent = {
     # @return hash
     #
     new: func(tabsContent, tabContent, tabId) {
-        var me = { parents: [DrawTabContent] };
+        var me = {
+            parents: [DrawTabContent],
+            _tabsContent: tabsContent,
+            _tabContent: tabContent,
+            _tabId: tabId,
+        };
 
-        me._tabsContent = tabsContent;
-        me._tabContent = tabContent;
-        me._tabId = tabId;
         me._icao = "";
         me._icaoEdit = nil;
         me._isHoldUpdateNearest = false;
@@ -116,8 +118,8 @@ var DrawTabContent = {
 
         me._bottomBar = BottomBar.new(
             tabsContent: me._tabsContent,
-            withIcaoBtns: me._isTabNearest() or me._isTabAlternate(),
             downloadMetarCallback: Callback.new(me._downloadMetar, me),
+            withIcaoBtns: me._isTabNearest() or me._isTabAlternate(),
         );
 
         me._drawBottomBar();

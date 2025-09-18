@@ -20,11 +20,10 @@ var RunwaysData = {
     # @return hash
     #
     new: func(metar) {
-        var me = { parents: [RunwaysData] };
-
-        me._metar = metar;
-
-        return me;
+        return {
+            parents: [RunwaysData],
+            _metar: metar,
+        };
     },
 
     #

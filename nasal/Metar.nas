@@ -29,11 +29,12 @@ var Metar = {
     # @return hash
     #
     new: func(tabId, updateMetarCallback, updateRealWxCallback) {
-        var me = { parents: [Metar] };
-
-        me._tabId = tabId;
-        me._updateMetarCallback = updateMetarCallback;
-        me._callbackUpdateRealWx = updateRealWxCallback;
+        var me = {
+            parents: [Metar],
+            _tabId: tabId,
+            _updateMetarCallback: updateMetarCallback,
+            _callbackUpdateRealWx: updateRealWxCallback,
+        };
 
         # If we download a METAR from an airport other than the current one,
         # because the current one does not have a META, we set this variable to true.

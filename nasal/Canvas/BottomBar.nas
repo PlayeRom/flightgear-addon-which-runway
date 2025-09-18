@@ -17,16 +17,18 @@ var BottomBar = {
     # Constructor
     #
     # @param  ghost  tabsContent  Tabs canvas content.
-    # @param  bool  withIcaoBtns  If true then buttons with nearest ICOAs will be added.
     # @param  hash  downloadMetarCallback  Callback object to run download METAR function.
+    # @param  bool  withIcaoBtns  If true then buttons with nearest ICOAs will be added.
     # @return hash
     #
-    new: func(tabsContent, withIcaoBtns, downloadMetarCallback) {
-        var me = { parents: [BottomBar] };
+    new: func(tabsContent, downloadMetarCallback, withIcaoBtns) {
+        var me = {
+            parents: [BottomBar],
+            _tabsContent: tabsContent,
+            _downloadMetarCallback: downloadMetarCallback,
+        };
 
-        me._tabsContent = tabsContent;
         me._icaoEdit = nil;
-        me._downloadMetarCallback = downloadMetarCallback;
         me._icao = "";
 
         if (withIcaoBtns) {
