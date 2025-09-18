@@ -108,8 +108,7 @@ var Dialog = {
 
         window.hide();
 
-        var self = me;
-
+        # var self = me;
         # window.del = func() {
         #     # This method will be call after click on (X) button in canvas top
         #     # bar and here we want hide the window only.
