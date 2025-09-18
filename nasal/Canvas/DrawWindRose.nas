@@ -51,14 +51,6 @@ var DrawWindRose = {
     # @return void
     #
     drawWindRose: func(centerX, centerY, radius, windDir, windKt, runway, runwaysData) {
-        me._draw.createClipContent(
-            top   : centerY - (radius * 1.45),
-            right : centerX + (radius * 1.45),
-            bottom: centerY + (radius * 1.45),
-            left  : centerX - (radius * 1.45),
-        );
-        me._draw.enableClipContent();
-
         me._radius = radius;
 
         var spokeStepDeg = 10; # graduation lines every 10°
@@ -129,8 +121,6 @@ var DrawWindRose = {
         me._drawRunway(centerX, centerY, runway);
 
         me._drawWindArrow(centerX, centerY, windDir, windKt);
-
-        me._draw.disableClipContent();
     },
 
     #
@@ -169,6 +159,10 @@ var DrawWindRose = {
         var METERS_PER_DEG_LAT   = 111320.0;
         var EARTH_EQUATOR_METERS = 40075000.0;
 
+        var rwyCenterX = centerX;
+        var rwyCenterY = centerY;
+        var startClipped = false;
+        var endClipped = false;
         var xStart = 0;
         var yStart = 0;
         var xEnd   = 0;
@@ -201,15 +195,32 @@ var DrawWindRose = {
             var dXM = (thisCenterLat - refCenterLat) * METERS_PER_DEG_LAT;
             var dYM = (thisCenterLon - refCenterLon) * mPerLon;
 
+            var dxPx = dYM * scale;
+            var dyPx = -dXM * scale;
+
             # Translation to pixels relative to the center of the wind rose.
-            centerX = centerX + dYM * scale;
-            centerY = centerY - dXM * scale;
+            rwyCenterX = centerX + dxPx;
+            rwyCenterY = centerY + dyPx;
 
             # The ends of the runway along the runway heading.
-            xStart = centerX - cosRad * (lenPix / 2);
-            yStart = centerY - sinRad * (lenPix / 2);
-            xEnd   = centerX + cosRad * (lenPix / 2);
-            yEnd   = centerY + sinRad * (lenPix / 2);
+            xStart = rwyCenterX - cosRad * (lenPix / 2);
+            yStart = rwyCenterY - sinRad * (lenPix / 2);
+            xEnd   = rwyCenterX + cosRad * (lenPix / 2);
+            yEnd   = rwyCenterY + sinRad * (lenPix / 2);
+
+            var clipped = me._clipLineToCircle(xStart, yStart, xEnd, yEnd, centerX, centerY, me._radius * 1.1);
+            if (clipped == nil) {
+                # Runway outside the wind rose, don't draw it
+                return;
+            }
+
+            startClipped = (clipped[0].x != xStart or clipped[0].y != yStart);
+            endClipped   = (clipped[1].x != xEnd   or clipped[1].y != yEnd);
+
+            xStart = clipped[0].x;
+            yStart = clipped[0].y;
+            xEnd   = clipped[1].x;
+            yEnd   = clipped[1].y;
         }
 
         # Draw runway
@@ -221,13 +232,76 @@ var DrawWindRose = {
             .setStrokeLineWidth(widthPix);
 
         # Threshold markings
-        if (rwy.reciprocal != nil) {
+        if (rwy.reciprocal != nil and !endClipped) {
             # For reciprocal
-            me._drawRunwayId(centerX, centerY, rwy.reciprocal.id, rwy.normDiffDeg, angleRad, lenPix, false, isMainRwy);
+            me._drawRunwayId(rwyCenterX, rwyCenterY, rwy.reciprocal.id, rwy.normDiffDeg, angleRad, lenPix, false, isMainRwy);
         }
 
-        angleRad = (rwy.heading + 90) * globals.D2R;
-        me._drawRunwayId(centerX, centerY, rwy.rwyId, rwy.normDiffDeg, angleRad, lenPix, isMainRwy, isMainRwy);
+        if (!startClipped) {
+            angleRad = (rwy.heading + 90) * globals.D2R;
+            me._drawRunwayId(rwyCenterX, rwyCenterY, rwy.rwyId, rwy.normDiffDeg, angleRad, lenPix, isMainRwy, isMainRwy);
+        }
+    },
+
+    #
+    # @param  double  x1, y1  Start point of line.
+    # @param  double  x2, y2  End point of line.
+    # @param  double  cx, cy  Center of wind rose.
+    # @param  double  radius  Radius to clip.
+    # @return vector|nil  Return vector with 2 point (start, end) or nil.
+    #
+    _clipLineToCircle: func(x1, y1, x2, y2, cx, cy, radius) {
+        var radiusPow2 = radius * radius;
+
+        # segment vector
+        var dx = x2 - x1;
+        var dy = y2 - y1;
+
+        # offset from the center of the circle
+        var fx = x1 - cx;
+        var fy = y1 - cy;
+
+        # quadratic equation: (dx^2 + dy^2) t^2 + 2(fx*dx + fy*dy) t + (fx^2 + fy^2 - radius^2) = 0
+        var a = dx * dx + dy * dy;
+        var b = 2 * (fx * dx + fy * dy);
+        var c = fx * fx + fy * fy - radiusPow2;
+
+        var disc = b * b - 4 * a * c;
+        if (disc < 0) {
+            # nothing to clip
+            return nil;
+        }
+
+        disc = math.sqrt(disc);
+        var t1 = (-b - disc) / (2 * a);
+        var t2 = (-b + disc) / (2 * a);
+
+        var points = [];
+
+        if (t1 >= 0 and t1 <= 1) {
+            append(points, {
+                x: x1 + t1 * dx,
+                y: y1 + t1 * dy,
+            });
+        }
+
+        if (t2 >= 0 and t2 <= 1) {
+            append(points, {
+                x: x1 + t2 * dx,
+                y: y1 + t2 * dy,
+            });
+        }
+
+        # zwróć odcinek przycięty
+        var inside1 = (math.pow(x1 - cx, 2) + math.pow(y1 - cy, 2)) <= radiusPow2;
+        var inside2 = (math.pow(x2 - cx, 2) + math.pow(y2 - cy, 2)) <= radiusPow2;
+
+           if (inside1 and inside2)          return [ {x: x1, y: y1}, { x: x2, y: y2} ];
+        elsif (inside1 and size(points) > 0) return [ {x: x1, y: y1}, points[0] ];
+        elsif (inside2 and size(points) > 0) return [ points[0], {x: x2, y: y2} ];
+        elsif (size(points) == 2)            return [ points[0], points[1] ];
+
+        return nil; # whole line is out of circle
     },
 
     #

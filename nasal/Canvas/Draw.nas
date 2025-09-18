@@ -28,10 +28,7 @@ var Draw = {
     new: func(canvasContent) {
         var me = { parents: [Draw] };
 
-        me._mainContent = canvasContent;
-        me._clipContent = nil;
-
-        me._isUsingClipContent = false;
+        me._content = canvasContent;
 
         return me;
     },
@@ -45,37 +42,10 @@ var Draw = {
     },
 
     #
-    # Create clip context.
-    #
-    # @param  int  top  Top border of the cropping area
-    # @param  int  right  Right border of the cropping area
-    # @param  int  bottom  Bottom border of the cropping area
-    # @param  int  left  Left border of the cropping area
-    # @return void
-    #
-    createClipContent: func(top, right, bottom, left) {
-        me._clipContent = me._mainContent.createChild("group", "clip-content")
-            .set("clip-frame", canvas.Element.PARENT)
-            .set("clip", sprintf("rect(%d, %d, %d, %d)", top, right, bottom, left));
-    },
-
-    enableClipContent: func() {
-        me._isUsingClipContent = true;
-    },
-
-    disableClipContent: func() {
-        me._isUsingClipContent = false;
-    },
-
-    #
     # @return ghost  Canvas content.
     #
     _getContent: func() {
-        if (me._isUsingClipContent and me._clipContent != nil) {
-            return me._clipContent;
-        }
-
-        return me._mainContent;
+        return me._content;
     },
 
     #
