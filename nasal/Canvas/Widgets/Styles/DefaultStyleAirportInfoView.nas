@@ -31,40 +31,38 @@ DefaultStyle.widgets["airport-info-view"] = {
         me._VAL2  = 3;
         me._UNIT2 = 4;
 
-        var x = 0;
-        var y = 0;
-
         me._airportNameText = me._draw.createText("n/a")
             .setColor(whichRunway.Colors.DEFAULT_TEXT)
             .setFontSize(24)
             .setFont(whichRunway.Fonts.SANS_BOLD);
 
         me._latLon = [
-            me._draw.createTextLabel(x, y, "Lat, Lon:"),
-            me._draw.createTextValue(x, y, "n/a"),
+            me._draw.createTextLabel("Lat, Lon:"),
+            me._draw.createTextValue("n/a"),
         ];
 
         me._elevation = [
-            me._draw.createTextLabel(x, y, "Elevation:"),
-            me._draw.createTextValue(x, y, "n/a"),
-            me._draw.createTextUnit(x, y, "ft /"),
-            me._draw.createTextValue(x, y, "n/a"),
-            me._draw.createTextUnit(x, y, "m"),
+            me._draw.createTextLabel("Elevation:"),
+            me._draw.createTextValue("n/a"),
+            me._draw.createTextUnit("ft /"),
+            me._draw.createTextValue("n/a"),
+            me._draw.createTextUnit("m"),
         ];
 
         me._magVar = [
-            me._draw.createTextLabel(x, y, "Mag Var:"),
-            me._draw.createTextValue(x, y, "n/a"),
+            me._draw.createTextLabel("Mag Var:"),
+            me._draw.createTextValue("n/a"),
         ];
 
         me._hasMetar = [
-            me._draw.createTextLabel(x, y, "Has METAR:"),
-            me._draw.createTextValue(x, y, "n/a"),
+            me._draw.createTextLabel("Has METAR:"),
+            me._draw.createTextValue("n/a"),
         ];
 
-        y = 40; # <- FIXME: this is incorrect, it should be 0 here, but I don't know why, ScrollArea doesn't take into
-                # account that there are tabs at the top and I have to artificially move the content here so that
-                # the tabs don't cover it.
+        var x = 0;
+        var y = 40; # <- FIXME: this is incorrect, it should be 0 here, but I don't know why, ScrollArea doesn't take into
+                    # account that there are tabs at the top and I have to artificially move the content here so that
+                    # the tabs don't cover it.
 
         me._airportNameText.setTranslation(x, y);
         y += me._draw.shiftY(me._airportNameText);
@@ -125,18 +123,10 @@ DefaultStyle.widgets["airport-info-view"] = {
         me._airportNameText.setText(model._airport.id ~ " – " ~ model._airport.name);
         me._latLon[me._VAL].setText(me._getLatLonInfo(model));
 
-        me._draw.setValuesForLine(
-            {
-                text : me._elevation[me._VAL],
-                unit : me._elevation[me._UNIT],
-                value: elevationFt,
-            },
-            {
-                text : me._elevation[me._VAL2],
-                unit : me._elevation[me._UNIT2],
-                value: elevationM,
-            },
-        );
+        me._elevation[me._VAL].setText(elevationFt);
+        me._elevation[me._VAL2].setText(elevationM);
+        var (xT, yT) = me._elevation[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yT, me._elevation);
 
         me._magVar[me._VAL].setText(sprintf("%.2f°", model._aptMagVar));
         me._hasMetar[me._VAL].setText(model._airport.has_metar ? "Yes" : "No");

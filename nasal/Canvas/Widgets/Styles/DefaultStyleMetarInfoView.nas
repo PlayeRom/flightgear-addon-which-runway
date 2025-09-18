@@ -25,52 +25,44 @@ DefaultStyle.widgets["metar-info-view"] = {
 
         me._draw = Draw.new(me._root);
 
-        var x = 0;
-        var y = 0;
-
         me._noLiveDataText = me._draw.createText("For METAR, it is necessary to select the \"Live Data\" weather scenario!")
-            .setTranslation(x, y)
             .setColor(whichRunway.Colors.RED)
             .setVisible(false);
 
         me._foreignMetarText = me._draw.createText() # "METAR comes from %s, %.1f NM (%.1f km) away:",
-            .setTranslation(x, y)
             .setColor(whichRunway.Colors.AMBER)
             .setVisible(false);
 
         me._metarLine1Text = me._draw.createText()
-            .setTranslation(x, y)
             .setColor(whichRunway.Colors.DEFAULT_TEXT)
             .setVisible(false);
 
         me._metarLine2Text = me._draw.createText()
-            .setTranslation(x, y)
             .setColor(whichRunway.Colors.DEFAULT_TEXT)
             .setVisible(false);
 
         me._pressure = {
             qnh: {
-                label   : me._draw.createTextLabel(x, y, "QNH:"),
-                inHgVal : me._draw.createTextValue(x, y, "n/a"),
-                inHgUnit: me._draw.createTextUnit(x, y, "inHg /"),
-                hPaVal  : me._draw.createTextValue(x, y, "n/a").setAlignment("right-baseline"),
-                hPaUnit : me._draw.createTextUnit(x, y, "hPa /"),
-                mmHgVal : me._draw.createTextValue(x, y, "n/a"),
-                mmHgUnit: me._draw.createTextUnit(x, y, "mmHg"),
+                label   : me._draw.createTextLabel("QNH:"),
+                inHgVal : me._draw.createTextValue("n/a"),
+                inHgUnit: me._draw.createTextUnit("inHg /"),
+                hPaVal  : me._draw.createTextValue("n/a").setAlignment("right-baseline"),
+                hPaUnit : me._draw.createTextUnit("hPa /"),
+                mmHgVal : me._draw.createTextValue("n/a"),
+                mmHgUnit: me._draw.createTextUnit("mmHg"),
             },
             qfe: {
-                label   : me._draw.createTextLabel(x, y, "QFE:"),
-                inHgVal : me._draw.createTextValue(x, y, "n/a"),
-                inHgUnit: me._draw.createTextUnit(x, y, "inHg /"),
-                hPaVal  : me._draw.createTextValue(x, y, "n/a").setAlignment("right-baseline"),
-                hPaUnit : me._draw.createTextUnit(x, y, "hPa /"),
-                mmHgVal : me._draw.createTextValue(x, y, "n/a"),
-                mmHgUnit: me._draw.createTextUnit(x, y, "mmHg"),
+                label   : me._draw.createTextLabel("QFE:"),
+                inHgVal : me._draw.createTextValue("n/a"),
+                inHgUnit: me._draw.createTextUnit("inHg /"),
+                hPaVal  : me._draw.createTextValue("n/a").setAlignment("right-baseline"),
+                hPaUnit : me._draw.createTextUnit("hPa /"),
+                mmHgVal : me._draw.createTextValue("n/a"),
+                mmHgUnit: me._draw.createTextUnit("mmHg"),
             },
         };
 
         me._windText = me._draw.createText("Wind")
-            .setTranslation(x, y)
             .setColor(whichRunway.Colors.BLUE)
             .setFontSize(20)
             .setFont(whichRunway.Fonts.SANS_BOLD);

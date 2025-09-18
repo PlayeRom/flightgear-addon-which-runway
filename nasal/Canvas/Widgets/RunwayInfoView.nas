@@ -46,7 +46,7 @@ gui.widgets.RunwayInfoView = {
     },
 
     #
-    # @param  double  aptMagVar  Airport  magnetic variation.
+    # @param  double  aptMagVar  Airport magnetic variation.
     # @return ghost
     #
     setAirportMagVar: func(aptMagVar) {

@@ -32,62 +32,62 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._UNIT2 = 4;
 
         me._runwayTexts = {
-            label: me._draw.createTextLabel(0, 0, "Runway/Helipad:"),
-            id   : me._draw.createTextValue(0, 0, "31L").setFontSize(20),
-            wind : me._draw.createTextLabel(0, 0, "Headwind/Tailwind"),
+            label: me._draw.createTextLabel("Runway/Helipad:"),
+            id   : me._draw.createTextValue("31L").setFontSize(20),
+            wind : me._draw.createTextLabel("Headwind/Tailwind"),
         };
 
         me._hdTw = [
-            me._draw.createTextLabel(0, 0, "Headwind/Tailwind:").setColor(whichRunway.Colors.BLUE),
-            me._draw.createTextValue(0, 0, "n/a").setColor(whichRunway.Colors.BLUE),
-            me._draw.createTextUnit(0, 0, "kts").setColor(whichRunway.Colors.BLUE),
+            me._draw.createTextLabel("Headwind/Tailwind:", whichRunway.Colors.BLUE),
+            me._draw.createTextValue("n/a", whichRunway.Colors.BLUE),
+            me._draw.createTextUnit("kts", whichRunway.Colors.BLUE),
         ];
 
         me._crosswind = [
-            me._draw.createTextLabel(0, 0, "Crosswind:").setColor(whichRunway.Colors.BLUE),
-            me._draw.createTextValue(0, 0, "n/a").setColor(whichRunway.Colors.BLUE),
-            me._draw.createTextUnit(0, 0, "kts").setColor(whichRunway.Colors.BLUE),
+            me._draw.createTextLabel("Crosswind:", whichRunway.Colors.BLUE),
+            me._draw.createTextValue("n/a", whichRunway.Colors.BLUE),
+            me._draw.createTextUnit("kts", whichRunway.Colors.BLUE),
         ];
 
         me._hdgTrue = [
-            me._draw.createTextLabel(0, 0, "Heading true:"),
-            me._draw.createTextValue(0, 0, "°"),
+            me._draw.createTextLabel("Heading true:"),
+            me._draw.createTextValue("°"),
         ];
 
         me._hdgMag = [
-            me._draw.createTextLabel(0, 0, "Heading mag:"),
-            me._draw.createTextValue(0, 0, "°"),
+            me._draw.createTextLabel("Heading mag:"),
+            me._draw.createTextValue("°"),
         ];
 
         me._rwyLength = [
-            me._draw.createTextLabel(0, 0, "Length:"),
-            me._draw.createTextValue(0, 0),
-            me._draw.createTextUnit(0, 0, "ft"),
-            me._draw.createTextValue(0, 0),
-            me._draw.createTextUnit(0, 0, "m"),
+            me._draw.createTextLabel("Length:"),
+            me._draw.createTextValue("0"),
+            me._draw.createTextUnit("ft"),
+            me._draw.createTextValue("0"),
+            me._draw.createTextUnit("m"),
         ];
 
         me._rwyWidth = [
-            me._draw.createTextLabel(0, 0, "Width:"),
-            me._draw.createTextValue(0, 0),
-            me._draw.createTextUnit(0, 0, "ft"),
-            me._draw.createTextValue(0, 0),
-            me._draw.createTextUnit(0, 0, "m"),
+            me._draw.createTextLabel("Width:"),
+            me._draw.createTextValue("0"),
+            me._draw.createTextUnit("ft"),
+            me._draw.createTextValue("0"),
+            me._draw.createTextUnit("m"),
         ];
 
         me._surface = [
-            me._draw.createTextLabel(0, 0, "Surface:"),
-            me._draw.createTextValue(0, 0, "n/a"),
+            me._draw.createTextLabel("Surface:"),
+            me._draw.createTextValue("n/a"),
         ];
 
         me._reciprocal = [
-            me._draw.createTextLabel(0, 0, "Reciprocal:"),
-            me._draw.createTextValue(0, 0, "n/a"),
+            me._draw.createTextLabel("Reciprocal:"),
+            me._draw.createTextValue("n/a"),
         ];
 
         me._ils = [
-            me._draw.createTextLabel(0, 0, "ILS:"),
-            me._draw.createTextValue(0, 0, "n/a"),
+            me._draw.createTextLabel("ILS:"),
+            me._draw.createTextValue("n/a"),
         ];
 
         var x = 0;
@@ -142,7 +142,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     reDrawContent: func(model) {
         me._drawRunwayInfo(model);
 
-        # model.setLayoutMaximumSize([MAX_SIZE, y]);
+        # model.setLayoutMaximumSize([model._size[0], me._contentHeight]);
         model.setLayoutMinimumSize([model._size[0], me._contentHeight]);
         model.setLayoutSizeHint([model._size[0], me._contentHeight]);
     },
@@ -189,31 +189,15 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._hdgTrue[me._VAL].setText(sprintf("%d°", rwyHdgTrue));
         me._hdgMag[me._VAL].setText(sprintf("%d°", rwyHdgMag));
 
-        me._draw.setValuesForLine(
-            {
-                text : me._rwyLength[me._VAL],
-                unit : me._rwyLength[me._UNIT],
-                value: sprintf("%d", math.round(rwy.length * globals.M2FT)),
-            },
-            {
-                text : me._rwyLength[me._VAL2],
-                unit : me._rwyLength[me._UNIT2],
-                value: sprintf("%d", math.round(rwy.length)),
-            },
-        );
+        me._rwyLength[me._VAL].setText(sprintf("%d", math.round(rwy.length * globals.M2FT)));
+        me._rwyLength[me._VAL2].setText(sprintf("%d", math.round(rwy.length)));
+        var (xTL, yTL) = me._rwyLength[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yTL, me._rwyLength);
 
-        me._draw.setValuesForLine(
-            {
-                text : me._rwyWidth[me._VAL],
-                unit : me._rwyWidth[me._UNIT],
-                value: sprintf("%d", math.round(rwy.width * globals.M2FT)),
-            },
-            {
-                text : me._rwyWidth[me._VAL2],
-                unit : me._rwyWidth[me._UNIT2],
-                value: sprintf("%d", math.round(rwy.width)),
-            },
-        );
+        me._rwyWidth[me._VAL].setText(sprintf("%d", math.round(rwy.width * globals.M2FT)));
+        me._rwyWidth[me._VAL2].setText(sprintf("%d", math.round(rwy.width)));
+        var (xTW, yTW) = me._rwyWidth[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yTW, me._rwyWidth);
 
         me._surface[me._VAL].setText(me._getSurface(rwy.surface));
         me._reciprocal[me._VAL].setText(rwy.reciprocal == nil ? "n/a" : rwy.reciprocal.id);

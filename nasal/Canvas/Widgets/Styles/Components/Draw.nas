@@ -89,23 +89,35 @@ var Draw = {
         return textElement.getSize()[1] + (Draw.MARGIN_Y * multiplier);
     },
 
-    createTextLabel: func(x, y, text = nil) {
+    #
+    # @param  string|nil  text
+    # @param  vector|nil  RGB color.
+    # @return ghost  Text canvas element for label.
+    #
+    createTextLabel: func(text = nil, color = nil) {
         return me.createText(text)
-            .setTranslation(x, y)
-            .setColor(whichRunway.Colors.DEFAULT_TEXT);
+            .setColor(color == nil ? whichRunway.Colors.DEFAULT_TEXT : color);
     },
 
-    createTextValue: func(x, y, text = nil) {
+    #
+    # @param  string|nil  text
+    # @param  vector|nil  RGB color.
+    # @return ghost  Text canvas element for value.
+    #
+    createTextValue: func(text = nil, color = nil) {
         return me.createText(text)
-            .setTranslation(x, y)
-            .setColor(whichRunway.Colors.DEFAULT_TEXT)
+            .setColor(color == nil ? whichRunway.Colors.DEFAULT_TEXT : color)
             .setFont(whichRunway.Fonts.SANS_BOLD);
     },
 
-    createTextUnit: func(x, y, text = nil) {
+    #
+    # @param  string|nil  text
+    # @param  vector|nil  RGB color.
+    # @return ghost  Text canvas element for unit.
+    #
+    createTextUnit: func(text = nil, color = nil) {
         return me.createText(text)
-            .setTranslation(x, y)
-            .setColor(whichRunway.Colors.DEFAULT_TEXT);
+            .setColor(color == nil ? whichRunway.Colors.DEFAULT_TEXT : color);
     },
 
     #
@@ -132,41 +144,5 @@ var Draw = {
         }
 
         return me.shiftY(lastText);
-    },
-
-    #
-    # As parameters you pass the vector of objects: { text: canvas, value: value, unit: canvas|nil  }
-    # and so on.
-    #
-    # @return void
-    #
-    setValuesForLine: func() {
-        var count = size(arg);
-        var x = Draw.VALUE_MARGIN_X;
-
-        for (var i = 0; i < count; i += 1) {
-            var param = arg[i];
-
-            if (i > 0) {
-                # shift value text:
-                var lastText = arg[i - 1].unit == nil
-                    ? arg[i - 1].text
-                    : arg[i - 1].unit;
-
-                var (tX, tY) = lastText.getTranslation();
-                x += me.shiftX(lastText);
-
-                param.text.setTranslation(x, tY);
-            }
-
-            param.text.setText(param.value);
-
-            if (param.unit != nil) {
-                # shift unit text:
-                var (tX, tY) = param.unit.getTranslation();
-                x += me.shiftX(param.text);
-                param.unit.setTranslation(x, tY);
-            }
-        }
     },
 };
