@@ -37,9 +37,11 @@ var loadExtraNasalFiles = func(addon) {
         "nasal/Utils",
         "nasal/Fonts",
         "nasal/Canvas/DrawTabContent",
+        "nasal/Canvas/BottomBar",
         "nasal/Canvas/Dialog",
         "nasal/Canvas/AboutDialog",
         "nasal/Canvas/WhichRwyDialog",
+        "nasal/Canvas/ScrollAreaHelper",
         "nasal/RunwaysData",
         "WhichRwy",
     ];
