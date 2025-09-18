@@ -69,8 +69,6 @@ DefaultStyle.widgets["wind-rose-view"] = {
         # model.setLayoutMaximumSize([MAX_SIZE, height]);
         model.setLayoutMinimumSize([height, height]);
         model.setLayoutSizeHint([height, height]);
-
-        me.update(model);
     },
 
     #
