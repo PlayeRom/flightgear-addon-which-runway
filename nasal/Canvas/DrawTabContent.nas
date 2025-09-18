@@ -449,7 +449,18 @@ var DrawTabContent = {
             .setVisible(true)
             .updateView();
 
+        me._reDrawRunways(airport, aptMagVar);
 
+        me._scrollArea.scrollToTop();
+        me._scrollArea.scrollToLeft();
+    },
+
+    #
+    # @param  ghost  airport
+    # @param  double  aptMagVar
+    # @return void
+    #
+    _reDrawRunways: func(airport, aptMagVar) {
         var runways = me._runwaysData.getRunways(airport);
         var runwaysSize = size(runways);
         var runwayWidgetsSize = me._runwayWidgets.size();
@@ -488,9 +499,6 @@ var DrawTabContent = {
                 .setVisible(true)
                 .updateView();
         }
-
-        me._scrollArea.scrollToTop();
-        me._scrollArea.scrollToLeft();
     },
 
     #
@@ -637,7 +645,6 @@ var DrawTabContent = {
     # @return void
     #
     _updateNearestAirportButtons: func() {
-        # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons call");
         var airports = globals.findAirportsWithinRange(50); # range in NM
         var airportSize = size(airports);
 
@@ -645,15 +652,11 @@ var DrawTabContent = {
             var airport = index < airportSize ? airports[index] : nil;
 
             if (airport == nil) {
-                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " disable");
-
                 me._btnLoadIcaos.vector[index]
                     .setText("----")
                     .setVisible(false)
                     .listen("clicked", nil);
             } else {
-                # logprint(LOG_ALERT, "Which Runway ----- _updateNearestAirportButtons button ", index, " enable with ICAO ", airport.id);
-
                 func() {
                     var icao = airport.id;
 

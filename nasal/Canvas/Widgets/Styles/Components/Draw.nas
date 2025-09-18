@@ -17,7 +17,7 @@ var Draw = {
     # Constants:
     #
     MARGIN_Y      : 10,
-    VALUE_MARGIN_X: 110,
+    VALUE_MARGIN_X: 110, # the distance of the value from the label.
 
     #
     # Constructor.

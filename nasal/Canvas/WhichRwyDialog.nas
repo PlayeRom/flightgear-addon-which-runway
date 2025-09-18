@@ -46,16 +46,15 @@ var WhichRwyDialog = {
         me._tabsContent = me._tabs.getContent();
         me.vbox.addItem(me._tabs);
 
-        me._tabNearest = canvas.VBoxLayout.new();
+        me._tabNearest   = canvas.VBoxLayout.new();
         me._tabDeparture = canvas.VBoxLayout.new();
-        me._tabArrival = canvas.VBoxLayout.new();
+        me._tabArrival   = canvas.VBoxLayout.new();
         me._tabAlternate = canvas.VBoxLayout.new();
 
         me._tabs.addTab(WhichRwyDialog.TAB_NEAREST, "Nearest", me._tabNearest);
         me._tabs.addTab(WhichRwyDialog.TAB_DEPARTURE, "Departure", me._tabDeparture);
         me._tabs.addTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival", me._tabArrival);
         me._tabs.addTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate", me._tabAlternate);
-
 
         me._drawTabContentNearest   = DrawTabContent.new(me._tabsContent, me._tabNearest, WhichRwyDialog.TAB_NEAREST);
         me._drawTabContentDeparture = DrawTabContent.new(me._tabsContent, me._tabDeparture, WhichRwyDialog.TAB_DEPARTURE);
