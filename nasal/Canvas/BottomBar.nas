@@ -18,17 +18,15 @@ var BottomBar = {
     #
     # @param  ghost  tabsContent  Tabs canvas content.
     # @param  bool  withIcaoBtns  If true then buttons with nearest ICOAs will be added.
-    # @param  func  downloadMetarCallback  Function to run download METAR.
-    # @param  hash  downloadMetarSelf  Owner class of downloadMetarCallback.
+    # @param  hash  downloadMetarCallback  Callback object to run download METAR function.
     # @return hash
     #
-    new: func(tabsContent, withIcaoBtns, downloadMetarCallback, downloadMetarOwner) {
+    new: func(tabsContent, withIcaoBtns, downloadMetarCallback) {
         var me = { parents: [BottomBar] };
 
         me._tabsContent = tabsContent;
         me._icaoEdit = nil;
         me._downloadMetarCallback = downloadMetarCallback;
-        me._downloadMetarOwner = downloadMetarOwner;
         me._icao = "";
 
         if (withIcaoBtns) {
@@ -89,7 +87,7 @@ var BottomBar = {
                         .setText(icao)
                         .setVisible(true)
                         .listen("clicked", func() {
-                            call(me._downloadMetarCallback, [icao], me._downloadMetarOwner);
+                            me._downloadMetarCallback.invoke(icao);
                         });
                 }();
             }
@@ -114,11 +112,11 @@ var BottomBar = {
             .setText(me._icao)
             .setFixedSize(80, 26)
             .listen("editingFinished", func(e) {
-                call(me._downloadMetarCallback, [e.detail.text], me._downloadMetarOwner);
+                me._downloadMetarCallback.invoke(e.detail.text);
             });
 
         var btnLoad = me._getButton("Load", func() {
-            call(me._downloadMetarCallback, [me._icaoEdit.text()], me._downloadMetarOwner);
+            me._downloadMetarCallback.invoke(me._icaoEdit.text());
         });
 
         var holdUpdateCheckbox = canvas.gui.widgets.CheckBox.new(me._tabsContent, canvas.style, { wordWrap: false })
@@ -132,7 +130,7 @@ var BottomBar = {
                     # with the nearest one if it has changed from the current one.
                     var newIcao = getprop("/sim/airport/closest-airport-id");
                     if (newIcao != me._icao) {
-                        call(me._downloadMetarCallback, [newIcao], me._downloadMetarOwner);
+                        me._downloadMetarCallback.invoke(newIcao);
                     }
                 }
             });
@@ -155,7 +153,7 @@ var BottomBar = {
         var buttonBox = canvas.HBoxLayout.new();
 
         var btnLoad = me._getButton("Update METAR", func() {
-            call(me._downloadMetarCallback, [me._icao], me._downloadMetarOwner);
+            me._downloadMetarCallback.invoke(me._icao);
         });
 
         buttonBox.addStretch(1);
@@ -183,11 +181,11 @@ var BottomBar = {
             .setText(me._icao)
             .setFixedSize(80, 26)
             .listen("editingFinished", func(e) {
-                call(me._downloadMetarCallback, [e.detail.text], me._downloadMetarOwner);
+                me._downloadMetarCallback.invoke(e.detail.text);
             });
 
         var btnLoad = me._getButton("Load", func() {
-            call(me._downloadMetarCallback, [me._icaoEdit.text()], me._downloadMetarOwner);
+            me._downloadMetarCallback.invoke(me._icaoEdit.text());
         });
 
         buttonBox.addStretch(1);

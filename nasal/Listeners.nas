@@ -21,7 +21,7 @@ var Listeners = {
     ON_CHILD_CHANGE: 2, # Triggered always, event if child properties has been changed.
 
     #
-    # Constructor
+    # Constructor.
     #
     # @return hash
     #
@@ -34,7 +34,7 @@ var Listeners = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #

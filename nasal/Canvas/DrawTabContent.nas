@@ -37,7 +37,11 @@ var DrawTabContent = {
         me._icaoEdit = nil;
         me._isHoldUpdateNearest = false;
 
-        me._metar = Metar.new(me._tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
+        me._metar = Metar.new(
+            me._tabId,
+            Callback.new(me._metarUpdatedCallback, me),
+            Callback.new(me._realWxUpdatedCallback, me),
+        );
         me._runwaysData = RunwaysData.new(me._metar);
 
         var scrollMargins = {
@@ -113,8 +117,7 @@ var DrawTabContent = {
         me._bottomBar = BottomBar.new(
             tabsContent: me._tabsContent,
             withIcaoBtns: me._isTabNearest() or me._isTabAlternate(),
-            downloadMetarCallback: me._downloadMetar,
-            downloadMetarOwner: me,
+            downloadMetarCallback: Callback.new(me._downloadMetar, me),
         );
 
         me._drawBottomBar();

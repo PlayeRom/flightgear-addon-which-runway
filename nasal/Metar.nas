@@ -24,18 +24,16 @@ var Metar = {
     # Constructor
     #
     # @param  string  tabId  Tab ID.
-    # @param  hash  objCallbacks
-    # @param  func  funcUpdatedCallback
-    # @param  func  funcRealWxCallback
+    # @param  hash  updateMetarCallback  Callback object invoked for update Metar.
+    # @param  hash  updateRealWxCallback  Callback object invoked for update real weather.
     # @return hash
     #
-    new: func(tabId, objCallbacks, funcUpdatedCallback, funcRealWxCallback) {
+    new: func(tabId, updateMetarCallback, updateRealWxCallback) {
         var me = { parents: [Metar] };
 
         me._tabId = tabId;
-        me._objCallbacks = objCallbacks;
-        me._funcUpdatedCallback = funcUpdatedCallback;
-        me._funcRealWxCallback = funcRealWxCallback;
+        me._updateMetarCallback = updateMetarCallback;
+        me._callbackUpdateRealWx = updateRealWxCallback;
 
         # If we download a METAR from an airport other than the current one,
         # because the current one does not have a META, we set this variable to true.
@@ -73,7 +71,7 @@ var Metar = {
             node: me._pathToMyMetar ~ "/data",
             code: func() {
                 logprint(LOG_ALERT, "Which Runway ----- METAR for ", me._tabId, " has been updated");
-                call(me._funcUpdatedCallback, [], me._objCallbacks);
+                me._updateMetarCallback.invoke();
             },
         );
 
@@ -81,7 +79,7 @@ var Metar = {
         me._listeners.add(
             node: "/environment/realwx/enabled",
             code: func(node) {
-                call(me._funcRealWxCallback, [], me._objCallbacks);
+                me._updateRealWxCallback.invoke();
             },
             init: false,
             type: Listeners.ON_CHANGE_ONLY,
