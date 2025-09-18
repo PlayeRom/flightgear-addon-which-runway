@@ -1,0 +1,170 @@
+#
+# Which Runway - Add-on for FlightGear
+#
+# Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
+#
+# Copyright (C) 2024 Roman Ludwicki
+#
+# AirportInfoView widget is an Open Source project and it is licensed
+# under the GNU Public License v3 (GPLv3)
+#
+
+#
+# AirportInfoView widget View.
+#
+DefaultStyle.widgets["airport-info-view"] = {
+    #
+    # Constructor.
+    #
+    # @param  ghost  parent
+    # @param  hash  cfg
+    # @return void
+    #
+    new: func(parent, cfg) {
+        me._root = parent.createChild("group", "airport-info-view");
+
+        me._draw = Draw.new(me._root);
+
+        me._LABEL = 0;
+        me._VAL   = 1;
+        me._UNIT  = 2;
+        me._VAL2  = 3;
+        me._UNIT2 = 4;
+
+        var x = 0;
+        var y = 0;
+
+        me._airportNameText = me._draw.createText("n/a")
+            .setColor(whichRunway.Colors.DEFAULT_TEXT)
+            .setFontSize(24)
+            .setFont(whichRunway.Fonts.SANS_BOLD);
+
+        me._latLon = [
+            me._draw.createTextLabel(x, y, "Lat, Lon:"),
+            me._draw.createTextValue(x, y, "n/a"),
+        ];
+
+        me._elevation = [
+            me._draw.createTextLabel(x, y, "Elevation:"),
+            me._draw.createTextValue(x, y, "n/a"),
+            me._draw.createTextUnit(x, y, "ft /"),
+            me._draw.createTextValue(x, y, "n/a"),
+            me._draw.createTextUnit(x, y, "m"),
+        ];
+
+        me._magVar = [
+            me._draw.createTextLabel(x, y, "Mag Var:"),
+            me._draw.createTextValue(x, y, "n/a"),
+        ];
+
+        me._hasMetar = [
+            me._draw.createTextLabel(x, y, "Has METAR:"),
+            me._draw.createTextValue(x, y, "n/a"),
+        ];
+
+        y = 40; # <- FIXME: this is incorrect, it should be 0 here, but I don't know why, ScrollArea doesn't take into
+                # account that there are tabs at the top and I have to artificially move the content here so that
+                # the tabs don't cover it.
+
+        me._airportNameText.setTranslation(x, y);
+        y += me._draw.shiftY(me._airportNameText);
+
+        y += me._draw.setTextTranslations(y, me._latLon);
+        y += me._draw.setTextTranslations(y, me._elevation);
+        y += me._draw.setTextTranslations(y, me._magVar);
+        y += me._draw.setTextTranslations(y, me._hasMetar);
+
+        me._contentHeight = y;
+    },
+
+    #
+    # Callback called when user resized the window.
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @param  int  w, h  Width and height of widget.
+    # @return ghost
+    #
+    setSize: func(model, w, h) {
+        me.reDrawContent(model);
+
+        return me;
+    },
+
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @return void
+    #
+    update: func(model) {
+        # nothing here
+    },
+
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @return void
+    #
+    reDrawContent: func(model) {
+        if (model._airport != nil) {
+            me._drawAirportInfo(model);
+        }
+
+        # model.setLayoutMaximumSize([MAX_SIZE, y]);
+        model.setLayoutMinimumSize([model._size[0], me._contentHeight]);
+        model.setLayoutSizeHint([model._size[0], me._contentHeight]);
+    },
+
+    #
+    # Draw airport and METAR information.
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @return double  New position of y shifted by height of printed line.
+    #
+    _drawAirportInfo: func(model) {
+        var elevationFt = sprintf("%d", math.round(model._airport.elevation * globals.M2FT));
+        var elevationM  = sprintf("%d", math.round(model._airport.elevation));
+
+        me._airportNameText.setText(model._airport.id ~ " – " ~ model._airport.name);
+        me._latLon[me._VAL].setText(me._getLatLonInfo(model));
+
+        me._draw.setValuesForLine(
+            {
+                text : me._elevation[me._VAL],
+                unit : me._elevation[me._UNIT],
+                value: elevationFt,
+            },
+            {
+                text : me._elevation[me._VAL2],
+                unit : me._elevation[me._UNIT2],
+                value: elevationM,
+            },
+        );
+
+        me._magVar[me._VAL].setText(sprintf("%.2f°", model._aptMagVar));
+        me._hasMetar[me._VAL].setText(model._airport.has_metar ? "Yes" : "No");
+    },
+
+    #
+    # Get string with airport geo coordinates in decimal and sexagesimal formats.
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @return string
+    #
+    _getLatLonInfo: func(model) {
+        var decimal = sprintf("%.4f, %.4f", model._airport.lat, model._airport.lon);
+
+        var signNS = model._airport.lat >= 0 ? "N" : "S";
+        var signEW = model._airport.lon >= 0 ? "E" : "W";
+        var sexagesimal = sprintf(
+            "%s %d°%02d'%.1f'', %s %d°%02d'%.1f''",
+            signNS,
+            math.abs(int(model._airport.lat)),
+            math.abs(int(model._airport.lat * 60 - int(model._airport.lat) * 60)),
+            math.abs(model._airport.lat * 3600 - int(model._airport.lat * 60) * 60),
+            signEW,
+            math.abs(int(model._airport.lon)),
+            math.abs(int(model._airport.lon * 60 - int(model._airport.lon) * 60)),
+            math.abs(model._airport.lon * 3600 - int(model._airport.lon * 60) * 60),
+        );
+
+        return decimal ~ "  /  " ~ sexagesimal;
+    },
+};

@@ -138,7 +138,7 @@ var Metar = {
     #
     # Get wind direction in true deg.
     #
-    # @param  ghost  airport  Airport object.
+    # @param  ghost|nil  airport  Airport object.
     # @return double|nil
     #
     getWindDir: func(airport) {
@@ -187,10 +187,11 @@ var Metar = {
     #
     # Get full METAR string or nil if not downloaded.
     #
+    # @param  ghost  airport  Airport object.
     # @return string|nil
     #
     getMetar: func(airport) {
-        if (airport.has_metar or me._isMetarFromNearestAirport) {
+        if (airport != nil and (airport.has_metar or me._isMetarFromNearestAirport)) {
             return getprop(me._pathToMyMetar ~ "/data");
         }
 
@@ -200,16 +201,21 @@ var Metar = {
     #
     # Return true if we can use the downloaded METAR.
     #
+    # @param  ghost|nill  airport  Airport object.
     # @return bool
     #
     canUseMetar: func(airport) {
+        if (airport == nil) {
+            return false;
+        }
+
         return me.isRealWeatherEnabled() and (airport.has_metar or me._isMetarFromNearestAirport);
     },
 
     #
     # Get QNH with 3 values: inHg, hPa and mmHg.
     #
-    # @param  ghost  airport  Airport object.
+    # @param  ghost|nil  airport  Airport object.
     # @return hash|nil
     #
     getQnhValues: func(airport) {
@@ -232,7 +238,7 @@ var Metar = {
     #
     # Get QFE with 3 values: inHg, hPa and mmHg.
     #
-    # @param  ghost  airport  Airport object.
+    # @param  ghost|nil  airport  Airport object.
     # @return hash|nil
     #
     getQfeValues: func(airport) {
@@ -336,6 +342,10 @@ var Metar = {
     # @return double|nil  Distance in meters or nil if failed.
     #
     getDistanceToStation: func(airport) {
+        if (!me._isMetarFromNearestAirport) {
+            return nil;
+        }
+
         var icao = me.getIcao();
         if (icao == nil) {
             return nil;

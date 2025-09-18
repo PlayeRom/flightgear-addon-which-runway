@@ -36,11 +36,7 @@ var loadExtraNasalFiles = func(addon) {
         "nasal/Metar",
         "nasal/Utils",
         "nasal/Fonts",
-        "nasal/Canvas/Draw",
-        "nasal/Canvas/DrawMetar",
         "nasal/Canvas/DrawTabContent",
-        "nasal/Canvas/DrawWindRose",
-        "nasal/Canvas/DrawRunways",
         "nasal/Canvas/Dialog",
         "nasal/Canvas/AboutDialog",
         "nasal/Canvas/WhichRwyDialog",
@@ -49,6 +45,23 @@ var loadExtraNasalFiles = func(addon) {
     ];
 
     loadVectorOfModules(addon, modules, "whichRunway");
+
+    # Add widgets to canvas namespace
+    var widgets = [
+        "nasal/Canvas/Widgets/AirportInfoView",
+        "nasal/Canvas/Widgets/MetarInfoView",
+        "nasal/Canvas/Widgets/RunwayInfoView",
+        "nasal/Canvas/Widgets/WindRoseView",
+        "nasal/Canvas/Widgets/MessageView",
+        "nasal/Canvas/Widgets/Styles/DefaultStyleAirportInfoView",
+        "nasal/Canvas/Widgets/Styles/DefaultStyleMetarInfoView",
+        "nasal/Canvas/Widgets/Styles/DefaultStyleRunwayInfoView",
+        "nasal/Canvas/Widgets/Styles/DefaultStyleWindRoseView",
+        "nasal/Canvas/Widgets/Styles/DefaultStyleMessageView",
+        "nasal/Canvas/Widgets/Styles/Components/Draw",
+    ];
+
+    loadVectorOfModules(addon, widgets, "canvas");
 };
 
 #

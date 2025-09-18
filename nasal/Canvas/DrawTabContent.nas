@@ -37,6 +37,69 @@ var DrawTabContent = {
         me._icaoEdit = nil;
         me._isHoldUpdateNearest = false;
 
+        me._metar = Metar.new(me._tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
+        me._runwaysData = RunwaysData.new(me._metar);
+
+        me._scrollArea = me._createScrollArea();
+
+        me._scrollContent = me._getScrollAreaContent(
+            context  : me._scrollArea,
+            font     : Fonts.SANS_REGULAR,
+            fontSize : 16,
+            alignment: "left-baseline",
+        );
+        me._scrollLayout = canvas.VBoxLayout.new();
+        me._scrollArea.setLayout(me._scrollLayout);
+        me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
+
+        me._messageView = canvas.gui.widgets.MessageView.new(me._scrollContent, canvas.style, {})
+            .setVisible(true);
+
+        me._airportInfoView = canvas.gui.widgets.AirportInfoView.new(me._scrollContent, canvas.style, {})
+            .setVisible(false);
+
+        me._metarInfoView = canvas.gui.widgets.MetarInfoView.new(me._scrollContent, canvas.style, {})
+            .setVisible(false)
+            .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
+
+        me._runwaysLayout = canvas.VBoxLayout.new();
+
+        me._scrollLayout.addItem(me._messageView, 1);
+        me._scrollLayout.addItem(me._airportInfoView);
+        me._scrollLayout.addItem(me._metarInfoView);
+        me._scrollLayout.addItem(me._runwaysLayout);
+
+        # Add some stretch in case the scroll area is larger than the content
+        me._scrollLayout.addStretch(1);
+
+
+        # Build 16 slots for runways
+        me._runwayWidgets = std.Vector.new();
+        for (var i = 0; i < 16; i += 1) {
+            var runwayHLayout = canvas.HBoxLayout.new();
+
+            var runwayInfoView = canvas.gui.widgets.RunwayInfoView.new(me._scrollContent, canvas.style, {})
+                .setVisible(false);
+
+            var windRoseView = canvas.gui.widgets.WindRoseView.new(me._scrollContent, canvas.style, {})
+                .setVisible(false);
+
+            var runwayVCenter = canvas.VBoxLayout.new(); # wrapper for set runway info vertically centered
+            runwayVCenter.addStretch(1);
+            runwayVCenter.addItem(runwayInfoView, 1);
+            runwayVCenter.addStretch(1);
+
+            runwayHLayout.addItem(runwayVCenter, 1);
+            runwayHLayout.addItem(windRoseView, 2);
+
+            me._runwaysLayout.addItem(runwayHLayout);
+
+            me._runwayWidgets.append({
+                runwayInfoView: runwayInfoView,
+                windRoseView: windRoseView,
+            });
+        }
+
         if (me._isTabNearest() or me._isTabAlternate()) {
             me._btnLoadIcaos = std.Vector.new();
             for (var i = 0; i < 5; i += 1) {
@@ -47,25 +110,7 @@ var DrawTabContent = {
             }
         }
 
-        me._scrollArea = me._createScrollArea();
-
-        me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
-
-        me._scrollContent = me._getScrollAreaContent(
-            context  : me._scrollArea,
-            font     : Fonts.SANS_REGULAR,
-            fontSize : 16,
-            alignment: "left-baseline",
-        );
-
         me._drawBottomBar();
-
-        ########################################################################
-
-        me._metar = Metar.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
-        me._draw = Draw.new(me._scrollContent);
-        me._drawMetar = DrawMetar.new(me._draw, me._metar);
-        me._drawRunways = DrawRunways.new(me._draw, me._metar);
 
         me._listeners = Listeners.new();
         me._setListeners();
@@ -84,9 +129,7 @@ var DrawTabContent = {
     #
     del: func() {
         me._listeners.del();
-        me._drawRunways.del();
-        me._drawMetar.del();
-        me._draw.del();
+        me._runwaysData.del();
         me._metar.del();
     },
 
@@ -142,9 +185,9 @@ var DrawTabContent = {
         scrollArea.setColorBackground(canvas.style.getColor("bg_color"));
         scrollArea.setContentsMargins(
             DrawTabContent.PADDING, # left
-            DrawTabContent.PADDING, # top
-            1,                      # right
-            DrawTabContent.PADDING, # bottom
+            0,                      # top
+            0,                      # right
+            0,                      # bottom
         );
 
         return scrollArea;
@@ -332,12 +375,30 @@ var DrawTabContent = {
     # @return void
     #
     _reDrawContentWithMessage: func(message, isError = false) {
-        me._scrollContent.removeAllChildren();
+        me._airportInfoView.setVisible(false);
+        me._metarInfoView.setVisible(false);
 
-        me._draw.printMessage(message, isError);
+        me._hideAllRunways();
+
+        me._messageView
+            .setText(message, isError)
+            .setVisible(true)
+            .updateView();
 
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
+    },
+
+    #
+    # Hide all runways widgets.
+    #
+    # @return void
+    #
+    _hideAllRunways: func() {
+        foreach (var widget; me._runwayWidgets.vector) {
+            widget.runwayInfoView.setVisible(false);
+            widget.windRoseView.setVisible(false);
+        }
     },
 
     #
@@ -346,114 +407,80 @@ var DrawTabContent = {
     # @return void
     #
     _reDrawContent: func() {
-        me._scrollContent.removeAllChildren();
-
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
-            me._draw.printMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
-        } else {
-            var aptMagVar = globals.magvar(airport);
-            var y = me._drawAirportAndMetar(airport, aptMagVar);
+            me._reDrawContentWithMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
+            return;
+        }
 
-            me._drawRunways.drawRunways(y, airport, aptMagVar);
+        var aptMagVar = globals.magvar(airport);
+
+        me._messageView.setVisible(false);
+
+        me._airportInfoView
+            .setAirport(airport)
+            .setAirportMagVar(aptMagVar)
+            .setVisible(true)
+            .updateView();
+
+        me._metarInfoView
+            .setIsRealWeatherEnabled(me._metar.isRealWeatherEnabled())
+            .setIsMetarFromNearestAirport(me._metar.isMetarFromNearestAirport())
+            .setDistanceToStation(me._metar.getDistanceToStation(airport))
+            .setMetarIcao(me._metar.getIcao())
+            .setMetar(me._metar.getMetar(airport))
+            .setCanUseMetar(me._metar.canUseMetar(airport))
+            .setMetarWind(
+                me._metar.getWindDir(airport),
+                me._metar.getWindSpeedKt(),
+                me._metar.getWindGustSpeedKt(),
+            )
+            .setQnhValues(me._metar.getQnhValues(airport))
+            .setQfeValues(me._metar.getQfeValues(airport))
+            .setVisible(true)
+            .updateView();
+
+        var runways = me._runwaysData.getRunways(airport);
+        var runwaysSize = size(runways);
+        var runwayWidgetsSize = me._runwayWidgets.size();
+
+        if (runwaysSize > runwayWidgetsSize) {
+            logprint(LOG_ALERT, "Which Runway ----- ", airport.id, " has ", runwaysSize,
+                " runways (including helipads), more than allocated (", runwayWidgetsSize, ")"
+            );
+        }
+
+        forindex (var index; me._runwayWidgets.vector) {
+            var widgets = me._runwayWidgets.vector[index];
+
+            if (index >= runwaysSize) {
+                widgets.runwayInfoView.setVisible(false);
+                widgets.windRoseView.setVisible(false);
+                continue;
+            }
+
+            var rwy = runways[index];
+
+            var runwayInfoView = widgets.runwayInfoView
+                .setRunwayData(rwy)
+                .setAirportMagVar(aptMagVar)
+                .setVisible(true)
+                .updateView();
+
+            var windRoseView = widgets.windRoseView
+                .setRadius(175)
+                .setWind(
+                    me._metar.getWindDir(airport),
+                    me._metar.getWindSpeedKt(),
+                )
+                .setRunway(rwy)
+                .setRunways(runways)
+                .setVisible(true)
+                .updateView();
         }
 
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
-    },
-
-    #
-    # Draw airport and METAR information.
-    #
-    # @param  ghost  airport
-    # @param  double  aptMagVar  Airport magnetic variation.
-    # @return double  New position of y shifted by height of printed line.
-    #
-    _drawAirportAndMetar: func(airport, aptMagVar) {
-        var x = 0;
-        var y = 0;
-
-        var elevationFt = math.round(airport.elevation * globals.M2FT);
-        var elevationM  = math.round(airport.elevation);
-
-        y += me._draw.printLineAirportName(x, y, airport).y;
-        y += me._draw.printLineWithValue(x, y, "Lat, Lon:", me._getLatLonInfo(airport)).y;
-        y += me._draw.printLineWith2Values(x, y, "Elevation:", elevationFt, "ft", elevationM, "m").y;
-        y += me._draw.printLineWithValue(x, y, "Mag Var:", sprintf("%.2f°", aptMagVar)).y;
-        y += me._draw.printLineWithValue(x, y, "Has METAR:", airport.has_metar ? "Yes" : "No").y;
-        y += Draw.MARGIN_Y;
-
-        y = me._drawMetar.drawMetar(x, y, airport);
-
-        var qnhValues = me._metar.getQnhValues(airport);
-        var qfeValues = me._metar.getQfeValues(airport);
-
-        y += qnhValues == nil
-            ? me._draw.printLineWithValue(x, y, "QNH:", "n/a").y
-            : me._draw.printLineAtmosphericPressure(x, y, "QNH:", qnhValues).y;
-
-        y += qfeValues == nil
-            ? me._draw.printLineWithValue(x, y, "QFE:", "n/a").y
-            : me._draw.printLineAtmosphericPressure(x, y, "QFE:", qfeValues).y;
-
-        y += (Draw.MARGIN_Y * 2);
-
-        # Wind
-        y += me._draw.printLineWind(x, y, "Wind " ~ me._getWindInfoText(airport)).y;
-
-        y += (Draw.MARGIN_Y * 4);
-
-        return y;
-    },
-
-    #
-    # @param  ghost  airport
-    # @return string
-    #
-    _getWindInfoText: func(airport) {
-        if (!me._metar.canUseMetar(airport)) {
-            return "n/a";
-        }
-
-        var windDir = me._metar.getWindDir(airport);
-        windDir = windDir == nil
-            ? "variable"
-            : math.round(windDir) ~ "°";
-
-        var result = windDir ~ " at " ~ math.round(me._metar.getWindSpeedKt()) ~ " kts";
-
-        var gust = math.round(me._metar.getWindGustSpeedKt());
-        if (gust > 0) {
-            result ~= " with gust at " ~ gust ~ " kts";
-        }
-
-        return result;
-    },
-
-    #
-    # Get string with airport geo coordinates in decimal and sexagesimal formats.
-    #
-    # @param  ghost  airport
-    # @return string
-    #
-    _getLatLonInfo: func(airport) {
-        var decimal = sprintf("%.4f, %.4f", airport.lat, airport.lon);
-
-        var signNS = airport.lat >= 0 ? "N" : "S";
-        var signEW = airport.lon >= 0 ? "E" : "W";
-        var sexagesimal = sprintf(
-            "%s %d°%02d'%.1f'', %s %d°%02d'%.1f''",
-            signNS,
-            math.abs(int(airport.lat)),
-            math.abs(int(airport.lat * 60 - int(airport.lat) * 60)),
-            math.abs(airport.lat * 3600 - int(airport.lat * 60) * 60),
-            signEW,
-            math.abs(int(airport.lon)),
-            math.abs(int(airport.lon * 60 - int(airport.lon) * 60)),
-            math.abs(airport.lon * 3600 - int(airport.lon * 60) * 60),
-        );
-
-        return decimal ~ "  /  " ~ sexagesimal;
     },
 
     #
