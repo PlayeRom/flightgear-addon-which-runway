@@ -62,11 +62,15 @@ var DrawTabContent = {
             .setVisible(false)
             .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
+        me._weatherInfoView = canvas.gui.widgets.WeatherInfoView.new(me._scrollContent, canvas.style, {})
+            .setVisible(false);
+
         me._runwaysLayout = canvas.VBoxLayout.new();
 
         me._scrollLayout.addItem(me._messageView, 1);
         me._scrollLayout.addItem(me._airportInfoView);
         me._scrollLayout.addItem(me._metarInfoView);
+        me._scrollLayout.addItem(me._weatherInfoView);
         me._scrollLayout.addItem(me._runwaysLayout);
 
         # Add some stretch in case the scroll area is larger than the content
@@ -377,6 +381,7 @@ var DrawTabContent = {
     _reDrawContentWithMessage: func(message, isError = false) {
         me._airportInfoView.setVisible(false);
         me._metarInfoView.setVisible(false);
+        me._weatherInfoView.setVisible(false);
 
         me._hideAllRunways();
 
@@ -429,8 +434,12 @@ var DrawTabContent = {
             .setDistanceToStation(me._metar.getDistanceToStation(airport))
             .setMetarIcao(me._metar.getIcao())
             .setMetar(me._metar.getMetar(airport))
-            .setCanUseMetar(me._metar.canUseMetar(airport))
-            .setMetarWind(
+            .setVisible(true)
+            .updateView();
+
+        me._weatherInfoView
+            .setIsMetarData(me._metar.canUseMetar(airport))
+            .setWind(
                 me._metar.getWindDir(airport),
                 me._metar.getWindSpeedKt(),
                 me._metar.getWindGustSpeedKt(),
@@ -439,6 +448,7 @@ var DrawTabContent = {
             .setQfeValues(me._metar.getQfeValues(airport))
             .setVisible(true)
             .updateView();
+
 
         var runways = me._runwaysData.getRunways(airport);
         var runwaysSize = size(runways);

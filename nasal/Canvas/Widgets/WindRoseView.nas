@@ -49,7 +49,7 @@ gui.widgets.WindRoseView = {
     },
 
     #
-    # @param  double|nil  windDir  Wind direction in degrees.
+    # @param  double|nil  windDir  Wind direction in degrees. If nil then wind is variable.
     # @param  double  windKt  Wind speed in knots.
     # @return ghost
     #

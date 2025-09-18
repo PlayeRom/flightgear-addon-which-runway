@@ -31,17 +31,21 @@ gui.widgets.MetarInfoView = {
         me._setView(style.createWidget(parent, "metar-info-view", me._cfg));
 
         me._isRealWeatherEnabled = false;
+
+        # If true then METAR is taken from nearest airport.
         me._isMetarFromNearestAirport = false;
+
+        # If METAR is taken from nearest airport this value has a distance to this airport.
         me._distanceToStation = nil;
+
+        # ICAO code of the airport from which the METAR originates.
         me._metarIcao = nil;
+
+        # METAR message string.
         me._metar = nil;
-        me._canUseMetar = false;
-        me._windDir = nil;
-        me._windSpeedKt = 0;
-        me._windGustSpeedKt = 0;
-        me._qnhValues = nil;
-        me._qfeValues = nil;
-        me._metarRangeNm = 0;
+
+        # The max range within which we are looking for METARs from other airports.
+        me._metarRangeNm = 30;
 
         return me;
     },
@@ -56,7 +60,7 @@ gui.widgets.MetarInfoView = {
     },
 
     #
-    # @param  bool  isRealWeatherEnabled
+    # @param  bool  isMetarFromNearestAirport
     # @return ghost
     #
     setIsMetarFromNearestAirport: func(isMetarFromNearestAirport) {
@@ -65,7 +69,7 @@ gui.widgets.MetarInfoView = {
     },
 
     #
-    # @param  double|nil  distanceToStation  Distance in meters or nil if failed.
+    # @param  double|nil  distanceToStation  Distance in meters or nil.
     # @return ghost
     #
     setDistanceToStation: func(distanceToStation) {
@@ -74,7 +78,7 @@ gui.widgets.MetarInfoView = {
     },
 
     #
-    # @param  string|nil  icao
+    # @param  string|nil  icao  ICAO code of METAR station.
     # @return ghost
     #
     setMetarIcao: func(icao) {
@@ -83,7 +87,7 @@ gui.widgets.MetarInfoView = {
     },
 
     #
-    # @param  string|nil  metar
+    # @param  string|nil  metar  METAR text or nil.
     # @return ghost
     #
     setMetar: func(metar) {
@@ -92,47 +96,7 @@ gui.widgets.MetarInfoView = {
     },
 
     #
-    # @param  bool  can
-    # @return ghost
-    #
-    setCanUseMetar: func(can) {
-        me._canUseMetar = can;
-        return me;
-    },
-
-    #
-    # @param  double|nil  windDir
-    # @param  double  windSpeedKt
-    # @param  double  windGustSpeedKt
-    # @return ghost
-    #
-    setMetarWind: func(windDir, windSpeedKt, windGustSpeedKt) {
-        me._windDir = windDir;
-        me._windSpeedKt = windSpeedKt;
-        me._windGustSpeedKt = windGustSpeedKt;
-        return me;
-    },
-
-    #
-    # @param  hash|nil  qnhValues
-    # @return ghost
-    #
-    setQnhValues: func(qnhValues) {
-        me._qnhValues = qnhValues;
-        return me;
-    },
-
-    #
-    # @param  hash|nil  qfeValues
-    # @return ghost
-    #
-    setQfeValues: func(qfeValues) {
-        me._qfeValues = qfeValues;
-        return me;
-    },
-
-    #
-    # @param  int  metarRangeNm
+    # @param  int  metarRangeNm  The max range within which we are looking for METARs from other airports.
     # @return ghost
     #
     setMetarRangeNm: func(metarRangeNm) {
@@ -141,7 +105,7 @@ gui.widgets.MetarInfoView = {
     },
 
     #
-    # Redraw view
+    # Redraw view.
     #
     # @return void
     #

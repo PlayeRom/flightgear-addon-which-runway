@@ -53,11 +53,13 @@ var loadExtraNasalFiles = func(addon) {
         "nasal/Canvas/Widgets/RunwayInfoView",
         "nasal/Canvas/Widgets/WindRoseView",
         "nasal/Canvas/Widgets/MessageView",
+        "nasal/Canvas/Widgets/WeatherInfoView",
         "nasal/Canvas/Widgets/Styles/DefaultStyleAirportInfoView",
         "nasal/Canvas/Widgets/Styles/DefaultStyleMetarInfoView",
         "nasal/Canvas/Widgets/Styles/DefaultStyleRunwayInfoView",
         "nasal/Canvas/Widgets/Styles/DefaultStyleWindRoseView",
         "nasal/Canvas/Widgets/Styles/DefaultStyleMessageView",
+        "nasal/Canvas/Widgets/Styles/DefaultStyleWeatherInfoView",
         "nasal/Canvas/Widgets/Styles/Components/Draw",
     ];
 
