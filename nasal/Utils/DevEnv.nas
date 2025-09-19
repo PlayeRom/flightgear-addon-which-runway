@@ -66,7 +66,6 @@ var DevEnv = {
         var content = io.readfile(envFilePath);
 
         var lines = globals.split("\n", content);
-        Log.alert("lines  typeof = ", typeof(lines));
 
         foreach (var line; lines) {
             line = me._cutComment(line);
