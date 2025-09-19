@@ -48,6 +48,25 @@ The illustration shows a case of gusty wind:
 
 ![alt 5-wind-with-gust](docs/5-wind-with-gust.png "Wind with gust")
 
+## Development
+
+This section is for developers only, if you are a user who just uses the add-on, you should not bother with this.
+
+### The `.env` file
+
+For more convenient development, this add-on recognizes an `.env` file, where you can set certain variables. The `.env` file is best created by making a copy of the `.env.example` file and renaming it to `.env`. The `.env` file is on the `.gitignore` list, making it more convenient to use than modifying the code in the repository.
+
+The add-on recognizes the following variables in the `.env` file:
+
+1. `DEV_MODE` which takes the values `​​true` or `false` (or `1`/`0`). Setting this variable to `true` will add a "Dev Reload" item to the add-on's menu. This menu is used to reload all of the add-on's Nasal code.
+
+2. `MY_LOG_LEVEL` - here you can specify the logging level for logs added using the `Log.print()` method. Possible values: `LOG_ALERT`, `LOG_WARN`, `LOG_INFO`, `LOG_DEBUG` or `LOG_BULK`.
+
+After changing these values, you need to reload the Nasal code using the "Dev Reload" menu item or the `:Yaw` multi-key command, or, as a last resort, restart the entire simulator.
+
+### Multi-key command
+
+To reset the add-on's Nasal scripts, you can also use the multi-key command: `:Yaw`, which always works regardless of the `DEV_MODE` value in the `.env` file. This way, you are always able to reset the add-on's Nasal code, even if you don't have a "Dev Reload" menu item.
 
 ## Authors
 

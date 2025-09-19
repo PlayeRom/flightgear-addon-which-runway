@@ -42,4 +42,33 @@
             </org.flightgear.addons.which-runway>
         </by-id>
     </addons>
+    <input>
+        <keyboard>
+            <multikey>
+                <key n="89">
+                    <name>Y</name>
+                    <!-- <desc>Development functions</desc> -->
+
+                    <key n="97">
+                        <name>a</name>
+                        <desc>Addon</desc>
+
+                        <key n="119">
+                            <name>w</name>
+                            <desc>Reload "Which Runway" Addon</desc>
+                            <exit/>
+                            <binding>
+                                <command>nasal</command>
+                                <script><![CDATA[
+                                    fgcommand("addon-reload", props.Node.new({
+                                        id: whichRunway.g_Addon.id,
+                                    }));
+                                ]]></script>
+                            </binding>
+                        </key>
+                    </key>
+                </key>
+            </multikey>
+        </keyboard>
+    </input>
 </PropertyList>

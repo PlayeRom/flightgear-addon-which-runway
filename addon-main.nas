@@ -32,6 +32,8 @@ var main = func(addon) {
 var loadExtraNasalFiles = func(addon) {
     var modules = [
         "nasal/Utils/Callback",
+        "nasal/Utils/DevEnv",
+        "nasal/Utils/DevReload",
         "nasal/Utils/Listeners",
         "nasal/Utils/Log",
         "nasal/Utils/Profiler",

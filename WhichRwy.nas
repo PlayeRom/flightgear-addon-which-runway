@@ -10,23 +10,23 @@
 #
 
 #
-# MY_LOG_LEVEL is using in logprint() to quickly change all logs visibility used in "whichRunway" namespace.
+# MY_LOG_LEVEL is using in Log.print() to quickly change all logs visibility used in "whichRunway" namespace.
 # Possible flags: LOG_ALERT, LOG_WARN, LOG_INFO, LOG_DEBUG, LOG_BULK.
 #
 var MY_LOG_LEVEL = LOG_WARN;
 
 #
-# Global object of addons.Addon
+# Global object of addons.Addon.
 #
 var g_Addon = nil;
 
 #
-# Global object of dialog
+# Global object of dialog.
 #
 var g_WhichRwyDialog = nil;
 
 #
-# Global object of about dialog
+# Global object of about dialog.
 #
 var g_AboutDialog = nil;
 
@@ -38,6 +38,18 @@ var g_AboutDialog = nil;
 #
 var init = func(addon) {
     g_Addon = addon;
+
+    # Handle development mode (.env file).
+    var reloadMenu = DevReload.new();
+    var env = DevEnv.new();
+    env.getValue("DEV_MODE")
+        ? reloadMenu.addMenu()
+        : reloadMenu.removeMenu();
+
+    var logLevel = env.getValue("MY_LOG_LEVEL");
+    if (logLevel != nil) {
+        MY_LOG_LEVEL = logLevel;
+    }
 
     # Disable the menu as it loads with delay.
     gui.menuEnable("which-runway-addon-main", false);
