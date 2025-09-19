@@ -60,9 +60,7 @@ DefaultStyle.widgets["airport-info-view"] = {
         ];
 
         var x = 0;
-        var y = 40; # <- FIXME: this is incorrect, it should be 0 here, but I don't know why, ScrollArea doesn't take into
-                    # account that there are tabs at the top and I have to artificially move the content here so that
-                    # the tabs don't cover it.
+        var y = me._airportNameText.getSize()[1];
 
         me._airportNameText.setTranslation(x, y);
         y += me._draw.shiftY(me._airportNameText);
@@ -70,7 +68,7 @@ DefaultStyle.widgets["airport-info-view"] = {
         y += me._draw.setTextTranslations(y, me._latLon);
         y += me._draw.setTextTranslations(y, me._elevation);
         y += me._draw.setTextTranslations(y, me._magVar);
-        y += me._draw.setTextTranslations(y, me._hasMetar);
+        y += me._draw.setTextTranslations(y, me._hasMetar, true);
 
         me._contentHeight = y;
     },

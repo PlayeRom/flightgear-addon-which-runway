@@ -113,7 +113,7 @@ DefaultStyle.widgets["weather-info-view"] = {
             ? me._printLineAtmosphericPressureNone(x, y, me._pressure.qfe)
             : me._printLineAtmosphericPressure(x, y, me._pressure.qfe, model._qfeValues);
 
-        y += (Draw.MARGIN_Y * 2);
+        y += 20;
 
         # Wind
         y += me._printLineWind(x, y, "Wind " ~ me._getWindInfoText(model));
@@ -175,7 +175,7 @@ DefaultStyle.widgets["weather-info-view"] = {
     _printLineWind: func(x, y, label) {
         me._windText.setText(label).setTranslation(x, y);
 
-        return me._draw.shiftY(me._windText);
+        return me._draw.shiftY(me._windText, 0);
     },
 
     #

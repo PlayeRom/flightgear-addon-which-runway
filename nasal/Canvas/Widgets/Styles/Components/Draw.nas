@@ -16,8 +16,7 @@ var Draw = {
     #
     # Constants:
     #
-    MARGIN_Y      : 10,
-    VALUE_MARGIN_X: 110, # the distance of the value from the label.
+    VALUE_MARGIN_X: 110, # the distance between label and value.
 
     #
     # Constructor.
@@ -75,18 +74,20 @@ var Draw = {
 
     #
     # @param  ghost  textElement
+    # @param  int  extraShift
     # @return double
     #
-    shiftX: func(textElement) {
-        return textElement.getSize()[0] + 5;
+    shiftX: func(textElement, extraShift = 5) {
+        return textElement.getSize()[0] + extraShift;
     },
 
     #
     # @param  ghost  textElement
+    # @param  int  extraShift
     # @return double
     #
-    shiftY: func(textElement, multiplier = 1) {
-        return textElement.getSize()[1] + (Draw.MARGIN_Y * multiplier);
+    shiftY: func(textElement, extraShift = 10) {
+        return textElement.getSize()[1] + extraShift;
     },
 
     #
@@ -123,9 +124,10 @@ var Draw = {
     #
     # @param  double  y  Initial Y position.
     # @param  vector  array  Array of text element.
+    # @param  bool  isLast
     # @return double  New Y position.
     #
-    setTextTranslations: func(y, array) {
+    setTextTranslations: func(y, array, isLast = false) {
         var x = 0;
         var index = 0;
         var lastText = nil;
@@ -143,6 +145,6 @@ var Draw = {
             index += 1;
         }
 
-        return me.shiftY(lastText);
+        return me.shiftY(lastText, isLast ? 0 : 10);
     },
 };

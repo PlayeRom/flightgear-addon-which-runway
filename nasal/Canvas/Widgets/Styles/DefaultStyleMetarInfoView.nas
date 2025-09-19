@@ -114,7 +114,7 @@ DefaultStyle.widgets["metar-info-view"] = {
         var lastText = me._metarLine1Text;
 
         if (line2 != nil) {
-            y += me._metarLine1Text.getSize()[1] + 5;
+            y += me._draw.shiftY(me._metarLine1Text, 5);
 
             me._metarLine2Text.setText(line2)
                 .setTranslation(x, y)
@@ -124,7 +124,7 @@ DefaultStyle.widgets["metar-info-view"] = {
             lastText = me._metarLine2Text;
         }
 
-        return y + me._draw.shiftY(lastText, 2);
+        return y + me._draw.shiftY(lastText, 0);
     },
 
     #
@@ -139,7 +139,7 @@ DefaultStyle.widgets["metar-info-view"] = {
             .setTranslation(x, y)
             .setVisible(true);
 
-        return y + me._draw.shiftY(me._noLiveDataText, 2);
+        return y + me._draw.shiftY(me._noLiveDataText, 0);
     },
 
     #

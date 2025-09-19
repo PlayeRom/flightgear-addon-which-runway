@@ -80,10 +80,15 @@ var DrawTabContent = {
 
         me._runwaysLayout = canvas.VBoxLayout.new();
 
-        me._scrollLayout.addItem(me._messageView, 1);
+        me._scrollLayout.addSpacing(10);
+        me._scrollLayout.addItem(me._messageView, 1); # 2nd param = stretch
+        me._scrollLayout.addSpacing(10);
         me._scrollLayout.addItem(me._airportInfoView);
+        me._scrollLayout.addSpacing(10);
         me._scrollLayout.addItem(me._metarInfoView);
+        me._scrollLayout.addSpacing(10);
         me._scrollLayout.addItem(me._weatherInfoView);
+        me._scrollLayout.addSpacing(0);
         me._scrollLayout.addItem(me._runwaysLayout);
 
         # Add some stretch in case the scroll area is larger than the content

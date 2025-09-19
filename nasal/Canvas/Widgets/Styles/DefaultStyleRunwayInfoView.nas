@@ -62,7 +62,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._rwyLength = [
             me._draw.createTextLabel("Length:"),
             me._draw.createTextValue("0"),
-            me._draw.createTextUnit("ft"),
+            me._draw.createTextUnit("ft /"),
             me._draw.createTextValue("0"),
             me._draw.createTextUnit("m"),
         ];
@@ -70,7 +70,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._rwyWidth = [
             me._draw.createTextLabel("Width:"),
             me._draw.createTextValue("0"),
-            me._draw.createTextUnit("ft"),
+            me._draw.createTextUnit("ft /"),
             me._draw.createTextValue("0"),
             me._draw.createTextUnit("m"),
         ];
@@ -97,7 +97,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._runwayTexts.label.setTranslation(x, y);
         x += me._draw.shiftX(me._runwayTexts.label);
         me._runwayTexts.id.setTranslation(x, y);
-        x += me._runwayTexts.id.getSize()[0] + 10;
+        x += me._draw.shiftX(me._runwayTexts.id, 10);
         me._runwayTexts.wind.setTranslation(x, y);
         y += me._draw.shiftY(me._runwayTexts.wind);
 
@@ -109,7 +109,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         y += me._draw.setTextTranslations(y, me._rwyWidth);
         y += me._draw.setTextTranslations(y, me._surface);
         y += me._draw.setTextTranslations(y, me._reciprocal);
-        y += me._draw.setTextTranslations(y, me._ils);
+        y += me._draw.setTextTranslations(y, me._ils, true);
 
         me._contentHeight = y;
     },
@@ -215,7 +215,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         var (xT, yT) = me._runwayTexts.id.getTranslation();
         me._runwayTexts.id.setText(runway.rwyId).setTranslation(x, yT);
 
-        x += me._runwayTexts.id.getSize()[0] + 10;
+        x += me._draw.shiftX(me._runwayTexts.id, 10);
         me._runwayTexts.wind.setText(me._geWindLabelByDir(runway.normDiffDeg))
             .setTranslation(x, yT)
             .setColor(me._geWindColorByDir(runway.normDiffDeg))
