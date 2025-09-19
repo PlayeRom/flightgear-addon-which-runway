@@ -45,12 +45,12 @@ var Profiler = {
         message = message == nil ? "" : "Context: " ~ message;
 
         if (me._startTime == nil) {
-            logprint(MY_LOG_LEVEL, g_Addon.name, " ----- profiler time = ? seconds. FIRST RUN start() method. ", message);
+            Log.print("profiler time = ? seconds. FIRST RUN start() METHOD. ", message);
         }
 
         var time = systime() - me._startTime;
 
-        logprint(MY_LOG_LEVEL, g_Addon.name, " ----- profiler time = ", time, " seconds. ", message);
+        Log.print("profiler time = ", time, " seconds. ", message);
 
         return time;
     },

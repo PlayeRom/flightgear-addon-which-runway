@@ -191,7 +191,7 @@ var DrawTabContent = {
                     }
 
                     if (node != nil) {
-                        logprint(MY_LOG_LEVEL, g_Addon.name, " ----- ", me._tabId, " got a new ICAO = ", node.getValue());
+                        Log.print(me._tabId, " got a new ICAO = ", node.getValue());
                         me._downloadMetar(node.getValue());
                     }
                 },
@@ -472,7 +472,7 @@ var DrawTabContent = {
         var runwayWidgetsSize = me._runwayWidgets.size();
 
         if (runwaysSize > runwayWidgetsSize) {
-            logprint(MY_LOG_LEVEL, g_Addon.name, " ----- ", airport.id, " has ", runwaysSize,
+            Log.print(airport.id, " has ", runwaysSize,
                 " runways (including helipads), more than allocated (", runwayWidgetsSize, ")"
             );
         }
