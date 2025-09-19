@@ -37,12 +37,12 @@ var DevReload = {
     addMenu: func() {
         var menuNode = me._getMenuNode();
         if (menuNode == nil) {
-            Log.alert("menu node not found");
+            Log.print("menu node not found");
             return;
         }
 
         if (me._isMenuItemExists(menuNode)) {
-            Log.alert("menu item already exist");
+            Log.print("menu item already exist");
             return;
         }
 
@@ -58,7 +58,7 @@ var DevReload = {
         menuNode.addChild("item").setValues(data);
         fgcommand("gui-redraw");
 
-        Log.alert("the menu item \"", DevReload.MENU_LABEL, "\" has been added.");
+        Log.print("the menu item \"", DevReload.MENU_LABEL, "\" has been added.");
     },
 
     #
@@ -69,20 +69,20 @@ var DevReload = {
     removeMenu: func() {
         var menuNode = me._getMenuNode();
         if (menuNode == nil) {
-            Log.alert("menu node not found");
+            Log.print("menu node not found");
             return;
         }
 
         var item = me._getMenuItem(menuNode);
         if (item == nil) {
-            Log.alert("menu item already doesn't exist");
+            Log.print("menu item already doesn't exist");
             return;
         }
 
         item.remove();
         fgcommand("gui-redraw");
 
-        Log.alert("the menu item \"", DevReload.MENU_LABEL, "\" has been removed.");
+        Log.print("the menu item \"", DevReload.MENU_LABEL, "\" has been removed.");
     },
 
     #
