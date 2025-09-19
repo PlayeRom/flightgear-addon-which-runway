@@ -71,7 +71,7 @@ var Metar = {
         me._listeners.add(
             node: me._pathToMyMetar ~ "/data",
             code: func() {
-                logprint(LOG_ALERT, "Which Runway ----- METAR for ", me._tabId, " has been updated");
+                logprint(MY_LOG_LEVEL, g_Addon.name, " ----- METAR for ", me._tabId, " has been updated");
                 me._updateMetarCallback.invoke();
             },
         );

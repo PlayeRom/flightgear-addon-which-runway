@@ -16,7 +16,7 @@
 # @return void
 #
 var main = func(addon) {
-    logprint(LOG_ALERT, "Which Runway addon initialized from path ", addon.basePath);
+    logprint(LOG_ALERT, addon.name, " Add-on initialized from path ", addon.basePath);
 
     loadExtraNasalFiles(addon);
 
@@ -31,19 +31,24 @@ var main = func(addon) {
 #
 var loadExtraNasalFiles = func(addon) {
     var modules = [
-        "nasal/Callback",
+        "nasal/Utils/Callback",
+        "nasal/Utils/Listeners",
+        "nasal/Utils/Profiler",
+        "nasal/Utils/Utils",
+
         "nasal/Colors",
-        "nasal/Listeners",
         "nasal/Metar",
-        "nasal/Utils",
         "nasal/Fonts",
+        "nasal/RunwaysData",
+
         "nasal/Canvas/DrawTabContent",
         "nasal/Canvas/BottomBar",
         "nasal/Canvas/Dialog",
+
         "nasal/Canvas/AboutDialog",
         "nasal/Canvas/WhichRwyDialog",
         "nasal/Canvas/ScrollAreaHelper",
-        "nasal/RunwaysData",
+
         "WhichRwy",
     ];
 
@@ -80,7 +85,7 @@ var loadVectorOfModules = func(addon, modules, namespace) {
         var fileName = addon.basePath ~ "/" ~ scriptName ~ ".nas";
 
         if (!io.load_nasal(fileName, namespace)) {
-            logprint(LOG_ALERT, "Which Runway Add-on module \"", scriptName, "\" loading failed");
+            logprint(LOG_ALERT, addon.name, " Add-on module \"", scriptName, "\" loading failed");
         }
     }
 };

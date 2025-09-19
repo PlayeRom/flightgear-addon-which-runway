@@ -39,6 +39,8 @@ var DrawTabContent = {
         me._icaoEdit = nil;
         me._isHoldUpdateNearest = false;
 
+        me._profiler = Profiler.new();
+
         me._metar = Metar.new(
             me._tabId,
             Callback.new(me._metarUpdatedCallback, me),
@@ -173,7 +175,7 @@ var DrawTabContent = {
                     }
 
                     if (node != nil) {
-                        logprint(LOG_ALERT, "Which Runway ----- ", me._tabId, " got a new ICAO = ", node.getValue());
+                        logprint(MY_LOG_LEVEL, g_Addon.name, " ----- ", me._tabId, " got a new ICAO = ", node.getValue());
                         me._downloadMetar(node.getValue());
                     }
                 },
@@ -380,6 +382,8 @@ var DrawTabContent = {
     # @return void
     #
     _reDrawContent: func() {
+        me._profiler.start();
+
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
             me._reDrawContentWithMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
@@ -421,6 +425,8 @@ var DrawTabContent = {
 
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
+
+        me._profiler.stop("redraw " ~ me._tabId);
     },
 
     #
@@ -434,7 +440,7 @@ var DrawTabContent = {
         var runwayWidgetsSize = me._runwayWidgets.size();
 
         if (runwaysSize > runwayWidgetsSize) {
-            logprint(LOG_ALERT, "Which Runway ----- ", airport.id, " has ", runwaysSize,
+            logprint(MY_LOG_LEVEL, g_Addon.name, " ----- ", airport.id, " has ", runwaysSize,
                 " runways (including helipads), more than allocated (", runwayWidgetsSize, ")"
             );
         }
