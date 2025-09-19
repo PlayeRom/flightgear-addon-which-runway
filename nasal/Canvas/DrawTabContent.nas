@@ -49,6 +49,12 @@ var DrawTabContent = {
         );
         me._runwaysData = RunwaysData.new(me._metar);
 
+        me._bottomBar = BottomBar.new(
+            tabsContent: me._tabsContent,
+            downloadMetarCallback: Callback.new(me._downloadMetar, me),
+            withIcaoBtns: me._isTabNearest() or me._isTabAlternate(),
+        );
+
         var scrollMargins = {
             left  : DrawTabContent.PADDING,
             top   : 0,
@@ -67,6 +73,9 @@ var DrawTabContent = {
         me._scrollLayout = canvas.VBoxLayout.new();
         me._scrollArea.setLayout(me._scrollLayout);
         me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
+        me._tabContent.addSpacing(10);
+        me._tabContent.addItem(me._getBottomBarByTabId());
+        me._tabContent.addSpacing(10);
 
         me._messageView = canvas.gui.widgets.MessageView.new(me._scrollContent, canvas.style, {})
             .setVisible(true);
@@ -138,14 +147,6 @@ var DrawTabContent = {
                 windRoseView: windRoseView,
             });
         }
-
-        me._bottomBar = BottomBar.new(
-            tabsContent: me._tabsContent,
-            downloadMetarCallback: Callback.new(me._downloadMetar, me),
-            withIcaoBtns: me._isTabNearest() or me._isTabAlternate(),
-        );
-
-        me._drawBottomBar();
 
         me._listeners = Listeners.new();
         me._setListeners();
@@ -508,22 +509,11 @@ var DrawTabContent = {
     },
 
     #
-    # @return ghost  Canvas layout object with controls.
-    #
-    _drawBottomBar: func() {
-        var buttonBox = me._getButtonBoxByTabId();
-
-        me._tabContent.addSpacing(10);
-        me._tabContent.addItem(buttonBox);
-        me._tabContent.addSpacing(10);
-
-        return buttonBox;
-    },
-
+    # Get bottom bar with buttons.
     #
     # @return ghost|nil  Canvas layout object with controls or nil if failed.
     #
-    _getButtonBoxByTabId: func() {
+    _getBottomBarByTabId: func() {
            if (me._isTabNearest())                         return me._bottomBar.drawBottomBarForNearest();
         elsif (me._isTabDeparture() or me._isTabArrival()) return me._bottomBar.drawBottomBarForScheduledTab();
         elsif (me._isTabAlternate())                       return me._bottomBar.drawBottomBarForAlternate();

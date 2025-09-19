@@ -30,9 +30,9 @@ var BottomBar = {
 
         me._icaoEdit = nil;
         me._icao = "";
+        me._btnLoadIcaos = std.Vector.new();
 
         if (withIcaoBtns) {
-            me._btnLoadIcaos = std.Vector.new();
             for (var i = 0; i < 5; i += 1) {
                 var btn = canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
                     .setText("----");
@@ -81,18 +81,19 @@ var BottomBar = {
                     .setText("----")
                     .setVisible(false)
                     .listen("clicked", nil);
-            } else {
-                func() {
-                    var icao = airport.id;
-
-                    me._btnLoadIcaos.vector[index]
-                        .setText(icao)
-                        .setVisible(true)
-                        .listen("clicked", func() {
-                            me._downloadMetarCallback.invoke(icao);
-                        });
-                }();
+                continue;
             }
+
+            func() {
+                var icao = airport.id;
+
+                me._btnLoadIcaos.vector[index]
+                    .setText(icao)
+                    .setVisible(true)
+                    .listen("clicked", func() {
+                        me._downloadMetarCallback.invoke(icao);
+                    });
+            }();
         }
     },
 

@@ -46,24 +46,27 @@ var WhichRwyDialog = {
         me._tabsContent = me._tabs.getContent();
         me.vbox.addItem(me._tabs);
 
-        me._tabNearest   = canvas.VBoxLayout.new();
-        me._tabDeparture = canvas.VBoxLayout.new();
-        me._tabArrival   = canvas.VBoxLayout.new();
-        me._tabAlternate = canvas.VBoxLayout.new();
-
-        me._tabs.addTab(WhichRwyDialog.TAB_NEAREST, "Nearest", me._tabNearest);
-        me._tabs.addTab(WhichRwyDialog.TAB_DEPARTURE, "Departure", me._tabDeparture);
-        me._tabs.addTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival", me._tabArrival);
-        me._tabs.addTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate", me._tabAlternate);
-
-        me._drawTabContentNearest   = DrawTabContent.new(me._tabsContent, me._tabNearest, WhichRwyDialog.TAB_NEAREST);
-        me._drawTabContentDeparture = DrawTabContent.new(me._tabsContent, me._tabDeparture, WhichRwyDialog.TAB_DEPARTURE);
-        me._drawTabContentArrival   = DrawTabContent.new(me._tabsContent, me._tabArrival, WhichRwyDialog.TAB_ARRIVAL);
-        me._drawTabContentAlternate = DrawTabContent.new(me._tabsContent, me._tabAlternate, WhichRwyDialog.TAB_ALTERNATE);
+        me._drawTabContentNearest   = me._createTab(WhichRwyDialog.TAB_NEAREST, "Nearest");
+        me._drawTabContentDeparture = me._createTab(WhichRwyDialog.TAB_DEPARTURE, "Departure");
+        me._drawTabContentArrival   = me._createTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival");
+        me._drawTabContentAlternate = me._createTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate");
 
         me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
 
         return me;
+    },
+
+    #
+    # Create single tab.
+    #
+    # @param  string  tabId  Unique tab ID.
+    # @param  string  label  Text displayed on the tba.
+    # @return hash  DrawTabContent object.
+    #
+    _createTab: func(tabId, label) {
+        var layout = canvas.VBoxLayout.new();
+        me._tabs.addTab(tabId, label, layout);
+        return DrawTabContent.new(me._tabsContent, layout, tabId);
     },
 
     #
