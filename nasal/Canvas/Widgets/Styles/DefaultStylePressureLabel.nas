@@ -56,6 +56,16 @@ DefaultStyle.widgets["pressure-label"] = {
     },
 
     #
+    # Set remembered content height to nil for recalculate translations during redraw.
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @return void
+    #
+    resetContentHeight: func(model) {
+        me._contentHeight = nil;
+    },
+
+    #
     # @param  ghost  model  PressureLabel model.
     # @return void
     #
@@ -70,7 +80,7 @@ DefaultStyle.widgets["pressure-label"] = {
         me._mmHgUnit.setVisible(false);
 
         y += model._inHg == nil
-            ? me._printLineAtmosphericPressureNone(x, y)
+            ? me._printLineAtmosphericPressureNone(x, y, model)
             : me._printLineAtmosphericPressure(x, y, model);
 
         # model.setLayoutMaximumSize([MAX_SIZE, y]);
@@ -81,12 +91,13 @@ DefaultStyle.widgets["pressure-label"] = {
     #
     # @param  double  x  Init position of x.
     # @param  double  y  Init position of y.
+    # @param  ghost  model  PressureLabel model.
     # @return double  New Y position.
     #
-    _printLineAtmosphericPressureNone: func(x, y) {
+    _printLineAtmosphericPressureNone: func(x, y, model) {
         me._label.setTranslation(x, y);
 
-        x += Draw.VALUE_MARGIN_X;
+        x += model._valueMarginX;
         me._inHgVal.setText("n/a").setTranslation(x, y);
 
         return me._draw.shiftY(me._inHgVal, 0);
@@ -102,7 +113,7 @@ DefaultStyle.widgets["pressure-label"] = {
         me._label.setTranslation(x, y);
 
         # inHg
-        x += Draw.VALUE_MARGIN_X;
+        x += model._valueMarginX;
         me._inHgVal.setText(sprintf("%.02f", model._inHg)).setTranslation(x, y);
         x += me._draw.shiftX(me._inHgVal);
         me._inHgUnit.setTranslation(x, y).setVisible(true);

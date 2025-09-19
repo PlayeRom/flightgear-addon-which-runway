@@ -14,11 +14,6 @@
 #
 var Draw = {
     #
-    # Constants:
-    #
-    VALUE_MARGIN_X: 110, # the distance between label and value.
-
-    #
     # Constructor.
     #
     # @param  ghost  canvasContent  Canvas object where we will be drawn.
@@ -123,25 +118,25 @@ var Draw = {
 
     #
     # @param  double  y  Initial Y position.
-    # @param  vector  array  Array of text element.
+    # @param  vector  elements  Array of canvas element.
     # @param  bool  isLast
     # @return double  New Y position.
     #
-    setTextTranslations: func(y, array, isLast = false) {
+    setTextTranslations: func(y, elements, valueMarginX, isLast = false) {
         var x = 0;
         var index = 0;
         var lastText = nil;
 
-        foreach (var textElem; array) {
+        foreach (var elem; elements) {
             if (index == 1) {
-                x += Draw.VALUE_MARGIN_X;
+                x += valueMarginX;
             } elsif (index > 1) {
                 x += me.shiftX(lastText);
             }
 
-            textElem.setTranslation(x, y);
+            elem.setTranslation(x, y);
 
-            lastText = textElem;
+            lastText = elem;
             index += 1;
         }
 

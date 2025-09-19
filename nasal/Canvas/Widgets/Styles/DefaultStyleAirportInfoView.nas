@@ -59,18 +59,7 @@ DefaultStyle.widgets["airport-info-view"] = {
             me._draw.createTextValue("n/a"),
         ];
 
-        var x = 0;
-        var y = me._airportNameText.getSize()[1];
-
-        me._airportNameText.setTranslation(x, y);
-        y += me._draw.shiftY(me._airportNameText);
-
-        y += me._draw.setTextTranslations(y, me._latLon);
-        y += me._draw.setTextTranslations(y, me._elevation);
-        y += me._draw.setTextTranslations(y, me._magVar);
-        y += me._draw.setTextTranslations(y, me._hasMetar, true);
-
-        me._contentHeight = y;
+        me._contentHeight = nil;
     },
 
     #
@@ -95,10 +84,24 @@ DefaultStyle.widgets["airport-info-view"] = {
     },
 
     #
+    # Set remembered content height to nil for recalculate translations during redraw.
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @return void
+    #
+    resetContentHeight: func(model) {
+        me._contentHeight = nil;
+    },
+
+    #
     # @param  ghost  model  AirportInfoView model.
     # @return void
     #
     reDrawContent: func(model) {
+        if (me._contentHeight == nil) {
+            me._contentHeight = me._setTranslations(model);
+        }
+
         if (model._airport != nil) {
             me._drawAirportInfo(model);
         }
@@ -109,10 +112,29 @@ DefaultStyle.widgets["airport-info-view"] = {
     },
 
     #
+    # @param  ghost  model  AirportInfoView model.
+    # @return double  New Y position.
+    #
+    _setTranslations: func(model) {
+        var x = 0;
+        var y = me._airportNameText.getSize()[1];
+
+        me._airportNameText.setTranslation(x, y);
+        y += me._draw.shiftY(me._airportNameText);
+
+        y += me._draw.setTextTranslations(y, me._latLon, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._elevation, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._magVar, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._hasMetar, model._valueMarginX, true);
+
+        return y;
+    },
+
+    #
     # Draw airport and METAR information.
     #
     # @param  ghost  model  AirportInfoView model.
-    # @return double  New position of y shifted by height of printed line.
+    # @return void
     #
     _drawAirportInfo: func(model) {
         var elevationFt = sprintf("%d", math.round(model._airport.elevation * globals.M2FT));
@@ -124,7 +146,7 @@ DefaultStyle.widgets["airport-info-view"] = {
         me._elevation[me._VAL].setText(elevationFt);
         me._elevation[me._VAL2].setText(elevationM);
         var (xT, yT) = me._elevation[me._VAL].getTranslation();
-        me._draw.setTextTranslations(yT, me._elevation);
+        me._draw.setTextTranslations(yT, me._elevation, model._valueMarginX);
 
         me._magVar[me._VAL].setText(sprintf("%.2f°", model._aptMagVar));
         me._hasMetar[me._VAL].setText(model._airport.has_metar ? "Yes" : "No");

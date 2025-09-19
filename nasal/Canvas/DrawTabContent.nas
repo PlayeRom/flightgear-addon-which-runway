@@ -18,6 +18,7 @@ var DrawTabContent = {
     #
     PADDING       : 10,
     METAR_RANGE_NM: 30,
+    VALUE_MARGIN_X: 110, # the distance between label and value.
 
     #
     # Constructor
@@ -71,6 +72,7 @@ var DrawTabContent = {
             .setVisible(true);
 
         me._airportInfoView = canvas.gui.widgets.AirportInfoView.new(me._scrollContent, canvas.style, {})
+            .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setVisible(false);
 
         me._metarInfoView = canvas.gui.widgets.MetarInfoView.new(me._scrollContent, canvas.style, {})
@@ -78,11 +80,15 @@ var DrawTabContent = {
             .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
         me._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(me._scrollContent, canvas.style, {})
+            .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setLabel("QNH:")
             .setVisible(false);
+
         me._pressureLabelQfe = canvas.gui.widgets.PressureLabel.new(me._scrollContent, canvas.style, {})
+            .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setLabel("QFE:")
             .setVisible(false);
+
         me._windLabel = canvas.gui.widgets.WindLabel.new(me._scrollContent, canvas.style, {})
             .setVisible(false);
 
@@ -111,6 +117,7 @@ var DrawTabContent = {
             var runwayHLayout = canvas.HBoxLayout.new();
 
             var runwayInfoView = canvas.gui.widgets.RunwayInfoView.new(me._scrollContent, canvas.style, {})
+                .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
                 .setVisible(false);
 
             var windRoseView = canvas.gui.widgets.WindRoseView.new(me._scrollContent, canvas.style, {})

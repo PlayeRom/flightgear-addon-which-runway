@@ -30,9 +30,22 @@ gui.widgets.AirportInfoView = {
         me._focus_policy = me.NoFocus;
         me._setView(style.createWidget(parent, "airport-info-view", me._cfg));
 
+        me._valueMarginX = 110;
         me._airport = nil;
         me._aptMagVar = nil;
 
+        return me;
+    },
+
+    #
+    # Set margin between label and value.
+    #
+    # @param  int  margin
+    # @return hash
+    #
+    setMarginForValue: func(margin) {
+        me._valueMarginX = margin;
+        me._view.resetContentHeight(me);
         return me;
     },
 

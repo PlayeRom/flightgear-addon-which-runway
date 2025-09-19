@@ -90,28 +90,7 @@ DefaultStyle.widgets["runway-info-view"] = {
             me._draw.createTextValue("n/a"),
         ];
 
-        var x = 0;
-        var y = 0;
-
-        # Set runway label
-        me._runwayTexts.label.setTranslation(x, y);
-        x += me._draw.shiftX(me._runwayTexts.label);
-        me._runwayTexts.id.setTranslation(x, y);
-        x += me._draw.shiftX(me._runwayTexts.id, 10);
-        me._runwayTexts.wind.setTranslation(x, y);
-        y += me._draw.shiftY(me._runwayTexts.wind);
-
-        y += me._draw.setTextTranslations(y, me._hdTw);
-        y += me._draw.setTextTranslations(y, me._crosswind);
-        y += me._draw.setTextTranslations(y, me._hdgTrue);
-        y += me._draw.setTextTranslations(y, me._hdgMag);
-        y += me._draw.setTextTranslations(y, me._rwyLength);
-        y += me._draw.setTextTranslations(y, me._rwyWidth);
-        y += me._draw.setTextTranslations(y, me._surface);
-        y += me._draw.setTextTranslations(y, me._reciprocal);
-        y += me._draw.setTextTranslations(y, me._ils, true);
-
-        me._contentHeight = y;
+        me._contentHeight = nil;
     },
 
     #
@@ -136,15 +115,58 @@ DefaultStyle.widgets["runway-info-view"] = {
     },
 
     #
+    # Set remembered content height to nil for recalculate translations during redraw.
+    #
+    # @param  ghost  model  AirportInfoView model.
+    # @return void
+    #
+    resetContentHeight: func(model) {
+        me._contentHeight = nil;
+    },
+
+    #
     # @param  ghost  model  RunwayInfoView model.
     # @return void
     #
     reDrawContent: func(model) {
+        if (me._contentHeight == nil) {
+            me._contentHeight = me._setTranslations(model);
+        }
+
         me._drawRunwayInfo(model);
 
         # model.setLayoutMaximumSize([model._size[0], me._contentHeight]);
         model.setLayoutMinimumSize([model._size[0], me._contentHeight]);
         model.setLayoutSizeHint([model._size[0], me._contentHeight]);
+    },
+
+    #
+    # @param  ghost  model  RunwayInfoView model.
+    # @return double  New Y position.
+    #
+    _setTranslations: func(model) {
+        var x = 0;
+        var y = 0;
+
+        # Set runway label
+        me._runwayTexts.label.setTranslation(x, y);
+        x += me._draw.shiftX(me._runwayTexts.label);
+        me._runwayTexts.id.setTranslation(x, y);
+        x += me._draw.shiftX(me._runwayTexts.id, 10);
+        me._runwayTexts.wind.setTranslation(x, y);
+        y += me._draw.shiftY(me._runwayTexts.wind);
+
+        y += me._draw.setTextTranslations(y, me._hdTw, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._crosswind, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._hdgTrue, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._hdgMag, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._rwyLength, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._rwyWidth, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._surface, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._reciprocal, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._ils, model._valueMarginX, true);
+
+        return y;
     },
 
     #
@@ -162,7 +184,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         if (rwy.headwind == nil) {
             me._hdTw[me._UNIT].setVisible(false);
         } else {
-            var x = Draw.VALUE_MARGIN_X + me._draw.shiftX(me._hdTw[me._VAL]);
+            var x = model._valueMarginX + me._draw.shiftX(me._hdTw[me._VAL]);
             var (xT, yT) = me._hdTw[me._UNIT].getTranslation();
             me._hdTw[me._UNIT]
                 .setTranslation(x, yT)
@@ -175,7 +197,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         if (xwUnit == nil) {
             me._crosswind[me._UNIT].setVisible(false);
         } else {
-            var x = Draw.VALUE_MARGIN_X + me._draw.shiftX(me._crosswind[me._VAL]);
+            var x = model._valueMarginX + me._draw.shiftX(me._crosswind[me._VAL]);
             var (xT, yT) = me._crosswind[me._UNIT].getTranslation();
             me._crosswind[me._UNIT]
                 .setText(xwUnit)
@@ -192,12 +214,12 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._rwyLength[me._VAL].setText(sprintf("%d", math.round(rwy.length * globals.M2FT)));
         me._rwyLength[me._VAL2].setText(sprintf("%d", math.round(rwy.length)));
         var (xTL, yTL) = me._rwyLength[me._VAL].getTranslation();
-        me._draw.setTextTranslations(yTL, me._rwyLength);
+        me._draw.setTextTranslations(yTL, me._rwyLength, model._valueMarginX);
 
         me._rwyWidth[me._VAL].setText(sprintf("%d", math.round(rwy.width * globals.M2FT)));
         me._rwyWidth[me._VAL2].setText(sprintf("%d", math.round(rwy.width)));
         var (xTW, yTW) = me._rwyWidth[me._VAL].getTranslation();
-        me._draw.setTextTranslations(yTW, me._rwyWidth);
+        me._draw.setTextTranslations(yTW, me._rwyWidth, model._valueMarginX);
 
         me._surface[me._VAL].setText(me._getSurface(rwy.surface));
         me._reciprocal[me._VAL].setText(rwy.reciprocal == nil ? "n/a" : rwy.reciprocal.id);
