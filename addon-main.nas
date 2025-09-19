@@ -37,6 +37,7 @@ var loadExtraNasalFiles = func(addon) {
         "nasal/Utils/Listeners",
         "nasal/Utils/Log",
         "nasal/Utils/Profiler",
+        "nasal/Utils/Timer",
         "nasal/Utils/Utils",
 
         "nasal/Colors",

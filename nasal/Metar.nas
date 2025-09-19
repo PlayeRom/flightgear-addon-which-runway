@@ -290,7 +290,7 @@ var Metar = {
             return false;
         }
 
-        var pos = find(" VRB", metar);
+        var pos = globals.find(" VRB", metar);
         if (pos == -1) {
             return false;
         }
