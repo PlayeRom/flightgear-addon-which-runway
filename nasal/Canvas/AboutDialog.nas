@@ -61,7 +61,7 @@ var AboutDialog = {
     _drawContent: func() {
         me.vbox.addItem(me._getLabel(g_Addon.name));
         me.vbox.addItem(me._getLabel(sprintf("version %s", g_Addon.version.str())));
-        me.vbox.addItem(me._getLabel("September 18, 2025"));
+        me.vbox.addItem(me._getLabel("September 19, 2025"));
 
         me.vbox.addStretch(1);
         me.vbox.addItem(me._getLabel("Written by:"));
