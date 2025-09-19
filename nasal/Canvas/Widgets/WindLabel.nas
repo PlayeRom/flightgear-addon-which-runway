@@ -5,15 +5,15 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# WeatherInfoView widget is an Open Source project and it is licensed
+# WindLabel widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# WeatherInfoView widget Model
+# WindLabel widget Model
 #
-gui.widgets.WeatherInfoView = {
-    _CLASS: "WeatherInfoView",
+gui.widgets.WindLabel = {
+    _CLASS: "WindLabel",
 
     #
     # Constructor.
@@ -26,16 +26,14 @@ gui.widgets.WeatherInfoView = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.WeatherInfoView, cfg);
+        var me = gui.Widget.new(gui.widgets.WindLabel, cfg);
         me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "weather-info-view", me._cfg));
+        me._setView(style.createWidget(parent, "wind-label", me._cfg));
 
         me._isMetarData = false;
         me._windDir = nil;
         me._windKt = 0;
         me._windGustKt = 0;
-        me._qnhValues = nil;
-        me._qfeValues = nil;
 
         return me;
     },
@@ -59,24 +57,6 @@ gui.widgets.WeatherInfoView = {
         me._windDir = windDir;
         me._windKt = windKt;
         me._windGustKt = windGustKt;
-        return me;
-    },
-
-    #
-    # @param  hash|nil  qnhValues  Hash with 3 fields: "inHg", "hPa", "mmHg". If nil then we haven't data (no METAR).
-    # @return ghost
-    #
-    setQnhValues: func(qnhValues) {
-        me._qnhValues = qnhValues;
-        return me;
-    },
-
-    #
-    # @param  hash|nil  qfeValues  Hash with 3 fields: "inHg", "hPa", "mmHg". If nil then we haven't data (no METAR).
-    # @return ghost
-    #
-    setQfeValues: func(qfeValues) {
-        me._qfeValues = qfeValues;
         return me;
     },
 

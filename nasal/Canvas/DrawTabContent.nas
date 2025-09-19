@@ -77,7 +77,13 @@ var DrawTabContent = {
             .setVisible(false)
             .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
-        me._weatherInfoView = canvas.gui.widgets.WeatherInfoView.new(me._scrollContent, canvas.style, {})
+        me._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(me._scrollContent, canvas.style, {})
+            .setLabel("QNH:")
+            .setVisible(false);
+        me._pressureLabelQfe = canvas.gui.widgets.PressureLabel.new(me._scrollContent, canvas.style, {})
+            .setLabel("QFE:")
+            .setVisible(false);
+        me._windLabel = canvas.gui.widgets.WindLabel.new(me._scrollContent, canvas.style, {})
             .setVisible(false);
 
         me._runwaysLayout = canvas.VBoxLayout.new();
@@ -89,7 +95,10 @@ var DrawTabContent = {
         me._scrollLayout.addSpacing(10);
         me._scrollLayout.addItem(me._metarInfoView);
         me._scrollLayout.addSpacing(10);
-        me._scrollLayout.addItem(me._weatherInfoView);
+        me._scrollLayout.addItem(me._pressureLabelQnh);
+        me._scrollLayout.addItem(me._pressureLabelQfe);
+        me._scrollLayout.addSpacing(20);
+        me._scrollLayout.addItem(me._windLabel);
         me._scrollLayout.addSpacing(0);
         me._scrollLayout.addItem(me._runwaysLayout);
 
@@ -351,7 +360,9 @@ var DrawTabContent = {
     _reDrawContentWithMessage: func(message, isError = false) {
         me._airportInfoView.setVisible(false);
         me._metarInfoView.setVisible(false);
-        me._weatherInfoView.setVisible(false);
+        me._pressureLabelQnh.setVisible(false);
+        me._pressureLabelQfe.setVisible(false);
+        me._windLabel.setVisible(false);
 
         me._hideAllRunways();
 
@@ -409,15 +420,29 @@ var DrawTabContent = {
             .setVisible(true)
             .updateView();
 
-        me._weatherInfoView
+        var qnh = me._metar.getQnhValues(airport);
+        me._pressureLabelQnh
+            .setInHg(qnh == nil ? nil : qnh.inHg)
+            .setHPa(qnh == nil ? nil : qnh.hPa)
+            .setMmHg(qnh == nil ? nil : qnh.mmHg)
+            .setVisible(true)
+            .updateView();
+
+        var qfe = me._metar.getQfeValues(airport);
+        me._pressureLabelQfe
+            .setInHg(qfe == nil ? nil : qfe.inHg)
+            .setHPa(qfe == nil ? nil : qfe.hPa)
+            .setMmHg(qfe == nil ? nil : qfe.mmHg)
+            .setVisible(true)
+            .updateView();
+
+        me._windLabel
             .setIsMetarData(me._metar.canUseMetar(airport))
             .setWind(
                 me._metar.getWindDir(airport),
                 me._metar.getWindSpeedKt(),
                 me._metar.getWindGustSpeedKt(),
             )
-            .setQnhValues(me._metar.getQnhValues(airport))
-            .setQfeValues(me._metar.getQfeValues(airport))
             .setVisible(true)
             .updateView();
 
