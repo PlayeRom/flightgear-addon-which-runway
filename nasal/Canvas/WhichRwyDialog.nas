@@ -42,9 +42,9 @@ var WhichRwyDialog = {
 
         me.setPositionOnCenter();
 
-        me._tabs = canvas.gui.widgets.TabWidget.new(me.group, canvas.style, {"tabs-closeable": false});
+        me._tabs = canvas.gui.widgets.TabWidget.new(me._group, canvas.style, {"tabs-closeable": false});
         me._tabsContent = me._tabs.getContent();
-        me.vbox.addItem(me._tabs);
+        me._vbox.addItem(me._tabs);
 
         me._drawTabContentNearest   = me._createTab(WhichRwyDialog.TAB_NEAREST, "Nearest");
         me._drawTabContentDeparture = me._createTab(WhichRwyDialog.TAB_DEPARTURE, "Departure");

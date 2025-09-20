@@ -33,13 +33,13 @@ var AboutDialog = {
 
         me.setPositionOnCenter();
 
-        me.vbox.addSpacing(AboutDialog.PADDING);
+        me._vbox.addSpacing(AboutDialog.PADDING);
         me._drawContent();
 
         var buttonBoxClose = me._drawBottomBar("Close", func { me.window.hide(); });
-        me.vbox.addSpacing(AboutDialog.PADDING);
-        me.vbox.addItem(buttonBoxClose);
-        me.vbox.addSpacing(AboutDialog.PADDING);
+        me._vbox.addSpacing(AboutDialog.PADDING);
+        me._vbox.addItem(buttonBoxClose);
+        me._vbox.addSpacing(AboutDialog.PADDING);
 
         return me;
     },
@@ -59,28 +59,28 @@ var AboutDialog = {
     # @return void
     #
     _drawContent: func() {
-        me.vbox.addItem(me._getLabel(g_Addon.name));
-        me.vbox.addItem(me._getLabel(sprintf("version %s", g_Addon.version.str())));
-        me.vbox.addItem(me._getLabel("September 19, 2025"));
+        me._vbox.addItem(me._getLabel(g_Addon.name));
+        me._vbox.addItem(me._getLabel(sprintf("version %s", g_Addon.version.str())));
+        me._vbox.addItem(me._getLabel("September 19, 2025"));
 
-        me.vbox.addStretch(1);
-        me.vbox.addItem(me._getLabel("Written by:"));
+        me._vbox.addStretch(1);
+        me._vbox.addItem(me._getLabel("Written by:"));
 
         foreach (var author; g_Addon.authors) {
-            me.vbox.addItem(me._getLabel(Utils.toString(author.name)));
+            me._vbox.addItem(me._getLabel(Utils.toString(author.name)));
         }
 
-        me.vbox.addStretch(1);
+        me._vbox.addStretch(1);
 
-        me.vbox.addItem(me._getButton("FlightGear wiki...", func {
+        me._vbox.addItem(me._getButton("FlightGear wiki...", func {
             Utils.openBrowser({ "url": g_Addon.homePage });
         }));
 
-        me.vbox.addItem(me._getButton("GitHub website...", func {
+        me._vbox.addItem(me._getButton("GitHub website...", func {
             Utils.openBrowser({ "url": g_Addon.codeRepositoryUrl });
         }));
 
-        me.vbox.addStretch(1);
+        me._vbox.addStretch(1);
     },
 
     #
@@ -89,7 +89,7 @@ var AboutDialog = {
     # @return ghost  Label widget.
     #
     _getLabel: func(text, wordWrap = false) {
-        var label = canvas.gui.widgets.Label.new(me.group, canvas.style, {wordWrap: wordWrap})
+        var label = canvas.gui.widgets.Label.new(me._group, canvas.style, {wordWrap: wordWrap})
             .setText(text);
 
         label.setTextAlign("center");
@@ -103,7 +103,7 @@ var AboutDialog = {
     # @return ghost  Button widget.
     #
     _getButton: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me.group, canvas.style, {})
+        return canvas.gui.widgets.Button.new(me._group, canvas.style, {})
             .setText(text)
             .setFixedSize(200, 26)
             .listen("clicked", callback);
@@ -117,7 +117,7 @@ var AboutDialog = {
     _drawBottomBar: func(label, callback) {
         var buttonBox = canvas.HBoxLayout.new();
 
-        var btnClose = canvas.gui.widgets.Button.new(me.group, canvas.style, {})
+        var btnClose = canvas.gui.widgets.Button.new(me._group, canvas.style, {})
             .setText(label)
             .setFixedSize(75, 26)
             .listen("clicked", callback);
