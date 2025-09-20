@@ -20,7 +20,7 @@ var main = func(addon) {
 
     loadExtraNasalFiles(addon);
 
-    whichRunway.init(addon);
+    whichRunway.Bootstrap.init(addon);
 };
 
 #
@@ -53,7 +53,7 @@ var loadExtraNasalFiles = func(addon) {
         "nasal/Canvas/WhichRwyDialog",
         "nasal/Canvas/ScrollAreaHelper",
 
-        "WhichRwy",
+        "Bootstrap",
     ];
 
     loadVectorOfModules(addon, modules, "whichRunway");
@@ -113,5 +113,5 @@ var loadVectorOfModules = func(addon, modules, namespace) {
 # @return void
 #
 var unload = func(addon) {
-    whichRunway.uninit();
+    whichRunway.Bootstrap.uninit();
 };
