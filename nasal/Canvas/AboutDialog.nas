@@ -36,7 +36,7 @@ var AboutDialog = {
         me._vbox.addSpacing(AboutDialog.PADDING);
         me._drawContent();
 
-        var buttonBoxClose = me._drawBottomBar("Close", func { me.window.hide(); });
+        var buttonBoxClose = me._drawBottomBar("Close", func { me._window.hide(); });
         me._vbox.addSpacing(AboutDialog.PADDING);
         me._vbox.addItem(buttonBoxClose);
         me._vbox.addSpacing(AboutDialog.PADDING);
