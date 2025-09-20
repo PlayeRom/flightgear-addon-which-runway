@@ -68,7 +68,7 @@ After changing these values, you need to reload the Nasal code using the "Dev Re
 
 To reset the add-on's Nasal scripts, you can also use the multi-key command: `:Yaw`, which always works regardless of the `DEV_MODE` value in the `.env` file. This way, you are always able to reset the add-on's Nasal code, even if you don't have a "Dev Reload" menu item.
 
-### Diagram
+### Class Diagram
 
 ![alt Class Diagram](docs/diagram.png "Class Diagram")
 
