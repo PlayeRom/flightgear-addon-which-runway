@@ -42,7 +42,6 @@ var loadExtraNasalFiles = func(addon) {
 
         "nasal/Colors",
         "nasal/Metar",
-        "nasal/Fonts",
         "nasal/RunwaysData",
 
         "nasal/Canvas/DrawTabContent",
