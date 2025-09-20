@@ -105,7 +105,7 @@ var Draw = {
     #
     createTextLabel: func(text = nil, color = nil) {
         return me.createText(text)
-            .setColor(color == nil ? whichRunway.Colors.DEFAULT_TEXT : color);
+            .setColor(color == nil ? style.getColor("text_color") : color);
     },
 
     #
@@ -115,7 +115,7 @@ var Draw = {
     #
     createTextValue: func(text = nil, color = nil) {
         return me.createText(text)
-            .setColor(color == nil ? whichRunway.Colors.DEFAULT_TEXT : color)
+            .setColor(color == nil ? style.getColor("text_color") : color)
             .setFont(canvas.font_mapper("sans", "bold"));
     },
 
@@ -126,7 +126,7 @@ var Draw = {
     #
     createTextUnit: func(text = nil, color = nil) {
         return me.createText(text)
-            .setColor(color == nil ? whichRunway.Colors.DEFAULT_TEXT : color);
+            .setColor(color == nil ? style.getColor("text_color") : color);
     },
 
     #

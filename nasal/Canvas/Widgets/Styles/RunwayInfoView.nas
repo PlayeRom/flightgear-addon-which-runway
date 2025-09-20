@@ -260,10 +260,10 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return whichRunway.Colors.DEFAULT_TEXT;
+           if (normDiffDeg == nil)                                   return style.getColor("text_color");
         elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return whichRunway.Colors.GREEN;
         elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return whichRunway.Colors.AMBER;
-        else                                                         return whichRunway.Colors.DEFAULT_TEXT;
+        else                                                         return style.getColor("text_color");
     },
 
     #

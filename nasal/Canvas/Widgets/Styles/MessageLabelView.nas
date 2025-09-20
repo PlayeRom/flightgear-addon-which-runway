@@ -26,7 +26,7 @@ DefaultStyle.widgets["message-label-view"] = {
         me._draw = Draw.new(me._root);
 
         me._text = me._draw.createText()
-            .setColor(whichRunway.Colors.DEFAULT_TEXT)
+            .setColor(style.getColor("text_color"))
             .setAlignment("center-center")
             .setFontSize(20);
     },
@@ -59,7 +59,7 @@ DefaultStyle.widgets["message-label-view"] = {
     reDrawContent: func(model) {
         if (model._text != nil) {
             me._text.setText(model._text)
-                .setColor(model._isError ? whichRunway.Colors.RED : whichRunway.Colors.DEFAULT_TEXT)
+                .setColor(model._isError ? whichRunway.Colors.RED : style.getColor("text_color"))
                 .setTranslation(model._size[0] / 2, model._size[1] / 2);
         }
 

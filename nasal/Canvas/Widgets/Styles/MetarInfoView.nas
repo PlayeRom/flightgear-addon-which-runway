@@ -34,11 +34,11 @@ DefaultStyle.widgets["metar-info-view"] = {
             .setVisible(false);
 
         me._metarLine1Text = me._draw.createText()
-            .setColor(whichRunway.Colors.DEFAULT_TEXT)
+            .setColor(style.getColor("text_color"))
             .setVisible(false);
 
         me._metarLine2Text = me._draw.createText()
-            .setColor(whichRunway.Colors.DEFAULT_TEXT)
+            .setColor(style.getColor("text_color"))
             .setVisible(false);
     },
 
@@ -102,7 +102,7 @@ DefaultStyle.widgets["metar-info-view"] = {
 
         var color = model._isMetarFromNearestAirport
             ? whichRunway.Colors.AMBER
-            : whichRunway.Colors.DEFAULT_TEXT;
+            : style.getColor("text_color");
 
         var (line1, line2) = me._getMetarTextLines(model);
 

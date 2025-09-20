@@ -112,7 +112,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
                         centerY + sinRad * (model._radius + markPadding),
                     )
                     .setAlignment("center-center")
-                    .setColor(whichRunway.Colors.DEFAULT_TEXT)
+                    .setColor(style.getColor("text_color"))
                     .setFontSize(18);
             } elsif (math.mod(deg, 30) == 0) {
                 # Direction numbers every 30°
@@ -362,7 +362,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     # @return void
     #
     _drawRunwayId: func(x, y, rwyId, normDiffDeg, angleRad, lenPix, isMainThreshold, isMainRwy) {
-        var color = whichRunway.Colors.DEFAULT_TEXT;
+        var color = style.getColor("text_color");
         if (isMainThreshold) {
             color = me._geWindColorByDir(normDiffDeg);
         } elsif (!isMainRwy) {
@@ -388,11 +388,11 @@ DefaultStyle.widgets["wind-rose-view"] = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return whichRunway.Colors.DEFAULT_TEXT;
+           if (normDiffDeg == nil)                                   return style.getColor("text_color");
         elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return whichRunway.Colors.GREEN;
         elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return whichRunway.Colors.AMBER;
 
-        return whichRunway.Colors.DEFAULT_TEXT;
+        return style.getColor("text_color");
     },
 
     #

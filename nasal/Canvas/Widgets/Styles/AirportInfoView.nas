@@ -32,7 +32,7 @@ DefaultStyle.widgets["airport-info-view"] = {
         me._UNIT2 = 4;
 
         me._airportNameText = me._draw.createText("n/a")
-            .setColor(whichRunway.Colors.DEFAULT_TEXT)
+            .setColor(style.getColor("text_color"))
             .setFontSize(24)
             .setFont(canvas.font_mapper("sans", "bold"));
 
