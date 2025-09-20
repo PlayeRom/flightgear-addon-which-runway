@@ -28,10 +28,13 @@ DefaultStyle.widgets["pressure-label-view"] = {
         me._label    = me._draw.createTextLabel("QNH:");
         me._inHgVal  = me._draw.createTextValue("n/a");
         me._inHgUnit = me._draw.createTextUnit("inHg /");
-        me._hPaVal   = me._draw.createTextValue("n/a").setAlignment("right-baseline");
+        me._hPaVal   = me._draw.createTextValue("0000") # Set "0000" as the max text for calculate max width
+            .setAlignment("right-baseline");
         me._hPaUnit  = me._draw.createTextUnit("hPa /");
         me._mmHgVal  = me._draw.createTextValue("n/a");
         me._mmHgUnit = me._draw.createTextUnit("mmHg");
+
+        me._hPaValShiftX = me._draw.shiftX(me._hPaVal, 0);
     },
 
     #
@@ -119,13 +122,14 @@ DefaultStyle.widgets["pressure-label-view"] = {
         me._inHgUnit.setTranslation(x, y).setVisible(true);
 
         # hPa
-        x += 82;
+        x += me._draw.shiftX(me._inHgUnit) + me._hPaValShiftX;
         me._hPaVal.setText(sprintf("%d", model._hPa)).setTranslation(x, y).setVisible(true);
+
         x += 5;
         me._hPaUnit.setTranslation(x, y).setVisible(true);
 
         # mmHg
-        x += 42;
+        x += me._draw.shiftX(me._hPaUnit);
         me._mmHgVal.setText(sprintf("%d", model._mmHg)).setTranslation(x, y).setVisible(true);
         x += me._draw.shiftX(me._mmHgVal);
         me._mmHgUnit.setTranslation(x, y).setVisible(true);
