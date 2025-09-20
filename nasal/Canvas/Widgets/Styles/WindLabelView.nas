@@ -23,11 +23,13 @@ DefaultStyle.widgets["wind-label-view"] = {
     new: func(parent, cfg) {
         me._root = parent.createChild("group", "wind-label-view");
 
+        me._colors = cfg.get("colors");
+
         me._draw = Draw.new(me._root);
 
         me._windText = me._draw.createText("Wind")
             .setTranslation(0, 0)
-            .setColor(whichRunway.Colors.BLUE)
+            .setColor(me._colors.BLUE)
             .setFontSize(20)
             .setFont(canvas.font_mapper("sans", "bold"));
     },

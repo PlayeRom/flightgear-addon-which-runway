@@ -23,6 +23,8 @@ DefaultStyle.widgets["message-label-view"] = {
     new: func(parent, cfg) {
         me._root = parent.createChild("group", "message-labe-view");
 
+        me._colors = cfg.get("colors");
+
         me._draw = Draw.new(me._root);
 
         me._text = me._draw.createText()
@@ -59,7 +61,7 @@ DefaultStyle.widgets["message-label-view"] = {
     reDrawContent: func(model) {
         if (model._text != nil) {
             me._text.setText(model._text)
-                .setColor(model._isError ? whichRunway.Colors.RED : style.getColor("text_color"))
+                .setColor(model._isError ? me._colors.RED : style.getColor("text_color"))
                 .setTranslation(model._size[0] / 2, model._size[1] / 2);
         }
 

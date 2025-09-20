@@ -23,6 +23,8 @@ DefaultStyle.widgets["runway-info-view"] = {
     new: func(parent, cfg) {
         me._root = parent.createChild("group", "runway-info-view");
 
+        me._colors = cfg.get("colors");
+
         me._fontSansRegular = canvas.font_mapper("sans");
         me._fontSansBold    = canvas.font_mapper("sans", "bold");
 
@@ -41,15 +43,15 @@ DefaultStyle.widgets["runway-info-view"] = {
         };
 
         me._hdTw = [
-            me._draw.createTextLabel("Headwind/Tailwind:", whichRunway.Colors.BLUE),
-            me._draw.createTextValue("n/a", whichRunway.Colors.BLUE),
-            me._draw.createTextUnit("kts", whichRunway.Colors.BLUE),
+            me._draw.createTextLabel("Headwind/Tailwind:", me._colors.BLUE),
+            me._draw.createTextValue("n/a", me._colors.BLUE),
+            me._draw.createTextUnit("kts", me._colors.BLUE),
         ];
 
         me._crosswind = [
-            me._draw.createTextLabel("Crosswind:", whichRunway.Colors.BLUE),
-            me._draw.createTextValue("n/a", whichRunway.Colors.BLUE),
-            me._draw.createTextUnit("kts", whichRunway.Colors.BLUE),
+            me._draw.createTextLabel("Crosswind:", me._colors.BLUE),
+            me._draw.createTextValue("n/a", me._colors.BLUE),
+            me._draw.createTextUnit("kts", me._colors.BLUE),
         ];
 
         me._hdgTrue = [
@@ -264,8 +266,8 @@ DefaultStyle.widgets["runway-info-view"] = {
     #
     _geWindColorByDir: func(normDiffDeg) {
            if (normDiffDeg == nil)                                   return style.getColor("text_color");
-        elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return whichRunway.Colors.GREEN;
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return whichRunway.Colors.AMBER;
+        elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return me._colors.GREEN;
+        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return me._colors.AMBER;
         else                                                         return style.getColor("text_color");
     },
 

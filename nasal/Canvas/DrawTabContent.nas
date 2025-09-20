@@ -77,14 +77,14 @@ var DrawTabContent = {
         me._tabContent.addItem(me._getBottomBarByTabId());
         me._tabContent.addSpacing(10);
 
-        me._messageView = canvas.gui.widgets.MessageLabel.new(me._scrollContent, canvas.style, {})
+        me._messageView = canvas.gui.widgets.MessageLabel.new(me._scrollContent, canvas.style, {colors: Colors})
             .setVisible(true);
 
         me._airportInfoView = canvas.gui.widgets.AirportInfo.new(me._scrollContent, canvas.style, {})
             .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setVisible(false);
 
-        me._metarInfoView = canvas.gui.widgets.MetarInfo.new(me._scrollContent, canvas.style, {})
+        me._metarInfoView = canvas.gui.widgets.MetarInfo.new(me._scrollContent, canvas.style, {colors: Colors})
             .setVisible(false)
             .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
@@ -98,7 +98,7 @@ var DrawTabContent = {
             .setLabel("QFE:")
             .setVisible(false);
 
-        me._windLabel = canvas.gui.widgets.WindLabel.new(me._scrollContent, canvas.style, {})
+        me._windLabel = canvas.gui.widgets.WindLabel.new(me._scrollContent, canvas.style, {colors: Colors})
             .setVisible(false);
 
         me._runwaysLayout = canvas.VBoxLayout.new();
@@ -125,11 +125,11 @@ var DrawTabContent = {
         for (var i = 0; i < 16; i += 1) {
             var runwayHLayout = canvas.HBoxLayout.new();
 
-            var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(me._scrollContent, canvas.style, {})
+            var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(me._scrollContent, canvas.style, {colors: Colors})
                 .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
                 .setVisible(false);
 
-            var windRoseView = canvas.gui.widgets.WindRose.new(me._scrollContent, canvas.style, {})
+            var windRoseView = canvas.gui.widgets.WindRose.new(me._scrollContent, canvas.style, {colors: Colors})
                 .setVisible(false);
 
             var runwayVCenter = canvas.VBoxLayout.new(); # wrapper for set runway info vertically centered

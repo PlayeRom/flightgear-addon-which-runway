@@ -23,14 +23,16 @@ DefaultStyle.widgets["metar-info-view"] = {
     new: func(parent, cfg) {
         me._root = parent.createChild("group", "metar-info-view");
 
+        me._colors = cfg.get("colors");
+
         me._draw = Draw.new(me._root);
 
         me._noLiveDataText = me._draw.createText("For METAR, it is necessary to select the \"Live Data\" weather scenario!")
-            .setColor(whichRunway.Colors.RED)
+            .setColor(me._colors.RED)
             .setVisible(false);
 
         me._foreignMetarText = me._draw.createText() # "METAR comes from %s, %.1f NM (%.1f km) away:",
-            .setColor(whichRunway.Colors.AMBER)
+            .setColor(me._colors.AMBER)
             .setVisible(false);
 
         me._metarLine1Text = me._draw.createText()
@@ -101,7 +103,7 @@ DefaultStyle.widgets["metar-info-view"] = {
         }
 
         var color = model._isMetarFromNearestAirport
-            ? whichRunway.Colors.AMBER
+            ? me._colors.AMBER
             : style.getColor("text_color");
 
         var (line1, line2) = me._getMetarTextLines(model);

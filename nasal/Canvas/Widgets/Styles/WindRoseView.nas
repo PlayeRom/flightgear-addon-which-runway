@@ -23,6 +23,8 @@ DefaultStyle.widgets["wind-rose-view"] = {
     new: func(parent, cfg) {
         me._root = parent.createChild("group", "wind-rose-view");
 
+        me._colors = cfg.get("colors");
+
         # me._content = me._root.createChild("group", "clip-content")
         #     .set("clip-frame", Element.PARENT);
 
@@ -392,8 +394,8 @@ DefaultStyle.widgets["wind-rose-view"] = {
     #
     _geWindColorByDir: func(normDiffDeg) {
            if (normDiffDeg == nil)                                   return style.getColor("text_color");
-        elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return whichRunway.Colors.GREEN;
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return whichRunway.Colors.AMBER;
+        elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return me._colors.GREEN;
+        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return me._colors.AMBER;
 
         return style.getColor("text_color");
     },
@@ -426,9 +428,9 @@ DefaultStyle.widgets["wind-rose-view"] = {
         me._draw.createPath()
             .moveTo(xStart, yStart)
             .lineTo(xEnd, yEnd)
-            .setColor(whichRunway.Colors.BLUE)
-            .setFill(whichRunway.Colors.BLUE)
-            .setStroke(whichRunway.Colors.BLUE)
+            .setColor(me._colors.BLUE)
+            .setFill(me._colors.BLUE)
+            .setStroke(me._colors.BLUE)
             .setStrokeLineWidth(me._windLineWidth);
 
         # Arrowhead
@@ -471,7 +473,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
 
         me._draw.createText(sprintf("%03d° %d kt", model._windDir, math.round(model._windKt)))
             .setTranslation(xLabel, yLabel)
-            .setColor(whichRunway.Colors.BLUE)
+            .setColor(me._colors.BLUE)
             .setFontSize(11)
             .setAlignment("center-center");
     },
@@ -490,18 +492,18 @@ DefaultStyle.widgets["wind-rose-view"] = {
         me._draw.createPath()
             .moveTo(x, y)
             .lineTo(x - math.cos(left) * arrowLength, y - math.sin(left) * arrowLength)
-            .setColor(whichRunway.Colors.BLUE)
-            .setFill(whichRunway.Colors.BLUE)
-            .setStroke(whichRunway.Colors.BLUE)
+            .setColor(me._colors.BLUE)
+            .setFill(me._colors.BLUE)
+            .setStroke(me._colors.BLUE)
             .setStrokeLineWidth(me._windLineWidth);
 
         # Right arrowhead line
         me._draw.createPath()
             .moveTo(x, y)
             .lineTo(x - math.cos(right) * arrowLength, y - math.sin(right) * arrowLength)
-            .setColor(whichRunway.Colors.BLUE)
-            .setFill(whichRunway.Colors.BLUE)
-            .setStroke(whichRunway.Colors.BLUE)
+            .setColor(me._colors.BLUE)
+            .setFill(me._colors.BLUE)
+            .setStroke(me._colors.BLUE)
             .setStrokeLineWidth(me._windLineWidth);
     },
 };
