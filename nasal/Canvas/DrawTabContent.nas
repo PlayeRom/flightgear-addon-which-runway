@@ -65,7 +65,7 @@ var DrawTabContent = {
         me._scrollArea = ScrollAreaHelper.create(context: me._tabsContent, margins: scrollMargins);
         me._scrollContent = ScrollAreaHelper.getContent(
             context  : me._scrollArea,
-            font     : Fonts.SANS_REGULAR,
+            font     : canvas.font_mapper("sans"),
             fontSize : 16,
             alignment: "left-baseline",
         );

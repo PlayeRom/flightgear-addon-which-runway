@@ -34,7 +34,7 @@ DefaultStyle.widgets["airport-info-view"] = {
         me._airportNameText = me._draw.createText("n/a")
             .setColor(whichRunway.Colors.DEFAULT_TEXT)
             .setFontSize(24)
-            .setFont(whichRunway.Fonts.SANS_BOLD);
+            .setFont(canvas.font_mapper("sans", "bold"));
 
         me._latLon = [
             me._draw.createTextLabel("Lat, Lon:"),

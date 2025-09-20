@@ -26,11 +26,10 @@ var Draw = {
     # @return hash
     #
     new: func(canvasContent) {
-        var me = { parents: [Draw] };
-
-        me._content = canvasContent;
-
-        return me;
+        return {
+            parents: [Draw],
+            _content: canvasContent,
+        };
     },
 
     #
@@ -117,7 +116,7 @@ var Draw = {
     createTextValue: func(text = nil, color = nil) {
         return me.createText(text)
             .setColor(color == nil ? whichRunway.Colors.DEFAULT_TEXT : color)
-            .setFont(whichRunway.Fonts.SANS_BOLD);
+            .setFont(canvas.font_mapper("sans", "bold"));
     },
 
     #

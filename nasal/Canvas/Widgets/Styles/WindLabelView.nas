@@ -29,7 +29,7 @@ DefaultStyle.widgets["wind-label-view"] = {
             .setTranslation(0, 0)
             .setColor(whichRunway.Colors.BLUE)
             .setFontSize(20)
-            .setFont(whichRunway.Fonts.SANS_BOLD);
+            .setFont(canvas.font_mapper("sans", "bold"));
     },
 
     #

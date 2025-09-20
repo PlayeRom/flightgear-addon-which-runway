@@ -271,9 +271,9 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return string  Font path.
     #
     _geWindFontByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return whichRunway.Fonts.SANS_REGULAR;
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return whichRunway.Fonts.SANS_BOLD;
-        else                                                         return whichRunway.Fonts.SANS_REGULAR;
+           if (normDiffDeg == nil)                                   return canvas.font_mapper("sans");
+        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return canvas.font_mapper("sans", "bold");
+        else                                                         return canvas.font_mapper("sans");
     },
 
     #

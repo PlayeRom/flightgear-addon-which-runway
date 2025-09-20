@@ -379,7 +379,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
             );
 
         if (isMainThreshold) {
-            text.setFont(whichRunway.Fonts.SANS_BOLD);
+            text.setFont(canvas.font_mapper("sans", "bold"));
         }
     },
 
