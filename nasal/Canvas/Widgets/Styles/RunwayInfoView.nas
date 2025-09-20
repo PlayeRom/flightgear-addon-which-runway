@@ -5,12 +5,12 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# RunwayInfoView widget is an Open Source project and it is licensed
+# RunwayInfo widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# RunwayInfoView widget View
+# RunwayInfo widget View
 #
 DefaultStyle.widgets["runway-info-view"] = {
     #
@@ -96,7 +96,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     #
     # Callback called when user resized the window.
     #
-    # @param  ghost  model  RunwayInfoView model.
+    # @param  ghost  model  RunwayInfo model.
     # @param  int  w, h  Width and height of widget.
     # @return ghost
     #
@@ -107,7 +107,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     },
 
     #
-    # @param  ghost  model  RunwayInfoView model.
+    # @param  ghost  model  RunwayInfo model.
     # @return void
     #
     update: func(model) {
@@ -117,7 +117,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     #
     # Set remembered content height to nil for recalculate translations during redraw.
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return void
     #
     resetContentHeight: func(model) {
@@ -125,7 +125,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     },
 
     #
-    # @param  ghost  model  RunwayInfoView model.
+    # @param  ghost  model  RunwayInfo model.
     # @return void
     #
     reDrawContent: func(model) {
@@ -141,7 +141,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     },
 
     #
-    # @param  ghost  model  RunwayInfoView model.
+    # @param  ghost  model  RunwayInfo model.
     # @return double  New Y position.
     #
     _setTranslations: func(model) {
@@ -170,7 +170,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     },
 
     #
-    # @param  ghost  model  RunwayInfoView model.
+    # @param  ghost  model  RunwayInfo model.
     # @return void
     #
     _drawRunwayInfo: func(model) {

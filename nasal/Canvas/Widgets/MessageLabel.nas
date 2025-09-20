@@ -5,15 +5,15 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# MessageView widget is an Open Source project and it is licensed
+# MessageLabel widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# MessageView widget Model
+# MessageLabel widget Model
 #
-gui.widgets.MessageView = {
-    _CLASS: "MessageView",
+gui.widgets.MessageLabel = {
+    _CLASS: "MessageLabel",
 
     #
     # Constructor.
@@ -26,9 +26,9 @@ gui.widgets.MessageView = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.MessageView, cfg);
+        var me = gui.Widget.new(gui.widgets.MessageLabel, cfg);
         me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "message-view", me._cfg));
+        me._setView(style.createWidget(parent, "message-label-view", me._cfg));
 
         me._text = nil;
         me._isError = false;

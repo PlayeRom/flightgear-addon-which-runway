@@ -5,14 +5,14 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# MessageView widget is an Open Source project and it is licensed
+# MessageLabel widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# MessageView widget View
+# MessageLabel widget View
 #
-DefaultStyle.widgets["message-view"] = {
+DefaultStyle.widgets["message-label-view"] = {
     #
     # Constructor
     #
@@ -21,7 +21,7 @@ DefaultStyle.widgets["message-view"] = {
     # @return void
     #
     new: func(parent, cfg) {
-        me._root = parent.createChild("group", "message-view");
+        me._root = parent.createChild("group", "message-labe-view");
 
         me._draw = Draw.new(me._root);
 
@@ -34,7 +34,7 @@ DefaultStyle.widgets["message-view"] = {
     #
     # Callback called when user resized the window
     #
-    # @param  ghost  model  MessageView model
+    # @param  ghost  model  MessageLabel model
     # @param  int  w, h  Width and height of widget
     # @return ghost
     #
@@ -45,7 +45,7 @@ DefaultStyle.widgets["message-view"] = {
     },
 
     #
-    # @param  ghost  model  MessageView model
+    # @param  ghost  model  MessageLabel model
     # @return void
     #
     update: func(model) {
@@ -53,7 +53,7 @@ DefaultStyle.widgets["message-view"] = {
     },
 
     #
-    # @param  ghost  model  MessageView model
+    # @param  ghost  model  MessageLabel model
     # @return void
     #
     reDrawContent: func(model) {
@@ -63,8 +63,11 @@ DefaultStyle.widgets["message-view"] = {
                 .setTranslation(model._size[0] / 2, model._size[1] / 2);
         }
 
+        var width = me._text.getSize()[0];
+        var height = me._text.getSize()[1];
+
         # model.setLayoutMaximumSize([MAX_SIZE, y]);
-        # model.setLayoutMinimumSize([model._size[0], y]);
-        # model.setLayoutSizeHint([model._size[0], y]);
+        model.setLayoutMinimumSize([width, height]);
+        model.setLayoutSizeHint([width, height]);
     },
 };

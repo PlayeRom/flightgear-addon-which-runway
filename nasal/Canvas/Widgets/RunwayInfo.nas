@@ -5,15 +5,15 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# AirportInfoView widget is an Open Source project and it is licensed
+# RunwayInfo widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# AirportInfoView widget Model
+# RunwayInfo widget Model
 #
-gui.widgets.AirportInfoView = {
-    _CLASS: "AirportInfoView",
+gui.widgets.RunwayInfo = {
+    _CLASS: "RunwayInfo",
 
     #
     # Constructor.
@@ -26,12 +26,12 @@ gui.widgets.AirportInfoView = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.AirportInfoView, cfg);
+        var me = gui.Widget.new(gui.widgets.RunwayInfo, cfg);
         me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "airport-info-view", me._cfg));
+        me._setView(style.createWidget(parent, "runway-info-view", me._cfg));
 
         me._valueMarginX = 110;
-        me._airport = nil;
+        me._runway = nil;
         me._aptMagVar = nil;
 
         return me;
@@ -50,11 +50,11 @@ gui.widgets.AirportInfoView = {
     },
 
     #
-    # @param  ghost|nil  airport  The airport object.
+    # @param  hash  runway
     # @return ghost
     #
-    setAirport: func(airport) {
-        me._airport = airport;
+    setRunwayData: func(runway) {
+        me._runway = runway;
         return me;
     },
 
@@ -68,7 +68,7 @@ gui.widgets.AirportInfoView = {
     },
 
     #
-    # Redraw view
+    # Redraw view.
     #
     # @return void
     #

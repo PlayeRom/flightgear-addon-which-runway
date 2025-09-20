@@ -12,7 +12,7 @@
 #
 # PressureLabel widget View.
 #
-DefaultStyle.widgets["pressure-label"] = {
+DefaultStyle.widgets["pressure-label-view"] = {
     #
     # Constructor.
     #
@@ -21,7 +21,7 @@ DefaultStyle.widgets["pressure-label"] = {
     # @return void
     #
     new: func(parent, cfg) {
-        me._root = parent.createChild("group", "pressure-label");
+        me._root = parent.createChild("group", "pressure-label-view");
 
         me._draw = Draw.new(me._root);
 
@@ -58,7 +58,7 @@ DefaultStyle.widgets["pressure-label"] = {
     #
     # Set remembered content height to nil for recalculate translations during redraw.
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return void
     #
     resetContentHeight: func(model) {

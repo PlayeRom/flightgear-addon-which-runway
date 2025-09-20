@@ -5,12 +5,12 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# AirportInfoView widget is an Open Source project and it is licensed
+# AirportInfo widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# MetarInfoView widget View.
+# MetarInfo widget View.
 #
 DefaultStyle.widgets["metar-info-view"] = {
     #
@@ -45,7 +45,7 @@ DefaultStyle.widgets["metar-info-view"] = {
     #
     # Callback called when user resized the window.
     #
-    # @param  ghost  model  MetarInfoView model.
+    # @param  ghost  model  MetarInfo model.
     # @param  int  w, h  Width and height of widget.
     # @return ghost
     #
@@ -56,7 +56,7 @@ DefaultStyle.widgets["metar-info-view"] = {
     },
 
     #
-    # @param  ghost  model  MetarInfoView model.
+    # @param  ghost  model  MetarInfo model.
     # @return void
     #
     update: func(model) {
@@ -64,7 +64,7 @@ DefaultStyle.widgets["metar-info-view"] = {
     },
 
     #
-    # @param  ghost  model  MetarInfoView model.
+    # @param  ghost  model  MetarInfo model.
     # @return void
     #
     reDrawContent: func(model) {
@@ -88,7 +88,7 @@ DefaultStyle.widgets["metar-info-view"] = {
     #
     # @param  double  x  Init position of x.
     # @param  double  y  Init position of y.
-    # @param  ghost  model  MetarInfoView model
+    # @param  ghost  model  MetarInfo model
     # @return double  New position of y shifted by height of printed line.
     #
     _drawMetar: func(x, y, model) {
@@ -147,7 +147,7 @@ DefaultStyle.widgets["metar-info-view"] = {
     #
     # @param  double  x  Init position of x.
     # @param  double  y  Init position of y.
-    # @param  ghost  model  MetarInfoView model.
+    # @param  ghost  model  MetarInfo model.
     # @return double  New position of y shifted by height of printed line.
     #
     _printWarningForeignMetar: func(x, y, model) {
@@ -170,7 +170,7 @@ DefaultStyle.widgets["metar-info-view"] = {
     },
 
     #
-    # @param  ghost  model  MetarInfoView model.
+    # @param  ghost  model  MetarInfo model.
     # @return vector  Two lines of text, where second line can be nil.
     #
     _getMetarTextLines: func(model) {

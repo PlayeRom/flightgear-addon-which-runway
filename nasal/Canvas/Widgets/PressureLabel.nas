@@ -28,7 +28,7 @@ gui.widgets.PressureLabel = {
         cfg = Config.new(cfg);
         var me = gui.Widget.new(gui.widgets.PressureLabel, cfg);
         me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "pressure-label", me._cfg));
+        me._setView(style.createWidget(parent, "pressure-label-view", me._cfg));
 
         me._valueMarginX = 110;
         me._label = "QNH:";

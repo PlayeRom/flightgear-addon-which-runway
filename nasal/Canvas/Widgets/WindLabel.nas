@@ -28,7 +28,7 @@ gui.widgets.WindLabel = {
         cfg = Config.new(cfg);
         var me = gui.Widget.new(gui.widgets.WindLabel, cfg);
         me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "wind-label", me._cfg));
+        me._setView(style.createWidget(parent, "wind-label-view", me._cfg));
 
         me._isMetarData = false;
         me._windDir = nil;

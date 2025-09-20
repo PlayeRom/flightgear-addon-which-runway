@@ -5,12 +5,12 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# AirportInfoView widget is an Open Source project and it is licensed
+# AirportInfo widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# AirportInfoView widget View.
+# AirportInfo widget View.
 #
 DefaultStyle.widgets["airport-info-view"] = {
     #
@@ -65,7 +65,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     #
     # Callback called when user resized the window.
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @param  int  w, h  Width and height of widget.
     # @return ghost
     #
@@ -76,7 +76,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     },
 
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return void
     #
     update: func(model) {
@@ -86,7 +86,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     #
     # Set remembered content height to nil for recalculate translations during redraw.
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return void
     #
     resetContentHeight: func(model) {
@@ -94,7 +94,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     },
 
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return void
     #
     reDrawContent: func(model) {
@@ -112,7 +112,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     },
 
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return double  New Y position.
     #
     _setTranslations: func(model) {
@@ -133,7 +133,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     #
     # Draw airport and METAR information.
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return void
     #
     _drawAirportInfo: func(model) {
@@ -155,7 +155,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     #
     # Get string with airport geo coordinates in decimal and sexagesimal formats.
     #
-    # @param  ghost  model  AirportInfoView model.
+    # @param  ghost  model  AirportInfo model.
     # @return string
     #
     _getLatLonInfo: func(model) {

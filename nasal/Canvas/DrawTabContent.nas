@@ -77,14 +77,14 @@ var DrawTabContent = {
         me._tabContent.addItem(me._getBottomBarByTabId());
         me._tabContent.addSpacing(10);
 
-        me._messageView = canvas.gui.widgets.MessageView.new(me._scrollContent, canvas.style, {})
+        me._messageView = canvas.gui.widgets.MessageLabel.new(me._scrollContent, canvas.style, {})
             .setVisible(true);
 
-        me._airportInfoView = canvas.gui.widgets.AirportInfoView.new(me._scrollContent, canvas.style, {})
+        me._airportInfoView = canvas.gui.widgets.AirportInfo.new(me._scrollContent, canvas.style, {})
             .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setVisible(false);
 
-        me._metarInfoView = canvas.gui.widgets.MetarInfoView.new(me._scrollContent, canvas.style, {})
+        me._metarInfoView = canvas.gui.widgets.MetarInfo.new(me._scrollContent, canvas.style, {})
             .setVisible(false)
             .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
@@ -125,11 +125,11 @@ var DrawTabContent = {
         for (var i = 0; i < 16; i += 1) {
             var runwayHLayout = canvas.HBoxLayout.new();
 
-            var runwayInfoView = canvas.gui.widgets.RunwayInfoView.new(me._scrollContent, canvas.style, {})
+            var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(me._scrollContent, canvas.style, {})
                 .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
                 .setVisible(false);
 
-            var windRoseView = canvas.gui.widgets.WindRoseView.new(me._scrollContent, canvas.style, {})
+            var windRoseView = canvas.gui.widgets.WindRose.new(me._scrollContent, canvas.style, {})
                 .setVisible(false);
 
             var runwayVCenter = canvas.VBoxLayout.new(); # wrapper for set runway info vertically centered

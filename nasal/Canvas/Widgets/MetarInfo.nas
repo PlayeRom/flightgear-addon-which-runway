@@ -5,15 +5,15 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# AirportInfoView widget is an Open Source project and it is licensed
+# AirportInfo widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# MetarInfoView widget Model
+# MetarInfo widget Model
 #
-gui.widgets.MetarInfoView = {
-    _CLASS: "MetarInfoView",
+gui.widgets.MetarInfo = {
+    _CLASS: "MetarInfo",
 
     #
     # Constructor.
@@ -26,7 +26,7 @@ gui.widgets.MetarInfoView = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.MetarInfoView, cfg);
+        var me = gui.Widget.new(gui.widgets.MetarInfo, cfg);
         me._focus_policy = me.NoFocus;
         me._setView(style.createWidget(parent, "metar-info-view", me._cfg));
 

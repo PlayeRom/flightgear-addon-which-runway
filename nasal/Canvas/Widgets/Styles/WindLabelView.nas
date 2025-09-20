@@ -12,7 +12,7 @@
 #
 # WindLabel widget View.
 #
-DefaultStyle.widgets["wind-label"] = {
+DefaultStyle.widgets["wind-label-view"] = {
     #
     # Constructor.
     #
@@ -21,7 +21,7 @@ DefaultStyle.widgets["wind-label"] = {
     # @return void
     #
     new: func(parent, cfg) {
-        me._root = parent.createChild("group", "wind-label");
+        me._root = parent.createChild("group", "wind-label-view");
 
         me._draw = Draw.new(me._root);
 

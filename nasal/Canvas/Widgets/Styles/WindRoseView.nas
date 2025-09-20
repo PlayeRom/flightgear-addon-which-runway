@@ -5,12 +5,12 @@
 #
 # Copyright (C) 2024 Roman Ludwicki
 #
-# WindRoseView widget is an Open Source project and it is licensed
+# WindRose widget is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# WindRoseView widget View
+# WindRose widget View
 #
 DefaultStyle.widgets["wind-rose-view"] = {
     #
@@ -34,7 +34,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     #
     # Callback called when user resized the window
     #
-    # @param  ghost  model  WindRoseView model.
+    # @param  ghost  model  WindRose model.
     # @param  int  w, h  Width and height of widget
     # @return ghost
     #
@@ -45,7 +45,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     },
 
     #
-    # @param  ghost  model  WindRoseView model.
+    # @param  ghost  model  WindRose model.
     # @return void
     #
     update: func(model) {
@@ -53,7 +53,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     },
 
     #
-    # @param  ghost  model  WindRoseView model.
+    # @param  ghost  model  WindRose model.
     # @return void
     #
     reDrawContent: func(model) {
@@ -74,7 +74,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     #
     # Draw wind rose.
     #
-    # @param  ghost  model  WindRoseView model.
+    # @param  ghost  model  WindRose model.
     # @param  double  centerX  Center of wind rose in pixels.
     # @param  double  centerY  Center of wind rose in pixels.
     # @return void
@@ -166,7 +166,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     #
     # Draw runway on wind rose.
     #
-    # @param  ghost  model  WindRoseView model.
+    # @param  ghost  model  WindRose model.
     # @param  double  centerX  Center of wind rose in pixels.
     # @param  double  centerY  Center of wind rose in pixels.
     # @param  hash  rwy  Runway object to draw in center.
@@ -398,7 +398,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     #
     # Draw wind arrow.
     #
-    # @param  ghost  model  WindRoseView model.
+    # @param  ghost  model  WindRose model.
     # @param  double  centerX  Center of wind rose in pixels.
     # @param  double  centerY  Center of wind rose in pixels.
     # @param  double|nil  windDir  Wind direction in degrees.
@@ -445,7 +445,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     },
 
     #
-    # @param  ghost  model  WindRoseView model.
+    # @param  ghost  model  WindRose model.
     # @param  double  xEnd
     # @param  double  yEnd
     # @param  double  centerX

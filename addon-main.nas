@@ -60,20 +60,22 @@ var loadExtraNasalFiles = func(addon) {
 
     # Add widgets to canvas namespace
     var widgets = [
-        "nasal/Canvas/Widgets/AirportInfoView",
-        "nasal/Canvas/Widgets/MessageView",
-        "nasal/Canvas/Widgets/MetarInfoView",
+        "nasal/Canvas/Widgets/AirportInfo",
+        "nasal/Canvas/Widgets/MessageLabel",
+        "nasal/Canvas/Widgets/MetarInfo",
         "nasal/Canvas/Widgets/PressureLabel",
-        "nasal/Canvas/Widgets/RunwayInfoView",
+        "nasal/Canvas/Widgets/RunwayInfo",
         "nasal/Canvas/Widgets/WindLabel",
-        "nasal/Canvas/Widgets/WindRoseView",
-        "nasal/Canvas/Widgets/Styles/DefaultStyleAirportInfoView",
-        "nasal/Canvas/Widgets/Styles/DefaultStyleMessageView",
-        "nasal/Canvas/Widgets/Styles/DefaultStyleMetarInfoView",
-        "nasal/Canvas/Widgets/Styles/DefaultStylePressureLabel",
-        "nasal/Canvas/Widgets/Styles/DefaultStyleRunwayInfoView",
-        "nasal/Canvas/Widgets/Styles/DefaultStyleWindLabel",
-        "nasal/Canvas/Widgets/Styles/DefaultStyleWindRoseView",
+        "nasal/Canvas/Widgets/WindRose",
+
+        "nasal/Canvas/Widgets/Styles/AirportInfoView",
+        "nasal/Canvas/Widgets/Styles/MessageLabelView",
+        "nasal/Canvas/Widgets/Styles/MetarInfoView",
+        "nasal/Canvas/Widgets/Styles/PressureLabelView",
+        "nasal/Canvas/Widgets/Styles/RunwayInfoView",
+        "nasal/Canvas/Widgets/Styles/WindLabelView",
+        "nasal/Canvas/Widgets/Styles/WindRoseView",
+
         "nasal/Canvas/Widgets/Styles/Components/Draw",
     ];
 
