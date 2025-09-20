@@ -30,23 +30,23 @@ If there is no other airport with a METAR within 30 NM, information about the ai
 **NOTE**: To download and use METAR data with this add-on, the add-on requires the "Live Data" weather scenario to be enabled. You can use this add-on with the weather scenario in offline mode, but wind and METAR data will not be displayed.
 
 
-![alt 1-which-runway](docs/1-which-runway.png "Which Runway main window")
+![alt Which Runway main window](docs/img/1-which-runway.png "Which Runway main window")
 
 The illustration shows the case when the airport does not have a METAR, but the METAR was downloaded from the nearest other airport:
 
-![alt 2-has-nearest-meta](docs/2-has-nearest-metar.png "With nearest METAR")
+![alt With nearest METAR](docs/img/2-has-nearest-metar.png "With nearest METAR")
 
 The illustration shows a case when the airport does not have a METAR and no other airport with a METAR was found within 30 NM:
 
-![alt 3-no-metar](docs/3-no-metar.png "No METAR at all")
+![alt No METAR at all](docs/img/3-no-metar.png "No METAR at all")
 
 The illustration shows the case when the wind is variable:
 
-![alt 4-wind-variable](docs/4-wind-variable.png "Wind variable")
+![alt Wind variable](docs/img/4-wind-variable.png "Wind variable")
 
 The illustration shows a case of gusty wind:
 
-![alt 5-wind-with-gust](docs/5-wind-with-gust.png "Wind with gust")
+![alt Wind with gust](docs/img/5-wind-with-gust.png "Wind with gust")
 
 ## Development
 
@@ -67,6 +67,10 @@ After changing these values, you need to reload the Nasal code using the "Dev Re
 ### Multi-key command
 
 To reset the add-on's Nasal scripts, you can also use the multi-key command: `:Yaw`, which always works regardless of the `DEV_MODE` value in the `.env` file. This way, you are always able to reset the add-on's Nasal code, even if you don't have a "Dev Reload" menu item.
+
+### Diagram
+
+![alt Class Diagram](docs/diagram.png "Class Diagram")
 
 ## Authors
 
