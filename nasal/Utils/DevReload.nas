@@ -18,7 +18,7 @@ var DevReload = {
     # Constants:
     #
     MENU_LABEL: "Dev Reload",
-    MENU_NAME : "which-runway-addon-dev-reload",
+    MAIN_MENU_NAME: "which-runway-addon",
 
     #
     # Constructor.
@@ -26,7 +26,11 @@ var DevReload = {
     # @return hash
     #
     new: func() {
-        return { parents: [DevReload] };
+        var me = { parents: [DevReload] };
+
+        me._menuName = g_Addon.id ~ "-dev-reload";
+
+        return me;
     },
 
     #
@@ -48,7 +52,7 @@ var DevReload = {
 
         var data = {
             label  : DevReload.MENU_LABEL,
-            name   : DevReload.MENU_NAME,
+            name   : me._menuName,
             binding: {
                 "command": "addon-reload",
                 "id"     : g_Addon.id,
@@ -93,7 +97,7 @@ var DevReload = {
     _getMenuNode: func() {
         foreach (var menu; props.globals.getNode("/sim/menubar/default").getChildren("menu")) {
             var name = menu.getChild("name");
-            if (name != nil and name.getValue() == "which-runway-addon") {
+            if (name != nil and name.getValue() == DevReload.MAIN_MENU_NAME) {
                 return menu;
             }
         }
@@ -120,7 +124,7 @@ var DevReload = {
     _getMenuItem: func(menuNode) {
         foreach (var item; menuNode.getChildren("item")) {
             var name = item.getChild("name");
-            if (name != nil and name.getValue() == DevReload.MENU_NAME) {
+            if (name != nil and name.getValue() == me._menuName) {
                 return item;
             }
         }
