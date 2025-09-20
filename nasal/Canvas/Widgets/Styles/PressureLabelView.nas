@@ -125,7 +125,7 @@ DefaultStyle.widgets["pressure-label-view"] = {
         x += me._draw.shiftX(me._inHgUnit) + me._hPaValShiftX;
         me._hPaVal.setText(sprintf("%d", model._hPa)).setTranslation(x, y).setVisible(true);
 
-        x += 5;
+        x += Draw.SHIFT_X;
         me._hPaUnit.setTranslation(x, y).setVisible(true);
 
         # mmHg

@@ -14,6 +14,12 @@
 #
 var Draw = {
     #
+    # Constants:
+    #
+    SHIFT_X: 5,
+    SHIFT_Y: 10,
+
+    #
     # Constructor.
     #
     # @param  ghost  canvasContent  Canvas object where we will be drawn.
@@ -69,19 +75,27 @@ var Draw = {
 
     #
     # @param  ghost  textElement
-    # @param  int  extraShift
+    # @param  int|nil  extraShift  If nil then Draw.SHIFT_X is set.
     # @return double
     #
-    shiftX: func(textElement, extraShift = 5) {
+    shiftX: func(textElement, extraShift = nil) {
+        if (extraShift == nil) {
+            extraShift = Draw.SHIFT_X;
+        }
+
         return textElement.getSize()[0] + extraShift;
     },
 
     #
     # @param  ghost  textElement
-    # @param  int  extraShift
+    # @param  int|nil  extraShift  If nil then Draw.SHIFT_Y is set.
     # @return double
     #
-    shiftY: func(textElement, extraShift = 10) {
+    shiftY: func(textElement, extraShift = nil) {
+        if (extraShift == nil) {
+            extraShift = Draw.SHIFT_Y;
+        }
+
         return textElement.getSize()[1] + extraShift;
     },
 
@@ -140,6 +154,6 @@ var Draw = {
             index += 1;
         }
 
-        return me.shiftY(lastText, isLast ? 0 : 10);
+        return me.shiftY(lastText, isLast ? 0 : Draw.SHIFT_Y);
     },
 };
