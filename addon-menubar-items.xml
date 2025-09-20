@@ -8,7 +8,6 @@
     <menubar-items>
         <menu>
             <label>Which Runway</label>
-            <name>which-runway-addon</name>
             <enabled type="bool">true</enabled>
 
             <item>
