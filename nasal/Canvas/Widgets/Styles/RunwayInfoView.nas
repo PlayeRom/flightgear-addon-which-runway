@@ -23,7 +23,10 @@ DefaultStyle.widgets["runway-info-view"] = {
     new: func(parent, cfg) {
         me._root = parent.createChild("group", "runway-info-view");
 
-        me._draw = Draw.new(me._root);
+        me._fontSansRegular = canvas.font_mapper("sans");
+        me._fontSansBold    = canvas.font_mapper("sans", "bold");
+
+        me._draw = Draw.new(me._root, me._fontSansBold);
 
         me._LABEL = 0;
         me._VAL   = 1;
@@ -271,9 +274,9 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return string  Font path.
     #
     _geWindFontByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return canvas.font_mapper("sans");
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return canvas.font_mapper("sans", "bold");
-        else                                                         return canvas.font_mapper("sans");
+           if (normDiffDeg == nil)                                   return me._fontSansRegular;
+        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return me._fontSansBold;
+        else                                                         return me._fontSansRegular;
     },
 
     #

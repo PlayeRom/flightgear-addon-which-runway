@@ -23,12 +23,14 @@ var Draw = {
     # Constructor.
     #
     # @param  ghost  canvasContent  Canvas object where we will be drawn.
+    # @param  string|nil  fontSansBold
     # @return hash
     #
-    new: func(canvasContent) {
+    new: func(canvasContent, fontSansBold = nil) {
         return {
             parents: [Draw],
             _content: canvasContent,
+            _fontSansBold: fontSansBold == nil ? canvas.font_mapper("sans", "bold") : fontSansBold,
         };
     },
 
@@ -116,7 +118,7 @@ var Draw = {
     createTextValue: func(text = nil, color = nil) {
         return me.createText(text)
             .setColor(color == nil ? style.getColor("text_color") : color)
-            .setFont(canvas.font_mapper("sans", "bold"));
+            .setFont(me._fontSansBold);
     },
 
     #

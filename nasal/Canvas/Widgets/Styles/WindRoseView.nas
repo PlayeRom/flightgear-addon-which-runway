@@ -26,7 +26,10 @@ DefaultStyle.widgets["wind-rose-view"] = {
         # me._content = me._root.createChild("group", "clip-content")
         #     .set("clip-frame", Element.PARENT);
 
-        me._draw = Draw.new(me._root);
+        me._fontSansBold = canvas.font_mapper("sans", "bold");
+
+        me._draw = Draw.new(me._root, me._fontSansBold);
+
 
         me._windLineWidth = 2;
     },
@@ -379,7 +382,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
             );
 
         if (isMainThreshold) {
-            text.setFont(canvas.font_mapper("sans", "bold"));
+            text.setFont(me._fontSansBold);
         }
     },
 
