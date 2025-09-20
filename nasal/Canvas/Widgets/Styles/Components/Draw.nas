@@ -30,7 +30,7 @@ var Draw = {
         return {
             parents: [Draw],
             _content: canvasContent,
-            _fontSansBold: fontSansBold == nil ? canvas.font_mapper("sans", "bold") : fontSansBold,
+            _fontSansBold: fontSansBold or canvas.font_mapper("sans", "bold"),
         };
     },
 
@@ -107,7 +107,7 @@ var Draw = {
     #
     createTextLabel: func(text = nil, color = nil) {
         return me.createText(text)
-            .setColor(color == nil ? style.getColor("text_color") : color);
+            .setColor(color or style.getColor("text_color"));
     },
 
     #
@@ -117,7 +117,7 @@ var Draw = {
     #
     createTextValue: func(text = nil, color = nil) {
         return me.createText(text)
-            .setColor(color == nil ? style.getColor("text_color") : color)
+            .setColor(color or style.getColor("text_color"))
             .setFont(me._fontSansBold);
     },
 
@@ -128,7 +128,7 @@ var Draw = {
     #
     createTextUnit: func(text = nil, color = nil) {
         return me.createText(text)
-            .setColor(color == nil ? style.getColor("text_color") : color);
+            .setColor(color or style.getColor("text_color"));
     },
 
     #

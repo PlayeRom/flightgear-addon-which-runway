@@ -147,8 +147,8 @@ var Dialog = {
         var screenW = me.getScreenWidth();
         var screenH = me.getScreenHeight();
 
-        var w = width  == nil ? me._width  : width;
-        var h = height == nil ? me._height : height;
+        var w = width  or me._width;
+        var h = height or me._height;
 
         me._window.setPosition(
             int(screenW / 2 - w / 2),
