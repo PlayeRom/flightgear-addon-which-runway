@@ -43,7 +43,7 @@ var Bootstrap = {
     init: func(addon) {
         g_Addon = addon;
 
-        Bootstrap.initDevMode();
+        Bootstrap._initDevMode();
 
         # Disable the menu as it loads with delay.
         gui.menuEnable("which-runway-addon-main", false);
@@ -64,25 +64,6 @@ var Bootstrap = {
     },
 
     #
-    # Handle development mode (.env file).
-    #
-    # @return void
-    #
-    initDevMode: func() {
-        var reloadMenu = DevReload.new();
-        var env = DevEnv.new();
-
-        env.getValue("DEV_MODE")
-            ? reloadMenu.addMenu()
-            : reloadMenu.removeMenu();
-
-        var logLevel = env.getValue("MY_LOG_LEVEL");
-        if (logLevel != nil) {
-            MY_LOG_LEVEL = logLevel;
-        }
-    },
-
-    #
     # Uninitialize Which Runway
     #
     # @return void
@@ -94,6 +75,25 @@ var Bootstrap = {
 
         if (g_AboutDialog != nil) {
             g_AboutDialog.del();
+        }
+    },
+
+    #
+    # Handle development mode (.env file).
+    #
+    # @return void
+    #
+    _initDevMode: func() {
+        var reloadMenu = DevReload.new();
+        var env = DevEnv.new();
+
+        env.getValue("DEV_MODE")
+            ? reloadMenu.addMenu()
+            : reloadMenu.removeMenu();
+
+        var logLevel = env.getValue("MY_LOG_LEVEL");
+        if (logLevel != nil) {
+            MY_LOG_LEVEL = logLevel;
         }
     },
 };
