@@ -227,7 +227,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._draw.setTextTranslations(yTW, me._rwyWidth, model._valueMarginX);
 
         me._surface[me._VAL].setText(me._getSurface(rwy.surface));
-        me._reciprocal[me._VAL].setText(rwy.reciprocal or "n/a");
+        me._reciprocal[me._VAL].setText(rwy.reciprocal == nil ? "n/a" : rwy.reciprocal.id);
         me._ils[me._VAL].setText(me._getIlsValue(rwy, rwyHdgTrue, rwyHdgMag, model._aptMagVar));
     },
 
