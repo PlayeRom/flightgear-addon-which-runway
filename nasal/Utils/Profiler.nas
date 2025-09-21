@@ -10,48 +10,57 @@
 #
 
 #
-# Profiler class.
+# Profiler class for measuring code execution time.
 #
 var Profiler = {
     #
-    # Constructor.
+    # Call stack.
     #
-    # @return hash
-    #
-    new: func() {
-        var me = { parents: [Profiler] };
-
-        me._startTime = nil;
-
-        return me;
-    },
+    _stack: std.Vector.new(),
 
     #
     # Start profiler.
     #
+    # @param  string  message  Extra context message.
     # @return void
     #
-    start: func() {
-        me._startTime = systime();
+    start: func(message = nil) {
+        Profiler._stack.append({
+            message: message == nil ? "" : "Context: " ~ message,
+            startTime: systime(),
+        });
     },
 
     #
     # Stop profiler and log result.
     #
-    # @param  string  message  Extra context message.
     # @return double  Measurement time in seconds.
     #
-    stop: func(message = nil) {
-        message = message == nil ? "" : "Context: " ~ message;
+    stop: func() {
+        var count = Profiler._stack.size();
 
-        if (me._startTime == nil) {
-            Log.print("profiler time = ? seconds. FIRST RUN start() METHOD. ", message);
+        if (count == 0) {
+            Log.print("profiler time = ? seconds. FIRST RUN start() METHOD.");
         }
 
-        var time = systime() - me._startTime;
+        var item = Profiler._stack.vector[count - 1];
 
-        Log.print("profiler time = ", time, " seconds. ", message);
+        var time = systime() - item.startTime;
+
+        Log.print("profiler time = ", time, " seconds. ", item.message);
+
+        # Remove item from stack
+        Profiler._stack.remove(item);
 
         return time;
+    },
+
+    #
+    # Clear all call stack.
+    #
+    # @return void
+    #
+    clear: func() {
+        Profiler._stack.clear();
     },
 };

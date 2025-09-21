@@ -69,6 +69,8 @@ var Bootstrap = {
     # @return void
     #
     uninit: func() {
+        Profiler.clear();
+
         if (g_WhichRwyDialog != nil) {
             g_WhichRwyDialog.del();
         }

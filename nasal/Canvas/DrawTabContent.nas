@@ -40,8 +40,6 @@ var DrawTabContent = {
         me._icaoEdit = nil;
         me._isHoldUpdateNearest = false;
 
-        me._profiler = Profiler.new();
-
         me._metar = Metar.new(
             me._tabId,
             Callback.new(me._metarUpdatedCallback, me),
@@ -401,7 +399,7 @@ var DrawTabContent = {
     # @return void
     #
     _reDrawContent: func() {
-        me._profiler.start();
+        Profiler.start("DrawTabContent._reDrawContent " ~ me._tabId);
 
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
@@ -459,7 +457,7 @@ var DrawTabContent = {
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
 
-        me._profiler.stop("redraw " ~ me._tabId);
+        Profiler.stop();
     },
 
     #
