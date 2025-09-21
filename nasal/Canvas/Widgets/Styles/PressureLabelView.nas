@@ -82,6 +82,8 @@ DefaultStyle.widgets["pressure-label-view"] = {
         me._mmHgVal.setVisible(false);
         me._mmHgUnit.setVisible(false);
 
+        me._label.setText(model._label);
+
         y += model._inHg == nil
             ? me._printLineAtmosphericPressureNone(x, y, model)
             : me._printLineAtmosphericPressure(x, y, model);
