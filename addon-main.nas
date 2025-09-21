@@ -18,82 +18,51 @@
 var main = func(addon) {
     logprint(LOG_ALERT, addon.name, " Add-on initialized from path ", addon.basePath);
 
-    loadExtraNasalFiles(addon);
+    loadNasalFiles(addon.basePath, "whichRunway");
 
     whichRunway.Bootstrap.init(addon);
 };
 
 #
-# Load extra Nasal files in main add-on directory
+# Search for ".nas" files recursively and load them.
 #
-# @param  ghost  addon  The addons.Addon object
+# @param  string  path  Starts as base path of add-on.
+# @param  string  namespace  Namespace of add-on.
+# @param  int  level  Starts from 0, each subsequent subdirectory gets level + 1.
+# @param  bool  isWidget  If true then we are in Widgets folder which means that we need add file to separate namespace.
 # @return void
 #
-var loadExtraNasalFiles = func(addon) {
-    var modules = [
-        "nasal/Utils/Callback",
-        "nasal/Utils/DevEnv",
-        "nasal/Utils/DevReload",
-        "nasal/Utils/Listeners",
-        "nasal/Utils/Log",
-        "nasal/Utils/Profiler",
-        "nasal/Utils/Timer",
-        "nasal/Utils/Utils",
+var loadNasalFiles = func(path, namespace, level = 0, isWidget = false) {
+    var files = globals.directory(path);
 
-        "nasal/Colors",
-        "nasal/Metar",
-        "nasal/RunwaysData",
-
-        "nasal/Canvas/DrawTabContent",
-        "nasal/Canvas/BottomBar",
-        "nasal/Canvas/Dialog",
-
-        "nasal/Canvas/AboutDialog",
-        "nasal/Canvas/WhichRwyDialog",
-        "nasal/Canvas/ScrollAreaHelper",
-
-        "Bootstrap",
-    ];
-
-    loadVectorOfModules(addon, modules, "whichRunway");
-
-    # Add widgets to canvas namespace
-    var widgets = [
-        "nasal/Canvas/Widgets/AirportInfo",
-        "nasal/Canvas/Widgets/MessageLabel",
-        "nasal/Canvas/Widgets/MetarInfo",
-        "nasal/Canvas/Widgets/PressureLabel",
-        "nasal/Canvas/Widgets/RunwayInfo",
-        "nasal/Canvas/Widgets/WindLabel",
-        "nasal/Canvas/Widgets/WindRose",
-
-        "nasal/Canvas/Widgets/Styles/AirportInfoView",
-        "nasal/Canvas/Widgets/Styles/MessageLabelView",
-        "nasal/Canvas/Widgets/Styles/MetarInfoView",
-        "nasal/Canvas/Widgets/Styles/PressureLabelView",
-        "nasal/Canvas/Widgets/Styles/RunwayInfoView",
-        "nasal/Canvas/Widgets/Styles/WindLabelView",
-        "nasal/Canvas/Widgets/Styles/WindRoseView",
-
-        "nasal/Canvas/Widgets/Styles/Components/Draw",
-    ];
-
-    loadVectorOfModules(addon, widgets, "canvas");
-};
-
-#
-# @param  ghost  addon  The addons.Addon object.
-# @param  vector  modules
-# @param  string  namespace
-# @return void
-#
-var loadVectorOfModules = func(addon, modules, namespace) {
-    foreach (var scriptName; modules) {
-        var fileName = addon.basePath ~ "/" ~ scriptName ~ ".nas";
-
-        if (!io.load_nasal(fileName, namespace)) {
-            logprint(LOG_ALERT, addon.name, " Add-on module \"", scriptName, "\" loading failed");
+    foreach (var file; files) {
+        if (file == "." or file == ".." or (level == 0 and file == "addon-main.nas")) {
+            continue;
         }
+
+        var fullPath = path ~ "/" ~ file;
+        var fileUc = string.uc(file);
+
+        if (io.is_regular_file(fullPath) and substr(fileUc, size(file) - 4) == ".NAS") {
+            io.load_nasal(fullPath, isWidget ? "canvas" : namespace);
+            continue;
+        }
+
+        if (level == 0 and fileUc != "NASAL") {
+            # At level 0 we are only interested in the "nasal" directory.
+            continue;
+        }
+
+        if (!io.is_directory(fullPath)) {
+            continue;
+        }
+
+        if (!isWidget) {
+            # Mark that we are entering the "Widgets" directory ("canvas" namespace).
+            isWidget = fileUc == "WIDGETS";
+        }
+
+        loadNasalFiles(fullPath, namespace, level + 1, isWidget);
     }
 };
 

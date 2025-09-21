@@ -10,8 +10,8 @@
 #
 
 #
-# MY_LOG_LEVEL is using in Log.print() to quickly change all logs visibility used in "whichRunway" namespace.
-# Possible flags: LOG_ALERT, LOG_WARN, LOG_INFO, LOG_DEBUG, LOG_BULK.
+# MY_LOG_LEVEL is using in Log.print() to quickly change all logs visibility used in addon's namespace.
+# Possible values: LOG_ALERT, LOG_WARN, LOG_INFO, LOG_DEBUG, LOG_BULK.
 #
 var MY_LOG_LEVEL = LOG_WARN;
 
@@ -95,5 +95,5 @@ var Bootstrap = {
         if (g_AboutDialog != nil) {
             g_AboutDialog.del();
         }
-    }
+    },
 };
