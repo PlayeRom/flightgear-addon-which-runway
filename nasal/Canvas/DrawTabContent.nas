@@ -39,7 +39,7 @@ var DrawTabContent = {
         me._icaoEdit = nil;
         me._isHoldUpdateNearest = false;
 
-        me._maxMetarRangeNmNode = props.globals.getNode(g_Addon.node.getPath() ~ "/addon-devel/max-metar-range-nm");
+        me._maxMetarRangeNmNode = props.globals.getNode(g_Addon.node.getPath() ~ "/settings/max-metar-range-nm");
 
         me._metar = Metar.new(
             me._tabId,
