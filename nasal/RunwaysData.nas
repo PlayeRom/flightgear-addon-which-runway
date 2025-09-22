@@ -70,36 +70,36 @@ var RunwaysData = {
 
     #
     # @param  double|nil  windDir
-    # @param  double  windSpeed
-    # @param  double  windGust
-    # @param  double  heading
+    # @param  double  windSpeedKt
+    # @param  double  windGustKt
+    # @param  double  trueHdg
     # @return vector
     #
-    _calculateWinds: func(windDir, windSpeed, windGust, heading) {
-        if (windDir == nil) {
-            return [nil, nil, nil, nil, nil];
+    _calculateWinds: func(windDir, windSpeedKt, windGustKt, trueHdg) {
+        var normDiffDeg = nil;
+        var headwind = nil;
+        var headwindGust = nil;
+        var crosswind = nil;
+        var crosswindGust = nil;
+
+        if (windDir != nil) {
+            var diff = windDir - trueHdg;
+            normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
+            var normDiffRad = normDiffDeg * globals.D2R;
+
+            var cosNormDiffRad = math.cos(normDiffRad);
+            var sinNormDiffRad = math.sin(normDiffRad);
+
+            # The values ​​headwind and crosswind can be -0, so here we reduce -0 to 0 by +0.0
+            headwind      = windSpeedKt * cosNormDiffRad + 0.0;
+            headwindGust  = windGustKt  * cosNormDiffRad + 0.0;
+            crosswind     = windSpeedKt * sinNormDiffRad + 0.0;
+            crosswindGust = windGustKt  * sinNormDiffRad + 0.0;
+
+            normDiffDeg = math.abs(normDiffDeg);
         }
 
-        var diff        = windDir - heading;
-        var normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
-        var normDiffRad = normDiffDeg * globals.D2R;
-
-        var cosNormDiffRad = math.cos(normDiffRad);
-        var sinNormDiffRad = math.sin(normDiffRad);
-
-        var headwind = windSpeed * cosNormDiffRad;
-        var headwindGust = windGust * cosNormDiffRad;
-
-        var crosswind = windSpeed * sinNormDiffRad;
-        var crosswindGust = windGust * sinNormDiffRad;
-
-        # The values ​​headwind and crosswind can be -0, so here we reduce -0 to 0
-        if (headwind == 0) headwind = 0;
-        if (headwindGust == 0) headwindGust = 0;
-        if (crosswind == 0) crosswind = 0;
-        if (crosswindGust == 0) crosswindGust = 0;
-
-        return [math.abs(normDiffDeg), headwind, headwindGust, crosswind, crosswindGust];
+        return [normDiffDeg, headwind, headwindGust, crosswind, crosswindGust];
     },
 
     #
