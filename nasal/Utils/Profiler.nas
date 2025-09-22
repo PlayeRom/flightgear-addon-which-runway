@@ -43,14 +43,11 @@ var Profiler = {
             Log.print("profiler time = ? seconds. FIRST RUN start() METHOD.");
         }
 
-        var item = Profiler._stack.vector[count - 1];
+        var item = Profiler._stack.pop(count - 1);
 
         var time = systime() - item.startTime;
 
         Log.print("profiler time = ", time, " seconds. ", item.message);
-
-        # Remove item from stack
-        Profiler._stack.remove(item);
 
         return time;
     },
