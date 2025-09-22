@@ -179,7 +179,7 @@ DefaultStyle.widgets["metar-info-view"] = {
         var metar = model._metar;
         if (metar == nil) {
             var line1 = sprintf(
-                "No METAR within %d NM (%.1f km)",
+                "No METAR within %.0f NM (%.1f km)",
                 model._metarRangeNm,
                 (model._metarRangeNm * globals.NM2M) / 1000,
             );

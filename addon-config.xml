@@ -16,7 +16,10 @@
     <addons>
         <by-id>
             <org.flightgear.addons.which-runway>
-                <addon-devel></addon-devel>
+                <addon-devel>
+                    <!-- Maximum search range of the nearest airport with METAR. -->
+                    <max-metar-range-nm type="double">30</max-metar-range-nm>
+                </addon-devel>
 
                 <!-- We need ../metar/data here for setlistener to work because we are observing these properties.-->
                 <tab-nearest>

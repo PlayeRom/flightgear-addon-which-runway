@@ -17,7 +17,6 @@ var DrawTabContent = {
     # Statics:
     #
     PADDING       : 10,
-    METAR_RANGE_NM: 30,
     VALUE_MARGIN_X: 110, # the distance between label and value.
 
     #
@@ -39,6 +38,8 @@ var DrawTabContent = {
         me._icao = "";
         me._icaoEdit = nil;
         me._isHoldUpdateNearest = false;
+
+        me._maxMetarRangeNmNode = props.globals.getNode(g_Addon.node.getPath() ~ "/addon-devel/max-metar-range-nm");
 
         me._metar = Metar.new(
             me._tabId,
@@ -83,8 +84,8 @@ var DrawTabContent = {
             .setVisible(false);
 
         me._metarInfoView = canvas.gui.widgets.MetarInfo.new(me._scrollContent, canvas.style, {colors: Colors})
-            .setVisible(false)
-            .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
+            .setVisible(false);
+            # .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
         me._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(me._scrollContent, canvas.style, {})
             .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
@@ -328,7 +329,7 @@ var DrawTabContent = {
     # @param  airport|nil  Airport or nil if not found.
     #
     _getNearestAirportWithMetar: func(airport) {
-        var airports = globals.findAirportsWithinRange(airport, DrawTabContent.METAR_RANGE_NM);
+        var airports = globals.findAirportsWithinRange(airport, me._maxMetarRangeNmNode.getValue());
         foreach (var nearest; airports) {
             if (nearest.has_metar) {
                 return nearest;
@@ -418,6 +419,7 @@ var DrawTabContent = {
             .updateView();
 
         me._metarInfoView
+            .setMetarRangeNm(me._maxMetarRangeNmNode.getValue())
             .setIsRealWeatherEnabled(me._metar.isRealWeatherEnabled())
             .setIsMetarFromNearestAirport(me._metar.isMetarFromNearestAirport())
             .setDistanceToStation(me._metar.getDistanceToStation(airport))

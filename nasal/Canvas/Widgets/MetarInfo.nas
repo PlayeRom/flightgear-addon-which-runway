@@ -96,7 +96,7 @@ gui.widgets.MetarInfo = {
     },
 
     #
-    # @param  int  metarRangeNm  The max range within which we are looking for METARs from other airports.
+    # @param  double  metarRangeNm  The max range within which we are looking for METARs from other airports.
     # @return ghost
     #
     setMetarRangeNm: func(metarRangeNm) {
