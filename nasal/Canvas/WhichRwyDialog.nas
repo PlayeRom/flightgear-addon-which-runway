@@ -35,7 +35,7 @@ var WhichRwyDialog = {
             Dialog.new(
                 width : WhichRwyDialog.WINDOW_WIDTH,
                 height: WhichRwyDialog.WINDOW_HEIGHT,
-                title : "Which Runway",
+                title : sprintf("Which Runway %s", g_Addon.version.str()),
                 resize: true,
             ),
         ] };
