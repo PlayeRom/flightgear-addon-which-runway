@@ -54,8 +54,8 @@ var DevReloadMenu = {
             label  : DevReloadMenu.RELOAD_MENU_LABEL,
             name   : me._reloadMenuName,
             binding: {
-                "command": "addon-reload",
-                "id"     : g_Addon.id,
+                command: "addon-reload",
+                id     : g_Addon.id,
             }
         };
 

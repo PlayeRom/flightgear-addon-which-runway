@@ -10,11 +10,11 @@
 #
 
 #
-# WhichRwyDialog dialog class
+# WhichRwyDialog dialog class.
 #
 var WhichRwyDialog = {
     #
-    # Constants
+    # Constants:
     #
     WINDOW_WIDTH : 800,
     WINDOW_HEIGHT: 700,
@@ -25,7 +25,7 @@ var WhichRwyDialog = {
     TAB_ALTERNATE: "tab-alternate",
 
     #
-    # Constructor
+    # Constructor.
     #
     # @return hash
     #
@@ -40,9 +40,12 @@ var WhichRwyDialog = {
             ),
         ] };
 
+        # Let the parent know who their child is.
+        me.setChild(me, WhichRwyDialog);
+
         me.setPositionOnCenter();
 
-        me._tabs = canvas.gui.widgets.TabWidget.new(me._group, canvas.style, {"tabs-closeable": false});
+        me._tabs = canvas.gui.widgets.TabWidget.new(me._group, canvas.style, { "tabs-closeable": false });
         me._tabsContent = me._tabs.getContent();
         me._vbox.addItem(me._tabs);
 
@@ -70,7 +73,7 @@ var WhichRwyDialog = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
