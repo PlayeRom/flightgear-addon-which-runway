@@ -48,6 +48,24 @@ The illustration shows a case of gusty wind:
 
 ![alt Wind with gust](docs/img/5-wind-with-gust.png "Wind with gust")
 
+## Keys
+
+- `1` - switch to the Nearest tab.
+- `2` - switch to the Departure tab.
+- `3` - switch to the Arrival tab.
+- `4` - switch to the Alternate tab.
+- `Up`/`Down` - scroll content with small increments (20 px).
+- `PageUp`/`PageDown` - scroll content with large increments (110 px).
+- `Esc` - close the window.
+
+## Customization
+
+Some options are stored in a property tree, so they can be changed during a flight session. To do this, go to the `Debug` menu -> `Browse Internal Properties` and then go to the `/addons/by-id/org.flightgear.addons.which-runway/setting` property. The following properties can be changed here:
+
+1. `max-metar-range-nm` - maximum search range of the nearest airport with METAR, used if the current airport does not have a METAR. Default 30 NM.
+2. `key-arrow-move-size` - by how many pixels the content should move when scrolling with the Up/Down arrow keys. Default 20 px.
+3. `key-page-move-size` - by how many pixels the content should move when scrolling with the PageUp/PageDown keys. Default 110 px.
+
 ## Development
 
 This section is for developers only, if you are a user who just uses the add-on, you should not bother with this.
