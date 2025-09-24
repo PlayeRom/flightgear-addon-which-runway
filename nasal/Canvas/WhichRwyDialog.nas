@@ -49,12 +49,19 @@ var WhichRwyDialog = {
         me._tabsContent = me._tabs.getContent();
         me._vbox.addItem(me._tabs);
 
-        me._drawTabContentNearest   = me._createTab(WhichRwyDialog.TAB_NEAREST, "Nearest");
-        me._drawTabContentDeparture = me._createTab(WhichRwyDialog.TAB_DEPARTURE, "Departure");
-        me._drawTabContentArrival   = me._createTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival");
-        me._drawTabContentAlternate = me._createTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate");
+        me._tabContents = {};
+
+        me._tabContents[WhichRwyDialog.TAB_NEAREST]   = me._createTab(WhichRwyDialog.TAB_NEAREST, "Nearest");
+        me._tabContents[WhichRwyDialog.TAB_DEPARTURE] = me._createTab(WhichRwyDialog.TAB_DEPARTURE, "Departure");
+        me._tabContents[WhichRwyDialog.TAB_ARRIVAL]   = me._createTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival");
+        me._tabContents[WhichRwyDialog.TAB_ALTERNATE] = me._createTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate");
 
         me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
+
+        me._keyArrowMoveSizeNode = props.globals.getNode(g_Addon.node.getPath() ~ "/settings/key-arrow-move-size");
+        me._keyPageMoveSizeNode  = props.globals.getNode(g_Addon.node.getPath() ~ "/settings/key-page-move-size");
+
+        me._keyActions();
 
         return me;
     },
@@ -78,11 +85,46 @@ var WhichRwyDialog = {
     # @return void
     #
     del: func() {
-        me._drawTabContentNearest.del();
-        me._drawTabContentDeparture.del();
-        me._drawTabContentArrival.del();
-        me._drawTabContentAlternate.del();
+        foreach (var tabId; keys(me._tabContents)) {
+            me._tabContents[tabId].del();
+        }
 
         call(Dialog.del, [], me);
+    },
+
+    #
+    # Handle keydown listener for window.
+    #
+    # @return void
+    #
+    _keyActions: func() {
+        me._window.addEventListener("keydown", func(event) {
+            # Possible fields of event:
+            #   event.key - key as name
+            #   event.keyCode - key as code
+            # Modifiers:
+            #   event.shiftKey
+            #   event.ctrlKey
+            #   event.altKey
+            #   event.metaKey
+
+            if (event.key == "Up") {
+                me._tabContents[me._tabs._currentTabId].scrollContent(-me._keyArrowMoveSizeNode.getValue());
+            } elsif (event.key == "Down") {
+                me._tabContents[me._tabs._currentTabId].scrollContent(me._keyArrowMoveSizeNode.getValue());
+            } elsif (event.key == "PageUp") {
+                me._tabContents[me._tabs._currentTabId].scrollContent(-me._keyPageMoveSizeNode.getValue());
+            } elsif (event.key == "PageDown") {
+                me._tabContents[me._tabs._currentTabId].scrollContent(me._keyPageMoveSizeNode.getValue());
+            } elsif (event.key == "1") {
+                me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
+            } elsif (event.key == "2") {
+                me._tabs.setCurrentTab(WhichRwyDialog.TAB_DEPARTURE);
+            } elsif (event.key == "3") {
+                me._tabs.setCurrentTab(WhichRwyDialog.TAB_ARRIVAL);
+            } elsif (event.key == "4") {
+                me._tabs.setCurrentTab(WhichRwyDialog.TAB_ALTERNATE);
+            }
+        });
     },
 };

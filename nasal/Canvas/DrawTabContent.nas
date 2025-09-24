@@ -520,4 +520,14 @@ var DrawTabContent = {
 
         return nil;
     },
+
+    #
+    # Scroll content vertically.
+    #
+    # @param  int  dy  Delta Y in pixels. A negative value scrolls up, a positive value scrolls down.
+    # @return void
+    #
+    scrollContent: func(dy) {
+        me._scrollArea.vertScrollBarBy(dy);
+    },
 };
