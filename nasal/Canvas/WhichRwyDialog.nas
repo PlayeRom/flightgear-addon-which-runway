@@ -13,6 +13,8 @@
 # WhichRwyDialog dialog class.
 #
 var WhichRwyDialog = {
+    CLASS: "WhichRwyDialog",
+
     #
     # Constants:
     #
@@ -41,7 +43,7 @@ var WhichRwyDialog = {
         ] };
 
         # Let the parent know who their child is.
-        me.setChild(me, WhichRwyDialog);
+        me.parents[1].setChild(me, WhichRwyDialog);
 
         me.setPositionOnCenter();
 
