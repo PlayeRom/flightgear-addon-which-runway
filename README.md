@@ -77,11 +77,15 @@ If you're using preferred runways for an airport, then:
 4. If no runway is suitable due to unfavorable wind conditions, everyone will receive the information **Is preferred: No**. You can then deselect the "Use preferred airport runways" option and simply check the runways by the highest headwind.
 5. If the wind is variable, the criteria for max tailwind and crosswind are not checked, which means that no runways are rejected from the preferred ones.
 
+### Comments
+
+Some runways have incorrectly created `rwyuse.xml` files. For example, the number of runways in a column is not the same, or they have multiple schedule entries for the same aircraft type, each with the same time range. Such cases can produce illogical results or won't be fully supported. The example of how this should be done correctly, and what I used as a basis, is the `EHAM.rwyuse.xml` file, where the aircraft type has a single schedule from 00:00 to 24:00, and the preferred runway lists have the same number of columns.
+
 ### Preferred runways and compatibility issues
 
 Currently, FlightGear uses the airport's preferred runways (if any) only for computer-controlled traffic. Therefore, if you start a session on a runway, your aircraft will be placed on the runway based on the highest headwind, without taking into account the airport's preferred runways. The good news is that this is recognized and marked with a FIXME comment in the FlightGear code :)
 
-Other add-ons, such as "Red Griffin ATC" (version 2.3.0 at the moment), work similarly. If you ask "Red Griffin ATC" for departure information, you'll receive a takeoff runway based on the highest headwind, and this will usually not be consistent with Which Runway, which uses preferred runways.
+Other add-ons, such as "Red Griffin ATC" (version 2.3.0 at the moment), work similarly. If you ask "Red Griffin ATC" for departure information, you'll receive a takeoff runway based on the highest headwind, and this will usually not be consistent with what “Which Runway” indicates when using preferred runways.
 
 ## Pictures
 
@@ -105,21 +109,21 @@ The illustration shows a case of gusty wind:
 
 ## Keys
 
-- `1` - switch to the Nearest tab.
-- `2` - switch to the Departure tab.
-- `3` - switch to the Arrival tab.
-- `4` - switch to the Alternate tab.
-- `Up`/`Down` - scroll content with small increments (20 px).
-- `PageUp`/`PageDown` - scroll content with large increments (110 px).
-- `Esc` - close the window.
+- `1` – switch to the Nearest tab.
+- `2` – switch to the Departure tab.
+- `3` – switch to the Arrival tab.
+- `4` – switch to the Alternate tab.
+- `Up`/`Down` – scroll content with small increments (20 px).
+- `PageUp`/`PageDown` – scroll content with large increments (110 px).
+- `Esc` – close the window.
 
 ## Customization
 
 Some options are stored in a property tree, so they can be changed during a flight session. To do this, go to the `Debug` menu -> `Browse Internal Properties` and then go to the `/addons/by-id/org.flightgear.addons.which-runway/setting` property. The following properties can be changed here:
 
-1. `max-metar-range-nm` - maximum search range of the nearest airport with METAR, used if the current airport does not have a METAR. Default 30 NM.
-2. `key-arrow-move-size` - by how many pixels the content should move when scrolling with the Up/Down arrow keys. Default 20 px.
-3. `key-page-move-size` - by how many pixels the content should move when scrolling with the PageUp/PageDown keys. Default 110 px.
+1. `max-metar-range-nm` – maximum search range of the nearest airport with METAR, used if the current airport does not have a METAR. Default 30 NM.
+2. `key-arrow-move-size` – by how many pixels the content should move when scrolling with the Up/Down arrow keys. Default 20 px.
+3. `key-page-move-size` – by how many pixels the content should move when scrolling with the PageUp/PageDown keys. Default 110 px.
 
 ## Development
 
@@ -133,7 +137,7 @@ The add-on recognizes the following variables in the `.env` file:
 
 1. `DEV_MODE` which takes the values `​​true` or `false` (or `1`/`0`). Setting this variable to `true` will add a "Dev Reload" item to the add-on's menu. This menu is used to reload all of the add-on's Nasal code.
 
-2. `MY_LOG_LEVEL` - here you can specify the logging level for logs added using the `Log.print()` method. Possible values: `LOG_ALERT`, `LOG_WARN`, `LOG_INFO`, `LOG_DEBUG` or `LOG_BULK`.
+2. `MY_LOG_LEVEL` – here you can specify the logging level for logs added using the `Log.print()` method. Possible values: `LOG_ALERT`, `LOG_WARN`, `LOG_INFO`, `LOG_DEBUG` or `LOG_BULK`.
 
 After changing these values, you need to reload the Nasal code using the "Dev Reload" menu item or the `:Yaw` multi-key command, or, as a last resort, restart the entire simulator.
 
