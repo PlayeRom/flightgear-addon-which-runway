@@ -29,6 +29,61 @@ If there is no other airport with a METAR within 30 NM, information about the ai
 
 **NOTE**: To download and use METAR data with this add-on, the add-on requires the "Live Data" weather scenario to be enabled. You can use this add-on with the weather scenario in offline mode, but wind and METAR data will not be displayed.
 
+## Preferred Runways
+
+Some airports, especially larger ones, include a file with the extension `*.rwyuse.xml` in their scenery. This file defines schedules for specific aircraft types and the preferred runways for takeoff and landing within a given schedule. The `rwyuse.xml` file also contains information about the maximum allowable tailwind and crosswind. If the first column of preferred runways does not meet the wind requirements, the next column is considered, and so on, until a column containing preferred runways is found. This means that the preferred runway may not necessarily be the one best located for the headwind. This is due to noise reduction, traffic volume, runway length, and other factors.
+
+"Which Runway" attempts to load the `rwyuse.xml` file, if it exists for a given airport, and takes into account the preferred runways there.
+
+If the airport has an `rwyuse.xml` file, it will be visible with an additional set of controls and information.
+
+![alt Preferred runways options](docs/img/rwyuse-panel.png "Preferred runways options")
+
+Controls:
+
+1. **Use preferred airport runways** checkbox – this will be enabled by default to use information from `rwyuse.xml`. However, you can always uncheck this option, which means disabling the `rwyuse.xml` file, and then the runways will be presented simply by the highest headwind.
+2. **Aircraft type** combobox – schedules for specific aircraft types are created in the `rwyuse.xml` file. Therefore, first make sure you have the correct aircraft type set:
+    1. `Commercial` – commercial airliners,
+    2. `General Aviation`,
+    3. `Ultralight`,
+    4. `Military`.
+
+    Not all airports have schedules for `Ultralight` and `Military`. If `Ultralight` is not present, `General` will be used, even though `Ultralight` is selected. If `Military` is not present, `Commercial` will be used. And if `General` is not specified, `Commercial` will also be used. Changing the aircraft in any tab will change the aircraft in every tab. This is convenient because we don't have to repeat this for every tab.
+3. Radio buttons **Takeoff** and **Lending** – here you must select whether you are interested in taking off or landing at a given airport. For the `Departure` tab, `takeoff` is selected and cannot be changed. For `Arrival`, `landing` is always selected. The values ​​can be changed on the `Nearest` and `Alternate` tabs.
+4. **Current UTC time** simply displays the current UTC time in the simulator to help set the schedule time. This time automatically updates.
+5. **Schedule UTC time** – here you should select the UTC time for takeoff or landing. As I mentioned, airports have their schedules based on time intervals in UTC, so it's important to enter the correct time. For example, if your flight will take another 2 hours, you should set the UTC time 2 hours ahead for landing. You will then receive the correct landing schedule.
+
+On the right side, you'll find additional information:
+
+1. **UTC Time** – the time used for the schedule. Remember to set the correct takeoff/landing time, which won't necessarily be the current time.
+2. **Max Tailwind** – the maximum allowable tailwind. If the runway has a tailwind greater than the value specified here, it is excluded from the preferred runways.
+3. **Max Crosswind** – the maximum allowable crosswind. If the runway has a crosswind greater than the value specified here, it is excluded from the preferred runways.
+4. **Traffic** – the aircraft type used. This should be the same type as you selected in the "Aircraft type" combo box, but this won't always be the case. If the airport doesn't contain any data for the selected aircraft, this value is changed as described above, for the "Aircraft type" option.
+5. **Schedule** – the name of the schedule from the `rwyuse.xml` file that corresponds to the given UTC time and aircraft/traffic. If `n/a` is displayed, it means the airport is not operational for the selected aircraft type at the selected UTC time. Runways will then be displayed simply by the highest headwind, without preferred runways. The values ​​found here may vary and depend on the airport, but here are some of them:
+    - `night` – night schedule, where preferred runways may be selected specifically for noise reasons;
+    - `day` – a general schedule for the entire day;
+    - `offpeak` – the end of peak traffic;
+    - `inbound` – heavy traffic arriving at the airport, in which case there may be more preferred runways for landing;
+    - `outbound` – heavy traffic departing from the airport, in which case there may be more preferred runways for takeoff;
+    - `general`, `ga` – most often one schedule for all general aviation traffic;
+    - `commercial` – most often one schedule for all airline traffic;
+    - `always` – some general schedule.
+
+If you're using preferred runways for an airport, then:
+
+1. The preferred runways will be displayed first. They will have the additional information **Is preferred: Yes**. Typically, there will be only one runway, or possibly two, for large airports. This is the runway you should select.
+2. Not all runways will be displayed here, only those that were on the airport's preferred list for a given schedule.
+3. If a runway doesn't meet the maximum tailwind or crosswind criteria, it will be marked with the additional information **Is preferred: No**.
+4. If no runway is suitable due to unfavorable wind conditions, everyone will receive the information **Is preferred: No**. You can then deselect the "Use preferred airport runways" option and simply check the runways by the highest headwind.
+5. If the wind is variable, the criteria for max tailwind and crosswind are not checked, which means that no runways are rejected from the preferred ones.
+
+### Preferred runways and compatibility issues
+
+Currently, FlightGear uses the airport's preferred runways (if any) only for computer-controlled traffic. Therefore, if you start a session on a runway, your aircraft will be placed on the runway based on the highest headwind, without taking into account the airport's preferred runways. The good news is that this is recognized and marked with a FIXME comment in the FlightGear code :)
+
+Other add-ons, such as "Red Griffin ATC" (version 2.3.0 at the moment), work similarly. If you ask "Red Griffin ATC" for departure information, you'll receive a takeoff runway based on the highest headwind, and this will usually not be consistent with Which Runway, which uses preferred runways.
+
+## Pictures
 
 ![alt Which Runway main window](docs/img/1-which-runway.png "Which Runway main window")
 
