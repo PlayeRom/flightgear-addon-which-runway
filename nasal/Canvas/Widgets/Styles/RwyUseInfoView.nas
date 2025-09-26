@@ -126,7 +126,7 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
         y += me._draw.setTextTranslations(y, me._tailwind, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._crosswind, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._schedule, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._traffic, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._traffic, model._valueMarginX, true);
 
         return y;
     },

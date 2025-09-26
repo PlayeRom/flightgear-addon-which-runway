@@ -122,6 +122,7 @@ var RunwaysData = {
         var rowsSize = math.max(takeoffRowSize, landingRowSize);
         var colSize = math.max(size(takeoffs[0]), size(landings[0])); # In case one of the arrays has size 0
 
+        var isPreferredColSet = false;
         for (var c = 0; c < colSize; c += 1) {
             var isColActive = true;
             var columnRunwayData = [];
@@ -130,7 +131,7 @@ var RunwaysData = {
                     var rwyId = takeoffs[r][c];
                     var runwayData = me._checkWindCriteria(airport, rwyId, wind);
                     if (runwayData != nil) {
-                        if (!runwayData.isActive) {
+                        if (!runwayData.isWindCriteriaMet) {
                             isColActive = false;
                         }
 
@@ -144,7 +145,7 @@ var RunwaysData = {
                     var rwyId = landings[r][c];
                     var runwayData = me._checkWindCriteria(airport, rwyId, wind);
                     if (runwayData != nil) {
-                        if (!runwayData.isActive) {
+                        if (!runwayData.isWindCriteriaMet) {
                             isColActive = false;
                         }
 
@@ -155,19 +156,38 @@ var RunwaysData = {
                 }
             }
 
+            # This is our preferred column of runways (can be only 1 column)
+            var isPreferred = (isColActive and !isPreferredColSet);
+            if (isPreferred) {
+                # Prevents subsequent runway columns from being set as preferred
+                isPreferredColSet = true;
+            }
+
             foreach (var columnRunway; columnRunwayData) {
                 if (!isColActive) {
-                    # Mark all runways in column as inactive
-                    columnRunway.isActive = false;
+                    # Mark all runways in column as not preferred
+                    columnRunway.isWindCriteriaMet = false;
                 }
 
                 # Runways from rwyuse.xml may be repeated in subsequent columns,
                 # so we do not want to add a runway that we have already added earlier.
                 if (!me._isRwyIdAlreadyAdded(columnRunway.rwyId, runwaysDataActive ~ runwaysDataInactive)) {
+                    if (columnRunway.isWindCriteriaMet and isPreferred) {
+                        columnRunway.isPreferred = true; # mark runway as preferred
+                    }
+
                     globals.append(
-                        columnRunway.isActive ? runwaysDataActive : runwaysDataInactive,
+                        columnRunway.isWindCriteriaMet ? runwaysDataActive : runwaysDataInactive,
                         columnRunway
                     );
+                } elsif (isPreferred) {
+                    # find the runway that was added earlier to mark it as preferred
+                    forindex (var index; runwaysDataActive) {
+                        if (runwaysDataActive[index].rwyId == columnRunway.rwyId) {
+                            runwaysDataActive[index].isPreferred = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -195,12 +215,12 @@ var RunwaysData = {
         var runway = airport.runways[rwyId];
         var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, runway.heading);
 
-        var isActive = true;
+        var isPassedWindCriteria = true;
         if (hw != nil and xw != nil) {
-            isActive = (hw >= -wind.tail and xw <= wind.cross);
+            isPassedWindCriteria = (hw >= -wind.tail and xw <= wind.cross);
         }
 
-        return me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway, isActive);
+        return me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway, isPassedWindCriteria);
     },
 
     #
@@ -294,11 +314,12 @@ var RunwaysData = {
     # @param  double|nil  xw  Crosswind in knots or nil if no METAR/wind.
     # @param  double|nil  xwGust  Crosswind for gust in knots or nil if no METAR/wind.
     # @param  ghost  runway  Runway or Helipad data from FlightGear.
-    # @param  bool  isActive  if false then the runway is not preferred because
-    #                         it does not meet the guidelines for maximum tail and cross winds.
+    # @param  bool|nil  isWindCriteriaMet  If nil then rwyuse.xml is not using.
+    #                                      If false then the runway is not preferred because
+    #                                      it does not meet the guidelines for maximum tail and cross winds.
     # @return hash
     #
-    _getRunwayData: func(type, normDiffDeg, hw, hwGust, xw, xwGust, runway, isActive = true) {
+    _getRunwayData: func(type, normDiffDeg, hw, hwGust, xw, xwGust, runway, isWindCriteriaMet = nil) {
         var isTypeRunway = type == "Runway";
 
         return {
@@ -317,7 +338,8 @@ var RunwaysData = {
             ils          : isTypeRunway ? runway.ils : nil,
             lat          : runway.lat,
             lon          : runway.lon,
-            isActive     : isActive,
+            isPreferred  : nil, # = true if rwyuse.xml is using and this is preferred runway
+            isWindCriteriaMet: isWindCriteriaMet,
         };
     },
 

@@ -95,6 +95,11 @@ DefaultStyle.widgets["runway-info-view"] = {
             me._draw.createTextValue("n/a"),
         ];
 
+        me._preferred = [
+            me._draw.createTextLabel("Is preferred:"),
+            me._draw.createTextValue("n/a"),
+        ];
+
         me._contentHeight = nil;
     },
 
@@ -169,7 +174,8 @@ DefaultStyle.widgets["runway-info-view"] = {
         y += me._draw.setTextTranslations(y, me._rwyWidth, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._surface, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._reciprocal, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._ils, model._valueMarginX, true);
+        y += me._draw.setTextTranslations(y, me._ils, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._preferred, model._valueMarginX, true);
 
         return y;
     },
@@ -229,6 +235,17 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._surface[me._VAL].setText(me._getSurface(rwy.surface));
         me._reciprocal[me._VAL].setText(rwy.reciprocal == nil ? "n/a" : rwy.reciprocal.id);
         me._ils[me._VAL].setText(me._getIlsValue(rwy, rwyHdgTrue, rwyHdgMag, model._aptMagVar));
+
+        if (rwy.isPreferred == true) {
+            me._preferred[me._LABEL].setVisible(true);
+            me._preferred[me._VAL].setText("Yes").setColor(me._colors.GREEN).setVisible(true);
+        } elsif (rwy.isWindCriteriaMet == false) {
+            me._preferred[me._LABEL].setVisible(true);
+            me._preferred[me._VAL].setText("No").setColor(me._colors.RED).setVisible(true);
+        } else { # rwy.isPreferred == nil
+            me._preferred[me._LABEL].setVisible(false);
+            me._preferred[me._VAL].setVisible(false);
+        }
     },
 
     #
