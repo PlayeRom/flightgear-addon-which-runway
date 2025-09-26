@@ -60,8 +60,9 @@ var DrawRwyUseControls = {
         me._utcHourNode   = props.globals.getNode("/sim/time/utc/hour");
         me._utcMinuteNode = props.globals.getNode("/sim/time/utc/minute");
 
-        me._utcHourValue   = me._utcHourNode.getValue();
-        me._utcMinuteValue = me._getMinuteValue(me._utcMinuteNode.getValue());
+        me._utcHourValue   = 0;
+        me._utcMinuteValue = 0;
+        me._setUtcTimeToCurrentValue();
 
         me._rwyUseInfoWidget = canvas.gui.widgets.RwyUseInfo.new(me._scrollContent, canvas.style, { colors: Colors })
             .setVisible(false);
@@ -102,8 +103,7 @@ var DrawRwyUseControls = {
     # @return void
     #
     setUtcTimeToCurrent: func() {
-        me._utcHourValue =  me._utcHourNode.getValue();
-        me._utcMinuteValue =  me._getMinuteValue(me._utcMinuteNode.getValue());
+        me._setUtcTimeToCurrentValue();
 
         me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
         me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
@@ -493,10 +493,21 @@ var DrawRwyUseControls = {
     },
 
     #
-    # @param  int  minute
-    # @return string
+    # @return value
     #
-    _getMinuteValue: func(minute) {
-        return math.ceil(minute / DrawRwyUseControls.MIN_INTERVAL) * DrawRwyUseControls.MIN_INTERVAL;
+    _setUtcTimeToCurrentValue: func() {
+        me._utcHourValue = me._utcHourNode.getValue();
+
+        var minute = math.ceil(me._utcMinuteNode.getValue() / DrawRwyUseControls.MIN_INTERVAL) * DrawRwyUseControls.MIN_INTERVAL;
+        if (minute == 60) {
+            minute = 0;
+
+            me._utcHourValue += 1;
+            if (me._utcHourValue >= 24) {
+                me._utcHourValue = 0;
+            }
+        }
+
+        me._utcMinuteValue = minute;
     },
 };
