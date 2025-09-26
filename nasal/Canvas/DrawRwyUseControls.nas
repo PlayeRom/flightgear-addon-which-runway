@@ -14,6 +14,11 @@
 #
 var DrawRwyUseControls = {
     #
+    # Constants:
+    #
+    MIN_INTERVAL: 10,
+
+    #
     # Constructor.
     #
     # @param  string  tabId
@@ -41,8 +46,34 @@ var DrawRwyUseControls = {
         me._labelAircraftType = nil;
         me._radioTakeoff = nil;
         me._radioLanding = nil;
+        me._labelCurrentUtcTime = nil;
+        me._labelCurrentUtcTimeValue = nil;
+        me._labelUtcTimeCtrl = nil;
+        me._labelUtcHour = nil;
+        me._labelUtcMinute = nil;
+        me._btnUtcHourMinus = nil;
+        me._btnUtcHourPlus = nil;
+        me._btnUtcMinuteMinus = nil;
+        me._btnUtcMinutePlus = nil;
+
+        me._currentUtcTime = "00:00";
+        me._utcHourNode   = props.globals.getNode("/sim/time/utc/hour");
+        me._utcMinuteNode = props.globals.getNode("/sim/time/utc/minute");
+
+        me._utcHourValue   = me._utcHourNode.getValue();
+        me._utcMinuteValue = me._getMinuteValue(me._utcMinuteNode.getValue());
+
         me._rwyUseInfoWidget = canvas.gui.widgets.RwyUseInfo.new(me._scrollContent, canvas.style, { colors: Colors })
             .setVisible(false);
+
+        me._listeners = Listeners.new();
+
+        me._listeners.add(
+            node: "/sim/time/utc/minute",
+            code: func() { me._updateCurrentUtcTime(); },
+            init: false,
+            type: Listeners.ON_CHANGE_ONLY,
+        );
 
         return me;
     },
@@ -53,6 +84,8 @@ var DrawRwyUseControls = {
     # @return void
     #
     del: func() {
+        me._listeners.del();
+
         call(DrawTabBase.del, [], me);
     },
 
@@ -63,6 +96,17 @@ var DrawRwyUseControls = {
     #
     isRwyUse: func() {
         return me._isRwyUse;
+    },
+
+    #
+    # @return void
+    #
+    setUtcTimeToCurrent: func() {
+        me._utcHourValue =  me._utcHourNode.getValue();
+        me._utcMinuteValue =  me._getMinuteValue(me._utcMinuteNode.getValue());
+
+        me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+        me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
     },
 
     #
@@ -112,6 +156,20 @@ var DrawRwyUseControls = {
     },
 
     #
+    # @return int  Set hour in UTC time.
+    #
+    getScheduleUtcHour: func() {
+        return me._utcHourValue;
+    },
+
+    #
+    # @return int  Set minute in UTC time.
+    #
+    getScheduleUtcMinute: func() {
+        return me._utcMinuteValue;
+    },
+
+    #
     # Crate whole layout to control rwyuse.
     #
     # #return ghost  Return canvas layout.
@@ -157,6 +215,17 @@ var DrawRwyUseControls = {
                     me._radioLanding.setEnabled(false);
                 }
 
+                me._labelCurrentUtcTime.setEnabled(me._isRwyUse);
+                me._labelCurrentUtcTimeValue.setEnabled(me._isRwyUse);
+
+                me._labelUtcTimeCtrl.setEnabled(me._isRwyUse);
+                me._labelUtcHour.setEnabled(me._isRwyUse);
+                me._labelUtcMinute.setEnabled(me._isRwyUse);
+                me._btnUtcHourMinus.setEnabled(me._isRwyUse);
+                me._btnUtcHourPlus.setEnabled(me._isRwyUse);
+                me._btnUtcMinuteMinus.setEnabled(me._isRwyUse);
+                me._btnUtcMinutePlus.setEnabled(me._isRwyUse);
+
                 me._redrawCallback.invoke();
             });
 
@@ -164,6 +233,8 @@ var DrawRwyUseControls = {
         vBox.addItem(me._checkboxRwyUse);
         vBox.addItem(aircraftTypeLayout);
         vBox.addItem(takeOffLandingLayout);
+        vBox.addItem(me._createCurrentUtcTimeLayout());
+        vBox.addItem(me._createUtcTimeControlLayout());
         vBox.addStretch(1);
 
         return vBox;
@@ -175,8 +246,7 @@ var DrawRwyUseControls = {
     # #return ghost  Return canvas layout.
     #
     _creteRwyUseComboBoxAircraft: func() {
-        me._labelAircraftType = canvas.gui.widgets.Label.new(me._scrollContent, canvas.style, {})
-            .setText("Aircraft type:");
+        me._labelAircraftType = me._getLabel("Aircraft type:");
 
         me._comboBoxAircraftType = canvas.gui.widgets.ComboBox.new(me._scrollContent, canvas.style, {})
             .setFixedSize(160, 28);
@@ -285,5 +355,148 @@ var DrawRwyUseControls = {
     _getRadioButton: func(text, cfg = nil) {
         return canvas.gui.widgets.RadioButton.new(me._scrollContent, canvas.style, cfg)
             .setText(text);
+    },
+
+    #
+    # @param  string  text
+    # @return ghost  Label widget.
+    #
+    _getLabel: func(text) {
+        return canvas.gui.widgets.Label.new(me._scrollContent, canvas.style, {})
+            .setText(text);
+    },
+
+    #
+    # @param  string  text  Label of button.
+    # @param  func  callback  Function which will be executed after click the button.
+    # @return ghost  Button widget.
+    #
+    _getButton: func(text, callback, height = 28) {
+        return canvas.gui.widgets.Button.new(me._scrollContent, canvas.style, {})
+            .setText(text)
+            .setFixedSize(height, 28)
+            .listen("clicked", callback);
+    },
+
+    #
+    # @return ghost  Label widget.
+    #
+    _createCurrentUtcTimeLayout: func() {
+        me._labelCurrentUtcTime = me._getLabel("Current UTC time:");
+
+        me._labelCurrentUtcTimeValue = me._getLabel(me._currentUtcTime);
+        me._updateCurrentUtcTime();
+
+        var hBox = canvas.HBoxLayout.new();
+        hBox.addItem(me._labelCurrentUtcTime);
+        hBox.addItem(me._labelCurrentUtcTimeValue);
+        hBox.addStretch(1);
+
+        return hBox;
+    },
+
+    #
+    # @return ghost  Label widget.
+    #
+    _createUtcTimeControlLayout: func() {
+        me._labelUtcTimeCtrl = me._getLabel("Schedule UTC time:");
+
+        me._labelUtcHour = me._getLabel(me._getPrintTimeFormat(me._utcHourValue));
+        me._labelUtcMinute = me._getLabel(me._getPrintTimeFormat(me._utcMinuteValue));
+
+        me._btnUtcHourMinus = me._getButton("-", func() {
+            me._utcHourValue -= 1;
+            if (me._utcHourValue <= -1) {
+                me._utcHourValue = 23;
+            }
+
+            me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+            me._redrawCallback.invoke();
+        });
+
+        me._btnUtcHourPlus = me._getButton("+", func() {
+            me._utcHourValue += 1;
+            if (me._utcHourValue >= 24) {
+                me._utcHourValue = 0;
+            }
+
+            me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+            me._redrawCallback.invoke();
+        });
+
+        me._btnUtcMinuteMinus = me._getButton("-", func() {
+            me._utcMinuteValue -= DrawRwyUseControls.MIN_INTERVAL;
+            if (me._utcMinuteValue < 0) {
+                me._utcMinuteValue = 60 - DrawRwyUseControls.MIN_INTERVAL;
+
+                me._utcHourValue -= 1;
+                if (me._utcHourValue <= -1) {
+                    me._utcHourValue = 23;
+                }
+
+                me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+            }
+
+            me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
+            me._redrawCallback.invoke();
+        });
+
+        me._btnUtcMinutePlus = me._getButton("+", func() {
+            me._utcMinuteValue += DrawRwyUseControls.MIN_INTERVAL;
+            if (me._utcMinuteValue >= 60) {
+                me._utcMinuteValue = 0;
+
+                me._utcHourValue += 1;
+                if (me._utcHourValue >= 24) {
+                    me._utcHourValue = 0;
+                }
+
+                me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+            }
+
+            me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
+            me._redrawCallback.invoke();
+        });
+
+        var hBox = canvas.HBoxLayout.new();
+        hBox.addItem(me._labelUtcTimeCtrl);
+        hBox.addItem(me._btnUtcHourMinus);
+        hBox.addItem(me._labelUtcHour);
+        hBox.addItem(me._btnUtcHourPlus);
+        hBox.addItem(me._btnUtcMinuteMinus);
+        hBox.addItem(me._labelUtcMinute);
+        hBox.addItem(me._btnUtcMinutePlus);
+        hBox.addStretch(1);
+
+        return hBox;
+    },
+
+    #
+    # @return void
+    #
+    _updateCurrentUtcTime: func() {
+        if (me._labelCurrentUtcTimeValue == nil) {
+            return;
+        }
+
+        var hour   = me._utcHourNode.getValue();
+        var minute = me._utcMinuteNode.getValue();
+        me._labelCurrentUtcTimeValue.setText(sprintf("%02d:%02d", hour, minute));
+    },
+
+    #
+    # @param  int  value
+    # @return string
+    #
+    _getPrintTimeFormat: func(value) {
+        return sprintf("%02d", value);
+    },
+
+    #
+    # @param  int  minute
+    # @return string
+    #
+    _getMinuteValue: func(minute) {
+        return math.ceil(minute / DrawRwyUseControls.MIN_INTERVAL) * DrawRwyUseControls.MIN_INTERVAL;
     },
 };

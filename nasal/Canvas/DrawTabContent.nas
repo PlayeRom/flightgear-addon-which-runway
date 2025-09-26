@@ -278,7 +278,13 @@ var DrawTabContent = {
             return;
         }
 
-        me._icao = globals.string.uc(icao);
+        var newIcao = globals.string.uc(icao);
+        if (newIcao != me._icao) {
+            # ICAO changed, set current UTC time
+            me._drawRwyUseControls.setUtcTimeToCurrent();
+        }
+
+        me._icao = newIcao;
 
         me._bottomBar.setIcao(me._icao);
 
@@ -463,34 +469,49 @@ var DrawTabContent = {
     # @return void
     #
     _reDrawRunways: func(airport, aptMagVar) {
+        var scheduleUtcHour   = me._drawRwyUseControls.getScheduleUtcHour();
+        var scheduleUtcMinute = me._drawRwyUseControls.getScheduleUtcMinute();
+
         var runways = me._runwaysData.getRunways(
             airport: airport,
             isRwyUse: me._drawRwyUseControls.isRwyUse(),
             aircraftType: me._drawRwyUseControls.getAircraftType(),
             isTakeoff: me._drawRwyUseControls.isTakeoff(),
+            utcHour: scheduleUtcHour,
+            utcMinute: scheduleUtcMinute,
         );
 
-        var rwyUseStatus = me._runwaysData.isPreferredRwySucceeded();
-        if (rwyUseStatus == true or rwyUseStatus == nil) {
+        var rwyUseStatus = me._runwaysData.getRwyUseStatus();
+        if (rwyUseStatus == RunwaysData.CODE_NO_XML) {
+            # TODO: Print info that airport has not rwyuse.xml file
+            me._rwyUseLayout.setVisible(false);
+        } else {
             me._rwyUseLayout.setVisible(true);
 
-            var currentUtcHour   = num(getprop("/sim/time/utc/hour"));
-            var currentUtcMinute = num(getprop("/sim/time/utc/minute"));
             var windCriteria = me._runwaysUse.getWind(me._icao, me._drawRwyUseControls.getAircraftType());
+            var traffic = me._runwaysUse.getUsedTrafficFullName(me._icao, me._drawRwyUseControls.getAircraftType());
+
+            var schedule = me._runwaysUse.getScheduleByTime(
+                me._icao,
+                me._drawRwyUseControls.getAircraftType(),
+                scheduleUtcHour,
+                scheduleUtcMinute,
+            );
+
+            if (schedule == RwyUse.ERR_NO_SCHEDULE) {
+                schedule = "n/a";
+            }
 
             me._drawRwyUseControls.getRwyUseInfoWidget()
-                .setUtcTime(sprintf("%02d:%02d", currentUtcHour, currentUtcMinute))
+                .setUtcTime(sprintf("%02d:%02d", scheduleUtcHour, scheduleUtcMinute))
                 .setWindCriteria(
                     windCriteria == nil ? "n/a" : windCriteria.tail,
                     windCriteria == nil ? "n/a" : windCriteria.cross,
                 )
-                .setSchedule(me._runwaysUse.getScheduleByTime(me._icao, me._drawRwyUseControls.getAircraftType()))
-                .setTraffic(me._runwaysUse.getUsedTrafficFullName(me._icao, me._drawRwyUseControls.getAircraftType()))
+                .setSchedule(schedule)
+                .setTraffic(traffic)
                 .setVisible(me._drawRwyUseControls.isRwyUse())
                 .updateView();
-        } else {
-            # TODO: Print info that airport has not rwyuse.xml file
-            me._rwyUseLayout.setVisible(false);
         }
 
         var runwaysSize = size(runways);

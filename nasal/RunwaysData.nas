@@ -10,11 +10,19 @@
 #
 
 #
-# RunwaysData class
+# RunwaysData class.
 #
 var RunwaysData = {
     #
-    # Constructor
+    # Constants:
+    #
+    CODE_IGNORE : 0, # User not used preferred runways.
+    CODE_OK     : 1, # Data from rwyuse.xml was found and returned successfully.
+    CODE_NO_XML : 2, # Airport has not rwyuse.xml file.
+    CODE_NO_DATA: 3, # File rwyuse.xml exist but no data for given time.
+
+    #
+    # Constructor.
     #
     # @param  hash  metar  Metar object.
     # @param  hash  runwaysUse  RwyUse object.
@@ -27,13 +35,13 @@ var RunwaysData = {
             _runwaysUse: runwaysUse,
         };
 
-        me._isPreferredRwySucceeded = nil;
+        me._rwyUseStatus = RunwaysData.CODE_IGNORE;
 
         return me;
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -48,38 +56,45 @@ var RunwaysData = {
     #                         if false then it based on best headwind.
     # @param  string  aircraftType  Aircraft type: "com", "gen", "mil", "ul".
     # @param  bool  isTakeoff  True for takeoff, false for landing.
+    # @param  int  utcHour
+    # @param  int  utcMinute
     # @return vector  Array of runways data.
     #
-    getRunways: func(airport, isRwyUse, aircraftType = "com", isTakeoff = false) {
-        me._isPreferredRwySucceeded = nil;
+    getRunways: func(airport, isRwyUse, aircraftType, isTakeoff, utcHour, utcMinute) {
+        me._rwyUseStatus = RunwaysData.CODE_IGNORE;
 
         if (isRwyUse) {
-            var preferredRunways = me._runwaysUse.getAllPreferredRunways(airport.id, aircraftType);
-            if (preferredRunways != nil) {
-                # Log.print("preferredRunways = ", string.join(", ", preferredRunways));
-                var result = me._getRunwaysByPreferred(airport, aircraftType, isTakeoff, preferredRunways);
-                if (result != nil) {
-                    me._isPreferredRwySucceeded = true;
-                    return result;
-                }
-            }
+            var preferredRunways = me._runwaysUse.getAllPreferredRunways(
+                airport.id,
+                aircraftType,
+                utcHour,
+                utcMinute,
+            );
 
-            me._isPreferredRwySucceeded = false;
+            if (preferredRunways == RwyUse.ERR_NO_SCHEDULE) {
+                me._rwyUseStatus = RunwaysData.CODE_NO_DATA;
+            } else {
+                if (preferredRunways != nil) {
+                    # Log.print("preferredRunways = ", string.join(", ", preferredRunways));
+                    var result = me._getRunwaysByPreferred(airport, aircraftType, isTakeoff, preferredRunways);
+                    if (result != nil) {
+                        me._rwyUseStatus = RunwaysData.CODE_OK;
+                        return result;
+                    }
+                }
+
+                me._rwyUseStatus = RunwaysData.CODE_NO_XML;
+            }
         }
 
         return me._getRunwaysByBestHeadwind(airport);
     },
 
     #
-    # Get the `rwyuse` status of the last getRunways use.
-    # If true then `rwyuse` was used successfully,
-    # if false then `rwyuse` was attempted but failed,
-    # if nil then `rwyuse` was not attempted, so this flag has no meaning.
+    # @return int
     #
-    # @return bool|nil
-    #
-    isPreferredRwySucceeded: func() {
-        return me._isPreferredRwySucceeded;
+    getRwyUseStatus: func() {
+        return me._rwyUseStatus;
     },
 
     #

@@ -25,6 +25,8 @@ var RwyUse = {
     TAKEOFF   : "takeoff",
     LANDING   : "landing",
 
+    ERR_NO_SCHEDULE: "err code no scheduler", # The airport does not operate at the specified time for the given aircraft type
+
     #
     # Constructor
     #
@@ -145,13 +147,17 @@ var RwyUse = {
     #
     # @param  string  icao  Airport ICAO code.
     # @param  string  acType  Aircraft type: "com", "gen", "mil", "ul".
+    # @param  int  utcHour
+    # @param  int  utcMinute
     # @return hash
     #
-    getAllPreferredRunways: func(icao, acType) {
+    getAllPreferredRunways: func(icao, acType, utcHour, utcMinute) {
         # Find schedule by time
-        var schedule = me.getScheduleByTime(icao, acType);
+        var schedule = me.getScheduleByTime(icao, acType, utcHour, utcMinute);
         if (schedule == nil) {
-            return nil; # schedule doesn't exist in schedule data
+            return nil; # error, no icao or traffic
+        } else if (schedule == RwyUse.ERR_NO_SCHEDULE) {
+            return RwyUse.ERR_NO_SCHEDULE; # the indicated traffic does not operate at the specified time
         }
 
         return me._data[icao].schedules[schedule];
@@ -236,9 +242,11 @@ var RwyUse = {
     #
     # @param  string  icao  Airport ICAO code.
     # @param  string  acType  Aircraft type: "com", "gen", "mil", "ul".
+    # @param  int  utcHour
+    # @param  int  utcMinute
     # @param  string|nil  Schedule name or nil if not found.
     #
-    getScheduleByTime: func(icao, acType) {
+    getScheduleByTime: func(icao, acType, utcHour, utcMinute) {
         if (!me._isIcaoLoaded(icao)) {
             return nil;
         }
@@ -250,16 +258,13 @@ var RwyUse = {
 
         var times = me._data[icao].aircraft[acType].time;
 
-        var currentUtcHour   = num(getprop("/sim/time/utc/hour"));
-        var currentUtcMinute = num(getprop("/sim/time/utc/minute"));
-
         foreach (var time; times) {
-            if (me._isTimeInRange(currentUtcHour, currentUtcMinute, time.start, time.end)) {
+            if (me._isTimeInRange(utcHour, utcMinute, time.start, time.end)) {
                 return time.schedule;
             }
         }
 
-        return nil;
+        return RwyUse.ERR_NO_SCHEDULE;
     },
 
     #
