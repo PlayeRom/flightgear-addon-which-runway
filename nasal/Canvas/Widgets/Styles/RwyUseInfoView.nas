@@ -54,13 +54,13 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
             me._draw.createTextUnit("kts", me._colors.BLUE).setFontSize(fontSize),
         ];
 
-        me._schedule = [
-            me._draw.createTextLabel("Schedule:").setFontSize(fontSize),
+        me._traffic = [
+            me._draw.createTextLabel("Traffic:").setFontSize(fontSize),
             me._draw.createTextValue("n/a").setFontSize(fontSize),
         ];
 
-        me._traffic = [
-            me._draw.createTextLabel("Traffic:").setFontSize(fontSize),
+        me._schedule = [
+            me._draw.createTextLabel("Schedule:").setFontSize(fontSize),
             me._draw.createTextValue("n/a").setFontSize(fontSize),
         ];
 
@@ -125,8 +125,8 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
         y += me._draw.setTextTranslations(y, me._utcTime, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._tailwind, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._crosswind, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._schedule, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._traffic, model._valueMarginX, true);
+        y += me._draw.setTextTranslations(y, me._traffic, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._schedule, model._valueMarginX, true);
 
         return y;
     },
@@ -146,7 +146,7 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
         var (xTC, yTC) = me._crosswind[me._VAL].getTranslation();
         me._draw.setTextTranslations(yTC, me._crosswind, model._valueMarginX);
 
-        me._schedule[me._VAL].setText(model._schedule or "n/a");
         me._traffic[me._VAL].setText(model._traffic or "n/a");
+        me._schedule[me._VAL].setText(model._schedule or "n/a");
     },
 };
