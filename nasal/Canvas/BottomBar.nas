@@ -31,6 +31,7 @@ var BottomBar = {
         me._icaoEdit = nil;
         me._icao = "";
         me._btnLoadIcaos = std.Vector.new();
+        me._isHoldUpdateNearest = false;
 
         if (withIcaoBtns) {
             for (var i = 0; i < 5; i += 1) {
@@ -62,6 +63,15 @@ var BottomBar = {
         if (me._icaoEdit != nil) {
             me._icaoEdit.setText(icao);
         }
+    },
+
+    #
+    # Return true ich checkbox "Hold update" is checked.
+    #
+    # @return bool
+    #
+    isHoldUpdateNearest: func() {
+        return me._isHoldUpdateNearest;
     },
 
     #

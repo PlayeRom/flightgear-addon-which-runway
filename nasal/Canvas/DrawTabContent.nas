@@ -37,7 +37,6 @@ var DrawTabContent = {
 
         me._icao = "";
         me._icaoEdit = nil;
-        me._isHoldUpdateNearest = false;
 
         me._maxMetarRangeNmNode = props.globals.getNode(g_Addon.node.getPath() ~ "/settings/max-metar-range-nm");
 
@@ -184,7 +183,7 @@ var DrawTabContent = {
                     if (me._isTabNearest()) {
                         me._bottomBar.updateNearestAirportButtons();
 
-                        if (me._isHoldUpdateNearest) {
+                        if (me._bottomBar.isHoldUpdateNearest()) {
                             # The ICAO code update is blocked by a checkbox, so we're leaving.
                             return;
                         }
