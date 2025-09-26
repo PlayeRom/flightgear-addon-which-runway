@@ -23,6 +23,10 @@
                     <!-- Scroll by keyboard -->
                     <key-arrow-move-size type="int">20</key-arrow-move-size>
                     <key-page-move-size type="int">110</key-page-move-size>
+
+                    <rwyuse>
+                        <aircraft-type type="string">com</aircraft-type>
+                    </rwyuse>
                 </settings>
 
                 <!-- We need ../metar/data here for setlistener to work because we are observing these properties.-->

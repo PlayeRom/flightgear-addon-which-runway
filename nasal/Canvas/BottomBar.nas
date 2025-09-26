@@ -17,13 +17,16 @@ var BottomBar = {
     # Constructor
     #
     # @param  ghost  tabsContent  Tabs canvas content.
+    # @param  string  tabId
     # @param  hash  downloadMetarCallback  Callback object to run download METAR function.
-    # @param  bool  withIcaoBtns  If true then buttons with nearest ICOAs will be added.
     # @return hash
     #
-    new: func(tabsContent, downloadMetarCallback, withIcaoBtns) {
+    new: func(tabsContent, tabId, downloadMetarCallback) {
         var me = {
-            parents: [BottomBar],
+            parents: [
+                BottomBar,
+                DrawTabBase.new(tabId),
+            ],
             _tabsContent: tabsContent,
             _downloadMetarCallback: downloadMetarCallback,
         };
@@ -33,7 +36,7 @@ var BottomBar = {
         me._btnLoadIcaos = std.Vector.new();
         me._isHoldUpdateNearest = false;
 
-        if (withIcaoBtns) {
+        if (me._isTabNearest() or me._isTabAlternate()) {
             for (var i = 0; i < 5; i += 1) {
                 var btn = canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
                     .setText("----");
@@ -51,6 +54,7 @@ var BottomBar = {
     # @return void
     #
     del: func() {
+        call(DrawTabBase.del, [], me);
     },
 
     #

@@ -17,13 +17,19 @@ var RunwaysData = {
     # Constructor
     #
     # @param  hash  metar  Metar object.
+    # @param  hash  runwaysUse  RwyUse object.
     # @return hash
     #
-    new: func(metar) {
-        return {
+    new: func(metar, runwaysUse) {
+        var me = {
             parents: [RunwaysData],
             _metar: metar,
+            _runwaysUse: runwaysUse,
         };
+
+        me._isPreferredRwySucceeded = nil;
+
+        return me;
     },
 
     #
@@ -38,9 +44,170 @@ var RunwaysData = {
     # Get runways data for given airport.
     #
     # @param  ghost  airport  Airport info object.
+    # @param  bool  isRwyUse  If true then preferred runways will be used (rwyuse.xml),
+    #                         if false then it based on best headwind.
+    # @param  string  aircraftType  Aircraft type: "com", "gen", "mil", "ul".
+    # @param  bool  isTakeoff  True for takeoff, false for landing.
     # @return vector  Array of runways data.
     #
-    getRunways: func(airport) {
+    getRunways: func(airport, isRwyUse, aircraftType = "com", isTakeoff = false) {
+        me._isPreferredRwySucceeded = nil;
+
+        if (isRwyUse) {
+            var preferredRunways = me._runwaysUse.getAllPreferredRunways(airport.id, aircraftType);
+            if (preferredRunways != nil) {
+                # Log.print("preferredRunways = ", string.join(", ", preferredRunways));
+                var result = me._getRunwaysByPreferred(airport, aircraftType, isTakeoff, preferredRunways);
+                if (result != nil) {
+                    me._isPreferredRwySucceeded = true;
+                    return result;
+                }
+            }
+
+            me._isPreferredRwySucceeded = false;
+        }
+
+        return me._getRunwaysByBestHeadwind(airport);
+    },
+
+    #
+    # Get the `rwyuse` status of the last getRunways use.
+    # If true then `rwyuse` was used successfully,
+    # if false then `rwyuse` was attempted but failed,
+    # if nil then `rwyuse` was not attempted, so this flag has no meaning.
+    #
+    # @return bool|nil
+    #
+    isPreferredRwySucceeded: func() {
+        return me._isPreferredRwySucceeded;
+    },
+
+    #
+    # @param  ghost  airport
+    # @param  string  aircraftType  Aircraft type can be "com", "gen", "mil", "ul".
+    # @param  bool  isTakeoff  True for takeoff, false for landing.
+    # @param  hash  preferredRunways
+    # @return vector|nil  Array of runways data or nil if false.
+    #
+    _getRunwaysByPreferred: func(airport, aircraftType, isTakeoff, preferredRunways) {
+        var wind = me._runwaysUse.getWind(airport.id, aircraftType);
+        if (wind == nil) {
+            return nil;
+        }
+
+        var runwaysDataActive = [];
+        var runwaysDataInactive = [];
+
+        var takeoffs = preferredRunways.takeoff;
+        var landings = preferredRunways.landing;
+
+        var takeoffRowSize = size(takeoffs);
+        var landingRowSize = size(landings);
+
+        var rowsSize = math.max(takeoffRowSize, landingRowSize);
+        var colSize = math.max(size(takeoffs[0]), size(landings[0])); # In case one of the arrays has size 0
+
+        for (var c = 0; c < colSize; c += 1) {
+            var isColActive = true;
+            var columnRunwayData = [];
+            for (var r = 0; r < rowsSize; r += 1) {
+                if (r < takeoffRowSize and c < size(takeoffs[r])) {
+                    var rwyId = takeoffs[r][c];
+                    var runwayData = me._checkWindCriteria(airport, rwyId, wind);
+                    if (runwayData != nil) {
+                        if (!runwayData.isActive) {
+                            isColActive = false;
+                        }
+
+                        if (isTakeoff) {
+                            append(columnRunwayData, runwayData);
+                        }
+                    }
+                }
+
+                if (r < landingRowSize and c < size(landings[r])) {
+                    var rwyId = landings[r][c];
+                    var runwayData = me._checkWindCriteria(airport, rwyId, wind);
+                    if (runwayData != nil) {
+                        if (!runwayData.isActive) {
+                            isColActive = false;
+                        }
+
+                        if (!isTakeoff) {
+                            append(columnRunwayData, runwayData);
+                        }
+                    }
+                }
+            }
+
+            foreach (var columnRunway; columnRunwayData) {
+                if (!isColActive) {
+                    # Mark all runways in column as inactive
+                    columnRunway.isActive = false;
+                }
+
+                # Runways from rwyuse.xml may be repeated in subsequent columns,
+                # so we do not want to add a runway that we have already added earlier.
+                if (!me._isRwyIdAlreadyAdded(columnRunway.rwyId, runwaysDataActive ~ runwaysDataInactive)) {
+                    globals.append(
+                        columnRunway.isActive ? runwaysDataActive : runwaysDataInactive,
+                        columnRunway
+                    );
+                }
+            }
+        }
+
+        # Active first:
+        return runwaysDataActive ~ runwaysDataInactive;
+    },
+
+    #
+    # @param  ghost  airport
+    # @param  string  rwyId
+    # @param  hash  wind
+    # @return hash
+    #
+    _checkWindCriteria: func(airport, rwyId, wind) {
+        if (!globals.contains(airport.runways, rwyId)) {
+            # The airport does not have such a runway
+            return nil;
+        }
+
+        var windDir   = me._metar.getWindDir(airport); # it can be nil
+        var windSpeed = me._metar.getWindSpeedKt();
+        var windGust  = me._metar.getWindGustSpeedKt();
+
+        var runway = airport.runways[rwyId];
+        var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, runway.heading);
+
+        var isActive = true;
+        if (hw != nil and xw != nil) {
+            isActive = (hw >= -wind.tail and xw <= wind.cross);
+        }
+
+        return me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway, isActive);
+    },
+
+    #
+    # @param  string  rwyId
+    # @param  vector  array
+    # @return bool
+    #
+    _isRwyIdAlreadyAdded: func(rwyId, array) {
+        foreach (var item; array) {
+            if (item.rwyId == rwyId) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+
+    #
+    # @param  ghost  airport
+    # @return vector  Array of runways data.
+    #
+    _getRunwaysByBestHeadwind: func(airport) {
         var windDir   = me._metar.getWindDir(airport); # it can be nil
         var windSpeed = me._metar.getWindSpeedKt();
         var windGust  = me._metar.getWindGustSpeedKt();
@@ -112,9 +279,11 @@ var RunwaysData = {
     # @param  double|nil  xw  Crosswind in knots or nil if no METAR/wind.
     # @param  double|nil  xwGust  Crosswind for gust in knots or nil if no METAR/wind.
     # @param  ghost  runway  Runway or Helipad data from FlightGear.
+    # @param  bool  isActive  if false then the runway is not preferred because
+    #                         it does not meet the guidelines for maximum tail and cross winds.
     # @return hash
     #
-    _getRunwayData: func(type, normDiffDeg, hw, hwGust, xw, xwGust, runway) {
+    _getRunwayData: func(type, normDiffDeg, hw, hwGust, xw, xwGust, runway, isActive = true) {
         var isTypeRunway = type == "Runway";
 
         return {
@@ -133,6 +302,7 @@ var RunwaysData = {
             ils          : isTypeRunway ? runway.ils : nil,
             lat          : runway.lat,
             lon          : runway.lon,
+            isActive     : isActive,
         };
     },
 

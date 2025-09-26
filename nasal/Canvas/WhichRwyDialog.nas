@@ -46,6 +46,8 @@ var WhichRwyDialog = {
         dialogParent.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
         dialogParent.setPositionOnCenter();
 
+        me._runwaysUse = RwyUse.new();
+
         me._tabs = canvas.gui.widgets.TabWidget.new(me._group, canvas.style, { "tabs-closeable": false });
         me._tabsContent = me._tabs.getContent();
         me._vbox.addItem(me._tabs);
@@ -77,7 +79,7 @@ var WhichRwyDialog = {
     _createTab: func(tabId, label) {
         var layout = canvas.VBoxLayout.new();
         me._tabs.addTab(tabId, label, layout);
-        return DrawTabContent.new(me._tabsContent, layout, tabId);
+        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwaysUse);
     },
 
     #

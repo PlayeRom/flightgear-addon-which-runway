@@ -25,32 +25,36 @@ var DrawTabContent = {
     # @param  ghost  tabsContent  Tabs canvas content.
     # @param  ghost  tabContent  Single tab canvas content.
     # @param  string  tabId
+    # @param  hash  runwaysUse  RwyUse object.
     # @return hash
     #
-    new: func(tabsContent, tabContent, tabId) {
+    new: func(tabsContent, tabContent, tabId, runwaysUse) {
         var me = {
-            parents: [DrawTabContent],
+            parents: [
+                DrawTabContent,
+                DrawTabBase.new(tabId),
+            ],
             _tabsContent: tabsContent,
             _tabContent: tabContent,
-            _tabId: tabId,
+            _runwaysUse: runwaysUse,
         };
 
         me._icao = "";
         me._icaoEdit = nil;
 
-        me._maxMetarRangeNmNode = props.globals.getNode(g_Addon.node.getPath() ~ "/settings/max-metar-range-nm");
+        me._maxMetarRangeNmNode = props.globals.getNode(me._addonNodePath ~ "/settings/max-metar-range-nm");
 
         me._metar = Metar.new(
             me._tabId,
             Callback.new(me._metarUpdatedCallback, me),
             Callback.new(me._realWxUpdatedCallback, me),
         );
-        me._runwaysData = RunwaysData.new(me._metar);
+        me._runwaysData = RunwaysData.new(me._metar, me._runwaysUse);
 
         me._bottomBar = BottomBar.new(
             tabsContent: me._tabsContent,
+            tabId: me._tabId,
             downloadMetarCallback: Callback.new(me._downloadMetar, me),
-            withIcaoBtns: me._isTabNearest() or me._isTabAlternate(),
         );
 
         var scrollMargins = {
@@ -96,8 +100,16 @@ var DrawTabContent = {
             .setLabel("QFE:")
             .setVisible(false);
 
-        me._windLabel = canvas.gui.widgets.WindLabel.new(me._scrollContent, canvas.style, {colors: Colors})
+        me._windLabel = canvas.gui.widgets.WindLabel.new(me._scrollContent, canvas.style, { colors: Colors })
             .setVisible(false);
+
+        me._drawRwyUseControls = DrawRwyUseControls.new(
+            me._tabId,
+            me._scrollContent,
+            Callback.new(me._reDrawContent, me),
+        );
+
+        me._rwyUseLayout = me._drawRwyUseControls.createRwyUseLayout();
 
         me._runwaysLayout = canvas.VBoxLayout.new();
 
@@ -112,6 +124,8 @@ var DrawTabContent = {
         me._scrollLayout.addItem(me._pressureLabelQfe);
         me._scrollLayout.addSpacing(20);
         me._scrollLayout.addItem(me._windLabel);
+        me._scrollLayout.addSpacing(20);
+        me._scrollLayout.addItem(me._rwyUseLayout);
         me._scrollLayout.addSpacing(0);
         me._scrollLayout.addItem(me._runwaysLayout);
 
@@ -166,6 +180,9 @@ var DrawTabContent = {
         me._runwaysData.del();
         me._metar.del();
         me._bottomBar.del();
+        me._drawRwyUseControls.del();
+
+        call(DrawTabBase.del, [], me);
     },
 
     #
@@ -207,42 +224,18 @@ var DrawTabContent = {
                 type: Listeners.ON_CHANGE_ONLY, # the listener will only trigger when the property is changed.
             );
         }
-    },
 
-    #
-    # Return true if current tab it's "Nearest" tab
-    #
-    # @return bool
-    #
-    _isTabNearest: func() {
-        return me._tabId == WhichRwyDialog.TAB_NEAREST;
-    },
-
-    #
-    # Return true if current tab it's "Departure" tab
-    #
-    # @return bool
-    #
-    _isTabDeparture: func() {
-        return me._tabId == WhichRwyDialog.TAB_DEPARTURE;
-    },
-
-    #
-    # Return true if current tab it's "Arrival" tab
-    #
-    # @return bool
-    #
-    _isTabArrival: func() {
-        return me._tabId == WhichRwyDialog.TAB_ARRIVAL;
-    },
-
-    #
-    # Return true if current tab it's "Alternate" tab
-    #
-    # @return bool
-    #
-    _isTabAlternate: func() {
-        return me._tabId == WhichRwyDialog.TAB_ALTERNATE;
+        me._listeners.add(
+            node: me._addonNodePath ~ "/settings/rwyuse/aircraft-type",
+            code: func(node) {
+                if (node != nil) {
+                    me._drawRwyUseControls.setAircraftType(node.getValue());
+                    me._drawRwyUseControls.getComboBoxAircraftType().setSelectedByValue(me._drawRwyUseControls.getAircraftType());
+                    me._reDrawContent();
+                }
+            },
+            type: Listeners.ON_CHANGE_ONLY,
+        );
     },
 
     #
@@ -268,6 +261,7 @@ var DrawTabContent = {
            if (me._isTabNearest())   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
         elsif (me._isTabDeparture()) return "No ICAO code. Enter the departure airport in Route Manager first.";
         elsif (me._isTabArrival())   return "No ICAO code. Enter the arrival airport in Route Manager first.";
+        elsif (me._isTabAlternate()) return "Enter the ICAO code of an airport below.";
 
         return "No ICAO code.";
     },
@@ -369,6 +363,8 @@ var DrawTabContent = {
         me._pressureLabelQnh.setVisible(false);
         me._pressureLabelQfe.setVisible(false);
         me._windLabel.setVisible(false);
+        me._rwyUseLayout.setVisible(false);
+        me._drawRwyUseControls.getRwyUseInfoWidget().setVisible(false);
 
         me._hideAllRunways();
 
@@ -403,7 +399,7 @@ var DrawTabContent = {
 
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
-            me._reDrawContentWithMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
+            me._reDrawContentWithMessage(me._getNoIcaoMessage(), true);
             return;
         }
 
@@ -467,7 +463,36 @@ var DrawTabContent = {
     # @return void
     #
     _reDrawRunways: func(airport, aptMagVar) {
-        var runways = me._runwaysData.getRunways(airport);
+        var runways = me._runwaysData.getRunways(
+            airport: airport,
+            isRwyUse: me._drawRwyUseControls.isRwyUse(),
+            aircraftType: me._drawRwyUseControls.getAircraftType(),
+            isTakeoff: me._drawRwyUseControls.isTakeoff(),
+        );
+
+        var rwyUseStatus = me._runwaysData.isPreferredRwySucceeded();
+        if (rwyUseStatus == true or rwyUseStatus == nil) {
+            me._rwyUseLayout.setVisible(true);
+
+            var currentUtcHour   = num(getprop("/sim/time/utc/hour"));
+            var currentUtcMinute = num(getprop("/sim/time/utc/minute"));
+            var windCriteria = me._runwaysUse.getWind(me._icao, me._drawRwyUseControls.getAircraftType());
+
+            me._drawRwyUseControls.getRwyUseInfoWidget()
+                .setUtcTime(sprintf("%02d:%02d", currentUtcHour, currentUtcMinute))
+                .setWindCriteria(
+                    windCriteria == nil ? "n/a" : windCriteria.tail,
+                    windCriteria == nil ? "n/a" : windCriteria.cross,
+                )
+                .setSchedule(me._runwaysUse.getScheduleByTime(me._icao, me._drawRwyUseControls.getAircraftType()))
+                .setTraffic(me._runwaysUse.getUsedTrafficFullName(me._icao, me._drawRwyUseControls.getAircraftType()))
+                .setVisible(me._drawRwyUseControls.isRwyUse())
+                .updateView();
+        } else {
+            # TODO: Print info that airport has not rwyuse.xml file
+            me._rwyUseLayout.setVisible(false);
+        }
+
         var runwaysSize = size(runways);
         var runwayWidgetsSize = me._runwayWidgets.size();
 

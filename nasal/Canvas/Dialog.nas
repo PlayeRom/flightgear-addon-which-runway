@@ -361,10 +361,12 @@ var Dialog = {
             return call(me._childCls[funcName], [], me._childMe);
         }
 
-        if (me._childCls == nil) {
-            Log.print("Dialog._callMethodByChild(", funcName, ") - NO child");
-        } else {
-            Log.print("Dialog._callMethodByChild(", funcName, ") - child ", me._childCls.CLASS, " has no function ", funcName);
+        if (g_isDevMode) {
+            if (me._childCls == nil) {
+                Log.print("Dialog._callMethodByChild(", funcName, ") - NO child");
+            } else {
+                Log.print("Dialog._callMethodByChild(", funcName, ") - child ", me._childCls.CLASS, " has no function ", funcName);
+            }
         }
 
         # Child doesn't have give function name, so run it by self.
