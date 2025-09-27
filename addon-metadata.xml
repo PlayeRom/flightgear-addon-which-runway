@@ -28,13 +28,13 @@
             </maintainer>
         </maintainers>
 
-        <short-description type="string">Which runway is best for takeoff or landing.</short-description>
-        <long-description type="string">This add-on uses the METAR to indicate which runway is best for takeoff or landing. It also calculates headwind, crosswind and tailwind forces for the each runway of the airport.</long-description>
+        <short-description type="string">Selects the best runway for takeoff and landing.</short-description>
+        <long-description type="string">This add-on uses METAR data and preferred runway information from the rwyuse.xml file to determine the most suitable runway for takeoff or landing. It also calculates the headwind, crosswind, and tailwind components for each runway at the airport.</long-description>
 
         <localized>
             <pl>
-                <short-description type="string">Który pas startowy jest najlepszy do startu i lądowania.</short-description>
-                <long-description type="string">Ten dodatek wykorzystuje dane METAR do wskazania najlepszego pasa startowego do startu lub lądowania. Oblicza również siłę wiatru czołowego, bocznego i tylnego dla każdego pasa startowego lotniska.</long-description>
+                <short-description type="string">Określa najlepszy pas do startu i lądowania.</short-description>
+                <long-description type="string">Ten dodatek wykorzystuje dane METAR oraz informacje o preferowanych pasach z pliku rwyuse.xml, aby wskazać najbardziej odpowiedni pas do startu lub lądowania. Dodatkowo oblicza siłę wiatru czołowego, bocznego i tylnego dla każdego pasa startowego lotniska.</long-description>
             </pl>
         </localized>
 
@@ -60,6 +60,7 @@
             <tag type="string">headwind</tag>
             <tag type="string">crosswind</tag>
             <tag type="string">tailwind</tag>
+            <tag type="string">rwyuse</tag>
         </tags>
     </addon>
 </PropertyList>
