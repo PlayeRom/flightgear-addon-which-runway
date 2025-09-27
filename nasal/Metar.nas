@@ -33,7 +33,7 @@ var Metar = {
             parents: [Metar],
             _tabId: tabId,
             _updateMetarCallback: updateMetarCallback,
-            _callbackUpdateRealWx: updateRealWxCallback,
+            _updateRealWxCallback: updateRealWxCallback,
         };
 
         # If we download a METAR from an airport other than the current one,
