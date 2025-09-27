@@ -64,6 +64,11 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
             me._draw.createTextValue("n/a").setFontSize(fontSize),
         ];
 
+        me._dailyOperatingHours = [
+            me._draw.createTextLabel("Daily operating hours:").setFontSize(fontSize),
+            me._draw.createTextValue("n/a").setFontSize(fontSize),
+        ];
+
         me._contentHeight = nil;
     },
 
@@ -126,7 +131,8 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
         y += me._draw.setTextTranslations(y, me._tailwind, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._crosswind, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._traffic, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._schedule, model._valueMarginX, true);
+        y += me._draw.setTextTranslations(y, me._schedule, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._dailyOperatingHours, model._valueMarginX, true);
 
         return y;
     },
@@ -147,6 +153,13 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
         me._draw.setTextTranslations(yTC, me._crosswind, model._valueMarginX);
 
         me._traffic[me._VAL].setText(model._traffic or "n/a");
-        me._schedule[me._VAL].setText(model._schedule or "n/a");
+
+        me._schedule[me._VAL]
+            .setText(model._schedule or "n/a")
+            .setColor(model._schedule == nil ? me._colors.AMBER : style.getColor("text_color"));
+
+        me._dailyOperatingHours[me._VAL]
+            .setText(model._dailyOperatingHours or "n/a")
+            .setColor(model._schedule == nil ? me._colors.AMBER : style.getColor("text_color"));
     },
 };

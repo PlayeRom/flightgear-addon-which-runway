@@ -30,12 +30,13 @@ gui.widgets.RwyUseInfo = {
         me._focus_policy = me.NoFocus;
         me._setView(style.createWidget(parent, "rwy-use-info-view", me._cfg));
 
-        me._valueMarginX = 120;
+        me._valueMarginX = 145;
         me._utcTime = "00:00";
         me._maxTail = nil;
         me._maxCross = nil;
-        me._schedule = nil;
         me._traffic = nil;
+        me._schedule = nil;
+        me._dailyOperatingHours = nil;
 
         return me;
     },
@@ -75,6 +76,15 @@ gui.widgets.RwyUseInfo = {
     },
 
     #
+    # @param  string  traffic
+    # @return ghost
+    #
+    setTraffic: func(traffic) {
+        me._traffic = traffic;
+        return me;
+    },
+
+    #
     # @param  string  schedule
     # @return ghost
     #
@@ -84,11 +94,13 @@ gui.widgets.RwyUseInfo = {
     },
 
     #
-    # @param  string  traffic
+    # Set operation time for given traffic/aircraft type.
+    #
+    # @param  string|nil  opTime
     # @return ghost
     #
-    setTraffic: func(traffic) {
-        me._traffic = traffic;
+    setDailyOperatingHours: func(opTime) {
+        me._dailyOperatingHours = opTime;
         return me;
     },
 

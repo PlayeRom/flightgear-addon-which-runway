@@ -202,6 +202,36 @@ var RwyUse = {
     },
 
     #
+    # Get daily operation time for given traffic/aircraft type.
+    #
+    # @param  string  icao  Airport ICAO code.
+    # @param  string  acType  Aircraft type: "com", "gen", "mil", "ul".
+    # @return string|nil  Time range or nil if not found.
+    #
+    getDailyOperatingHours: func(icao, acType) {
+        if (!me._isIcaoLoaded(icao)) {
+            return nil;
+        }
+
+        acType = me._checkAircraftType(icao, acType);
+        if (acType == nil) {
+            return nil; # no data for aircraft type
+        }
+
+        var times = me._data[icao].aircraft[acType].time;
+        if (size(times) == 0) {
+            return nil; # no time data
+        }
+
+        return sprintf("%02d:%02d – %02d:%02d",
+            times[0].start.hour,
+            times[0].start.minute,
+            times[-1].end.hour,
+            times[-1].end.minute,
+        );
+    },
+
+    #
     # Check is ICAO.rwyuse.xml is loaded, if not load it.
     #
     # @param  string  icao  Airport ICAO code.

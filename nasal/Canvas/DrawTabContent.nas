@@ -490,8 +490,10 @@ var DrawTabContent = {
             } else {
                 me._rwyUseLayout.setVisible(true);
 
-                var windCriteria = me._runwaysUse.getWind(me._icao, me._drawRwyUseControls.getAircraftType());
-                var traffic = me._runwaysUse.getUsedTrafficFullName(me._icao, me._drawRwyUseControls.getAircraftType());
+                var acType = me._drawRwyUseControls.getAircraftType();
+                var windCriteria = me._runwaysUse.getWind(me._icao, acType);
+                var traffic = me._runwaysUse.getUsedTrafficFullName(me._icao, acType);
+                var dailyOpHours = me._runwaysUse.getDailyOperatingHours(me._icao, acType);
 
                 var schedule = me._runwaysUse.getScheduleByTime(
                     me._icao,
@@ -501,7 +503,7 @@ var DrawTabContent = {
                 );
 
                 if (schedule == RwyUse.ERR_NO_SCHEDULE) {
-                    schedule = "n/a";
+                    schedule = nil;
                 }
 
                 me._drawRwyUseControls.getRwyUseInfoWidget()
@@ -512,6 +514,7 @@ var DrawTabContent = {
                     )
                     .setSchedule(schedule)
                     .setTraffic(traffic)
+                    .setDailyOperatingHours(dailyOpHours)
                     .setVisible(me._drawRwyUseControls.isRwyUse())
                     .updateView();
             }
