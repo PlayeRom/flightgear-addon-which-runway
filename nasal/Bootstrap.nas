@@ -30,6 +30,11 @@ var g_isDevMode = false;
 var g_Addon = nil;
 
 #
+# Global object of Settings
+#
+var g_Settings = nil;
+
+#
 # Global object of dialog.
 #
 var g_WhichRwyDialog = nil;
@@ -53,6 +58,8 @@ var Bootstrap = {
         g_Addon = addon;
 
         Bootstrap._initDevMode();
+
+        g_Settings = Settings.new();
 
         # Disable the menu as it loads with delay.
         gui.menuEnable("which-runway-addon-main", false);

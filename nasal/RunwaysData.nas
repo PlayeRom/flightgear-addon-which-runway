@@ -63,7 +63,7 @@ var RunwaysData = {
     getRunways: func(airport, isRwyUse, aircraftType, isTakeoff, utcHour, utcMinute) {
         me._rwyUseStatus = RunwaysData.CODE_IGNORE;
 
-        if (isRwyUse) {
+        if (g_Settings.getRwyUseEnabled() and isRwyUse) {
             var preferredRunways = me._runwaysUse.getAllPreferredRunways(
                 airport.id,
                 aircraftType,

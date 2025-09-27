@@ -38,7 +38,7 @@ var DrawRwyUseControls = {
 
         me._isRwyUse = true;
 
-        me._aircraftType = getprop(me._addonNodePath ~ "/settings/rwyuse/aircraft-type") or RwyUse.COMMERCIAL;
+        me._aircraftType = g_Settings.getRwyUseAircraftType();
         me._aircraftOperation = me._getDefaultAircraftOperationByTabId();
 
         me._checkboxRwyUse = nil;
@@ -126,6 +126,7 @@ var DrawRwyUseControls = {
     #
     setAircraftType: func(acType)  {
         me._aircraftType = acType;
+        me._comboBoxAircraftType.setSelectedByValue(me._aircraftType);
     },
 
     #
@@ -273,7 +274,7 @@ var DrawRwyUseControls = {
         me._comboBoxAircraftType.setSelectedByValue(me._aircraftType);
         me._comboBoxAircraftType.listen("selected-item-changed", func(e) {
             # This setprop will trigger listener for every tab to change aircraft type and redraw:
-            setprop(me._addonNodePath ~ "/settings/rwyuse/aircraft-type", e.detail.value);
+            g_Settings.setRwyUseAircraftType(e.detail.value);
         });
 
         var hBox = canvas.HBoxLayout.new();

@@ -122,8 +122,10 @@ The illustration shows a case of gusty wind:
 Some options are stored in a property tree, so they can be changed during a flight session. To do this, go to the `Debug` menu -> `Browse Internal Properties` and then go to the `/addons/by-id/org.flightgear.addons.which-runway/setting` property. The following properties can be changed here:
 
 1. `max-metar-range-nm` – maximum search range of the nearest airport with METAR, used if the current airport does not have a METAR. Default 30 NM.
-2. `key-arrow-move-size` – by how many pixels the content should move when scrolling with the Up/Down arrow keys. Default 20 px.
-3. `key-page-move-size` – by how many pixels the content should move when scrolling with the PageUp/PageDown keys. Default 110 px.
+2. `keys/arrow-move-size` – by how many pixels the content should move when scrolling with the Up/Down arrow keys. Default 20 px.
+3. `keys/page-move-size` – by how many pixels the content should move when scrolling with the PageUp/PageDown keys. Default 110 px.
+4. `rwyuse/enabled` – whether the use of rwyuse.xml files should be enabled. Default `true`.
+5. `rwyuse/aircraft-type` – default aircraft type (traffic) for rwyuse.xml files. Default `com` (commercial).
 
 ## Development
 

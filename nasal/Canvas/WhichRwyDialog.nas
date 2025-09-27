@@ -61,9 +61,6 @@ var WhichRwyDialog = {
 
         me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
 
-        me._keyArrowMoveSizeNode = props.globals.getNode(g_Addon.node.getPath() ~ "/settings/key-arrow-move-size");
-        me._keyPageMoveSizeNode  = props.globals.getNode(g_Addon.node.getPath() ~ "/settings/key-page-move-size");
-
         me._keyActions();
 
         return me;
@@ -113,13 +110,13 @@ var WhichRwyDialog = {
             #   event.metaKey
 
             if (event.key == "Up") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(-me._keyArrowMoveSizeNode.getValue());
+                me._tabContents[me._tabs._currentTabId].scrollContent(-g_Settings.getKeyArrowMoveSize());
             } elsif (event.key == "Down") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(me._keyArrowMoveSizeNode.getValue());
+                me._tabContents[me._tabs._currentTabId].scrollContent(g_Settings.getKeyArrowMoveSize());
             } elsif (event.key == "PageUp") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(-me._keyPageMoveSizeNode.getValue());
+                me._tabContents[me._tabs._currentTabId].scrollContent(-g_Settings.getKeyPageMoveSize());
             } elsif (event.key == "PageDown") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(me._keyPageMoveSizeNode.getValue());
+                me._tabContents[me._tabs._currentTabId].scrollContent(g_Settings.getKeyPageMoveSize());
             } elsif (event.key == "1") {
                 me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
             } elsif (event.key == "2") {

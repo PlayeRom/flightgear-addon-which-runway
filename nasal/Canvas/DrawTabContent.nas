@@ -42,8 +42,6 @@ var DrawTabContent = {
         me._icao = "";
         me._icaoEdit = nil;
 
-        me._maxMetarRangeNmNode = props.globals.getNode(me._addonNodePath ~ "/settings/max-metar-range-nm");
-
         me._metar = Metar.new(
             me._tabId,
             Callback.new(me._metarUpdatedCallback, me),
@@ -230,7 +228,6 @@ var DrawTabContent = {
             code: func(node) {
                 if (node != nil) {
                     me._drawRwyUseControls.setAircraftType(node.getValue());
-                    me._drawRwyUseControls.getComboBoxAircraftType().setSelectedByValue(me._drawRwyUseControls.getAircraftType());
                     me._reDrawContent();
                 }
             },
@@ -328,7 +325,7 @@ var DrawTabContent = {
     # @param  airport|nil  Airport or nil if not found.
     #
     _getNearestAirportWithMetar: func(airport) {
-        var airports = globals.findAirportsWithinRange(airport, me._maxMetarRangeNmNode.getValue());
+        var airports = globals.findAirportsWithinRange(airport, g_Settings.getMaxMetarRangeNm());
         foreach (var nearest; airports) {
             if (nearest.has_metar) {
                 return nearest;
@@ -401,7 +398,9 @@ var DrawTabContent = {
     # @return void
     #
     _reDrawContent: func() {
-        Profiler.start("DrawTabContent._reDrawContent " ~ me._tabId);
+        if (g_isDevMode) {
+            Profiler.start("DrawTabContent._reDrawContent " ~ me._tabId);
+        }
 
         var airport = globals.airportinfo(me._icao);
         if (airport == nil) {
@@ -420,7 +419,7 @@ var DrawTabContent = {
             .updateView();
 
         me._metarInfoView
-            .setMetarRangeNm(me._maxMetarRangeNmNode.getValue())
+            .setMetarRangeNm(g_Settings.getMaxMetarRangeNm())
             .setIsRealWeatherEnabled(me._metar.isRealWeatherEnabled())
             .setIsMetarFromNearestAirport(me._metar.isMetarFromNearestAirport())
             .setDistanceToStation(me._metar.getDistanceToStation(airport))
@@ -460,7 +459,9 @@ var DrawTabContent = {
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
 
-        Profiler.stop();
+        if (g_isDevMode) {
+            Profiler.stop();
+        }
     },
 
     #
@@ -481,37 +482,41 @@ var DrawTabContent = {
             utcMinute: scheduleUtcMinute,
         );
 
-        var rwyUseStatus = me._runwaysData.getRwyUseStatus();
-        if (rwyUseStatus == RunwaysData.CODE_NO_XML) {
-            # TODO: Print info that airport has not rwyuse.xml file
-            me._rwyUseLayout.setVisible(false);
-        } else {
-            me._rwyUseLayout.setVisible(true);
+        if (g_Settings.getRwyUseEnabled()) {
+            var rwyUseStatus = me._runwaysData.getRwyUseStatus();
+            if (rwyUseStatus == RunwaysData.CODE_NO_XML) {
+                # TODO: Print info that airport has not rwyuse.xml file
+                me._rwyUseLayout.setVisible(false);
+            } else {
+                me._rwyUseLayout.setVisible(true);
 
-            var windCriteria = me._runwaysUse.getWind(me._icao, me._drawRwyUseControls.getAircraftType());
-            var traffic = me._runwaysUse.getUsedTrafficFullName(me._icao, me._drawRwyUseControls.getAircraftType());
+                var windCriteria = me._runwaysUse.getWind(me._icao, me._drawRwyUseControls.getAircraftType());
+                var traffic = me._runwaysUse.getUsedTrafficFullName(me._icao, me._drawRwyUseControls.getAircraftType());
 
-            var schedule = me._runwaysUse.getScheduleByTime(
-                me._icao,
-                me._drawRwyUseControls.getAircraftType(),
-                scheduleUtcHour,
-                scheduleUtcMinute,
-            );
+                var schedule = me._runwaysUse.getScheduleByTime(
+                    me._icao,
+                    me._drawRwyUseControls.getAircraftType(),
+                    scheduleUtcHour,
+                    scheduleUtcMinute,
+                );
 
-            if (schedule == RwyUse.ERR_NO_SCHEDULE) {
-                schedule = "n/a";
+                if (schedule == RwyUse.ERR_NO_SCHEDULE) {
+                    schedule = "n/a";
+                }
+
+                me._drawRwyUseControls.getRwyUseInfoWidget()
+                    .setUtcTime(sprintf("%02d:%02d", scheduleUtcHour, scheduleUtcMinute))
+                    .setWindCriteria(
+                        windCriteria == nil ? "n/a" : windCriteria.tail,
+                        windCriteria == nil ? "n/a" : windCriteria.cross,
+                    )
+                    .setSchedule(schedule)
+                    .setTraffic(traffic)
+                    .setVisible(me._drawRwyUseControls.isRwyUse())
+                    .updateView();
             }
-
-            me._drawRwyUseControls.getRwyUseInfoWidget()
-                .setUtcTime(sprintf("%02d:%02d", scheduleUtcHour, scheduleUtcMinute))
-                .setWindCriteria(
-                    windCriteria == nil ? "n/a" : windCriteria.tail,
-                    windCriteria == nil ? "n/a" : windCriteria.cross,
-                )
-                .setSchedule(schedule)
-                .setTraffic(traffic)
-                .setVisible(me._drawRwyUseControls.isRwyUse())
-                .updateView();
+        } else {
+            me._rwyUseLayout.setVisible(false);
         }
 
         var runwaysSize = size(runways);
