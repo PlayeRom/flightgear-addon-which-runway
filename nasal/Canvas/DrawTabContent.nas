@@ -109,6 +109,11 @@ var DrawTabContent = {
 
         me._rwyUseLayout = me._drawRwyUseControls.createRwyUseLayout();
 
+        me._airportHasNotRwyUse = canvas.gui.widgets.Label.new(me._scrollContent, canvas.style, {})
+            .setText("The airport does not have data on preferred runways.")
+            .setVisible(false);
+        me._airportHasNotRwyUse.setColor(Colors.AMBER);
+
         me._runwaysLayout = canvas.VBoxLayout.new();
 
         me._scrollLayout.addSpacing(10);
@@ -123,6 +128,7 @@ var DrawTabContent = {
         me._scrollLayout.addSpacing(20);
         me._scrollLayout.addItem(me._windLabel);
         me._scrollLayout.addSpacing(20);
+        me._scrollLayout.addItem(me._airportHasNotRwyUse);
         me._scrollLayout.addItem(me._rwyUseLayout);
         me._scrollLayout.addSpacing(0);
         me._scrollLayout.addItem(me._runwaysLayout);
@@ -366,6 +372,7 @@ var DrawTabContent = {
         me._pressureLabelQnh.setVisible(false);
         me._pressureLabelQfe.setVisible(false);
         me._windLabel.setVisible(false);
+        me._airportHasNotRwyUse.setVisible(false);
         me._rwyUseLayout.setVisible(false);
         me._drawRwyUseControls.getRwyUseInfoWidget().setVisible(false);
 
@@ -485,9 +492,10 @@ var DrawTabContent = {
         if (g_Settings.getRwyUseEnabled()) {
             var rwyUseStatus = me._runwaysData.getRwyUseStatus();
             if (rwyUseStatus == RunwaysData.CODE_NO_XML) {
-                # TODO: Print info that airport has not rwyuse.xml file
+                me._airportHasNotRwyUse.setVisible(true);
                 me._rwyUseLayout.setVisible(false);
             } else {
+                me._airportHasNotRwyUse.setVisible(false);
                 me._rwyUseLayout.setVisible(true);
 
                 var acType = me._drawRwyUseControls.getAircraftType();
@@ -519,6 +527,7 @@ var DrawTabContent = {
                     .updateView();
             }
         } else {
+            me._airportHasNotRwyUse.setVisible(false);
             me._rwyUseLayout.setVisible(false);
         }
 
