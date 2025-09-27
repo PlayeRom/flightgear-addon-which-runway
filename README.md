@@ -68,6 +68,7 @@ On the right side, you'll find additional information:
     - `general`, `ga` – most often one schedule for all general aviation traffic;
     - `commercial` – most often one schedule for all airline traffic;
     - `always` – some general schedule.
+6. **Daily operating hours** – the 24-hour range of hours during which the selected traffic can operate, meaning that the airport has a defined schedule for these hours. If you set the UTC time outside the range of hours specified here, you receive an amber warning and the Schedule will indicate `n/a`.
 
 If you're using preferred runways for an airport, then:
 
