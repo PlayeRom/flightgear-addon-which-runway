@@ -53,6 +53,7 @@ var AboutDialog = {
     # Destructor
     #
     # @return void
+    # @override
     #
     del: func() {
         call(Dialog.del, [], me);

@@ -10,7 +10,7 @@
 #
 
 #
-# Base Dialog class
+# Base Dialog class.
 #
 var Dialog = {
     CLASS: "Dialog",
@@ -18,11 +18,11 @@ var Dialog = {
     #
     # Constructor
     #
-    # @param  int  width  Initial width of window
-    # @param  int  height  Initial height of window
-    # @param  string  title  Title of window in the top bar
-    # @param  bool  resize  If true then user will be possible to resize the window
-    # @param  func|nil  onResize  Callback call when width or height of window was changed
+    # @param  int  width  Initial width of window.
+    # @param  int  height  Initial height of window.
+    # @param  string  title  Title of window in the top bar.
+    # @param  bool  resize  If true then user will be possible to resize the window.
+    # @param  func|nil  onResize  Callback call when width or height of window was changed.
     # @return hash
     #
     new: func(width, height, title, resize = false, onResize = nil) {
@@ -100,7 +100,7 @@ var Dialog = {
     # @param  int  height
     # @param  string  title
     # @param  bool  resize
-    # @return ghost  Canvas Window object
+    # @return ghost  Canvas Window object.
     #
     _createCanvasWindow: func(width, height, title, resize) {
         var type = "dialog";
@@ -120,7 +120,8 @@ var Dialog = {
             # bar and here we want hide the window only.
             # FG version 2024.x supports the destroy_on_close flag, which could
             # be set to false, then FG would call hide() on the window itself,
-            # but this will not give us the ability to call the child function.
+            # but this will not give us the ability to call the child's hide()
+            # function.
 
             self._callMethodByChild("hide");
         };
@@ -129,7 +130,7 @@ var Dialog = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -141,7 +142,7 @@ var Dialog = {
     },
 
     #
-    # Set position on center of screen
+    # Set position on center of screen.
     #
     # @param  int|nil  width, height  Dimension of window. If nil, the values provided by the constructor will be used.
     # @return void
@@ -170,7 +171,7 @@ var Dialog = {
     },
 
     #
-    # Show canvas dialog
+    # Show canvas dialog.
     #
     # @return void
     #
@@ -180,7 +181,7 @@ var Dialog = {
     },
 
     #
-    # Hide canvas dialog
+    # Hide canvas dialog.
     #
     # @return void
     #
@@ -189,7 +190,7 @@ var Dialog = {
     },
 
     #
-    # Return true if window is showing
+    # Return true if window is showing.
     #
     # @return bool
     #
@@ -216,7 +217,7 @@ var Dialog = {
     },
 
     #
-    # Get X position of this window
+    # Get X position of this window.
     #
     # @return int
     #
@@ -225,7 +226,7 @@ var Dialog = {
     },
 
     #
-    # Get Y position of this window
+    # Get Y position of this window.
     #
     # @return int
     #
@@ -288,7 +289,7 @@ var Dialog = {
     },
 
     #
-    # Get path to canvas properties which depend of FG version
+    # Get path to canvas properties which depend of FG version.
     #
     # @return string
     #

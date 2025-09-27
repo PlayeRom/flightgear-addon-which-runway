@@ -85,6 +85,7 @@ var WhichRwyDialog = {
     # Destructor.
     #
     # @return void
+    # @override
     #
     del: func() {
         foreach (var tabId; keys(me._tabContents)) {
