@@ -16,7 +16,11 @@
 var MY_LOG_LEVEL = LOG_WARN;
 
 #
-# Global flag to enable dev mode (more logs).
+# Global flag to enable dev mode.
+# You can use this flag to condition on heavier logging that shouldn't be
+# executed for the end user, but you want to keep it in your code for development
+# purposes. This flag will be set to true automatically when you use an .env
+# file with DEV_MODE=true.
 #
 var g_isDevMode = false;
 
