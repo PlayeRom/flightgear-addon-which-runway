@@ -33,10 +33,9 @@ var AboutDialog = {
             Dialog.new(AboutDialog.WINDOW_WIDTH, AboutDialog.WINDOW_HEIGHT, "About Which Runway"),
         ] };
 
-        # Let the parent know who their child is.
-        me.parents[1].setChild(me, AboutDialog);
-
-        me.setPositionOnCenter();
+        var dialogParent = me.parents[1];
+        dialogParent.setChild(me, AboutDialog); # Let the parent know who their child is.
+        dialogParent.setPositionOnCenter();
 
         me._vbox.addSpacing(AboutDialog.PADDING);
         me._drawContent();

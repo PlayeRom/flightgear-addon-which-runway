@@ -42,10 +42,9 @@ var WhichRwyDialog = {
             ),
         ] };
 
-        # Let the parent know who their child is.
-        me.parents[1].setChild(me, WhichRwyDialog);
-
-        me.setPositionOnCenter();
+        var dialogParent = me.parents[1];
+        dialogParent.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
+        dialogParent.setPositionOnCenter();
 
         me._tabs = canvas.gui.widgets.TabWidget.new(me._group, canvas.style, { "tabs-closeable": false });
         me._tabsContent = me._tabs.getContent();
