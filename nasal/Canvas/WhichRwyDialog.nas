@@ -112,13 +112,13 @@ var WhichRwyDialog = {
             #   event.metaKey
 
             if (event.key == "Up") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(-g_Settings.getKeyArrowMoveSize());
+                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(-g_Settings.getKeyArrowMoveSize());
             } elsif (event.key == "Down") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(g_Settings.getKeyArrowMoveSize());
+                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(g_Settings.getKeyArrowMoveSize());
             } elsif (event.key == "PageUp") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(-g_Settings.getKeyPageMoveSize());
+                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(-g_Settings.getKeyPageMoveSize());
             } elsif (event.key == "PageDown") {
-                me._tabContents[me._tabs._currentTabId].scrollContent(g_Settings.getKeyPageMoveSize());
+                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(g_Settings.getKeyPageMoveSize());
             } elsif (event.key == "1") {
                 me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
             } elsif (event.key == "2") {
