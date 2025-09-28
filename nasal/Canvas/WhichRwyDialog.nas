@@ -32,15 +32,17 @@ var WhichRwyDialog = {
     # @return hash
     #
     new: func() {
-        var me = { parents: [
-            WhichRwyDialog,
-            Dialog.new(
-                width : WhichRwyDialog.WINDOW_WIDTH,
-                height: WhichRwyDialog.WINDOW_HEIGHT,
-                title : sprintf("Which Runway %s", g_Addon.version.str()),
-                resize: true,
-            ),
-        ] };
+        var me = {
+            parents: [
+                WhichRwyDialog,
+                PersistentDialog.new(
+                    width : WhichRwyDialog.WINDOW_WIDTH,
+                    height: WhichRwyDialog.WINDOW_HEIGHT,
+                    title : sprintf("Which Runway %s", g_Addon.version.str()),
+                    resize: true,
+                ),
+            ],
+        };
 
         var dialogParent = me.parents[1];
         dialogParent.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
@@ -83,14 +85,14 @@ var WhichRwyDialog = {
     # Destructor.
     #
     # @return void
-    # @override
+    # @override PersistentDialog
     #
     del: func() {
         foreach (var tabId; keys(me._tabContents)) {
             me._tabContents[tabId].del();
         }
 
-        call(Dialog.del, [], me);
+        me.parents[1].del();
     },
 
     #

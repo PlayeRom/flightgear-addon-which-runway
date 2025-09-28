@@ -28,10 +28,16 @@ var AboutDialog = {
     # @return hash
     #
     new: func() {
-        var me = { parents: [
-            AboutDialog,
-            Dialog.new(AboutDialog.WINDOW_WIDTH, AboutDialog.WINDOW_HEIGHT, "About Which Runway"),
-        ] };
+        var me = {
+            parents: [
+                AboutDialog,
+                PersistentDialog.new(
+                    AboutDialog.WINDOW_WIDTH,
+                    AboutDialog.WINDOW_HEIGHT,
+                    "About Which Runway",
+                ),
+            ],
+        };
 
         var dialogParent = me.parents[1];
         dialogParent.setChild(me, AboutDialog); # Let the parent know who their child is.
@@ -40,7 +46,7 @@ var AboutDialog = {
         me._vbox.addSpacing(AboutDialog.PADDING);
         me._drawContent();
 
-        var buttonBoxClose = me._drawBottomBar("Close", func { me._window.hide(); });
+        var buttonBoxClose = me._drawBottomBar("Close", func { me.hide(); });
         me._vbox.addSpacing(AboutDialog.PADDING);
         me._vbox.addItem(buttonBoxClose);
         me._vbox.addSpacing(AboutDialog.PADDING);
@@ -52,10 +58,10 @@ var AboutDialog = {
     # Destructor
     #
     # @return void
-    # @override
+    # @override PersistentDialog
     #
     del: func() {
-        call(Dialog.del, [], me);
+        me.parents[1].del();
     },
 
     #
