@@ -41,7 +41,7 @@ var LoadRwyUseXml = {
     load: func(icao) {
         var path = me._findPathToAirportFile(icao, "rwyuse");
         if (path == nil) {
-            Log.print(icao, " path to rwyuse not found");
+            Log.print(icao, ", path to rwyuse.xml not found");
             return nil;
         }
 
@@ -49,18 +49,29 @@ var LoadRwyUseXml = {
         # var mainNode = io.read_airport_properties(icao, "rwyuse");
         # So we use io.readxml() to read raw XML.
 
-        var mainNode = io.readxml(path);
-        if (mainNode == nil) {
-            Log.print(icao, " loading rwyuse path failed from ", path);
+        var node = io.readxml(path);
+        if (node == nil) {
+            Log.print(icao, ", loading rwyuse.xml file failed from ", path);
             return nil;
         }
 
+        return me._parseXml(icao, node);
+    },
+
+    #
+    # Parse the XML data by given node.
+    #
+    # @param  string  icao  ICAO code of the airport.
+    # @param  ghost  node  The props.Node of the whole XML file.
+    # @return hash  The data structure is described in the constructor of RwyUse class.
+    #
+    _parseXml: func(icao, node) {
         var data = {
             aircraft: {},
             schedules: {},
         };
 
-        var rwyUseNode = mainNode.getChild("rwyuse");
+        var rwyUseNode = node.getChild("rwyuse");
 
         var loopTypes = [
             RwyUse.COMMERCIAL,
@@ -77,23 +88,32 @@ var LoadRwyUseXml = {
         }
 
         foreach (var schedule; rwyUseNode.getChildren("schedule")) {
-            var scheduleName = schedule.getValue("___name"); # inbound, outbound, offpeak, night, general
+            if (schedule == nil) {
+                continue;
+            }
 
-            data.schedules[scheduleName] = {
-                takeoff: me._getRunways(schedule, "takeoff"), # vector of vectors with runways IDs.
-                landing: me._getRunways(schedule, "landing"),
-            };
+            var scheduleName = schedule.getValue("___name"); # inbound, outbound, offpeak, night, general
+            if (scheduleName == nil) {
+                continue;
+            }
+
+            if (globals.contains(data.schedules, scheduleName)) {
+                Log.alert(icao, ".rwyuse.xml has duplicate schedule name \"", scheduleName, "\"");
+                continue;
+            }
+
+            data.schedules[scheduleName] = me._getRunways(icao, schedule);
         }
 
         # Logs only
         if (g_isDevMode) {
             foreach (var schedule; keys(data.schedules)) {
                 foreach (var takeoffs; data.schedules[schedule].takeoff) {
-                    Log.print(icao, ", schedule = ", schedule, ", takeoff = ", string.join(", ", takeoffs));
+                    Log.print(icao, ".rwyuse.xml, schedule = ", schedule, ", takeoff = ", string.join(", ", takeoffs));
                 }
 
                 foreach (var landings; data.schedules[schedule].landing) {
-                    Log.print(icao, ", schedule = ", schedule, ", landing = ", string.join(", ", landings));
+                    Log.print(icao, ".rwyuse.xml, schedule = ", schedule, ", landing = ", string.join(", ", landings));
                 }
             }
         }
@@ -115,6 +135,10 @@ var LoadRwyUseXml = {
         }
 
         foreach (var scenery; props.globals.getNode("/sim").getChildren("fg-scenery")) {
+            if (scenery == nil) {
+                continue;
+            }
+
             var sceneryPath = scenery.getValue();
             if (sceneryPath == nil) {
                 continue;
@@ -122,11 +146,9 @@ var LoadRwyUseXml = {
 
             var fullPath = sceneryPath ~ "/" ~ pathToRwyUse;
 
-            if (!io.exists(fullPath)) {
-                continue;
+            if (io.exists(fullPath)) {
+                return fullPath;
             }
-
-            return fullPath;
         }
 
         return nil;
@@ -148,9 +170,9 @@ var LoadRwyUseXml = {
     },
 
     #
-    # @param  string  icao
-    # @param  ghost  rwyUseNode
-    # @param  string  type  Type can be "com", "gen", "mil", "ul".
+    # @param  string  icao  ICAO code of the airport.
+    # @param  ghost  node  The props.Node of the <rwyuse> XML node.
+    # @param  string  type  Aircraft type, it can be "com", "gen", "mil", "ul".
     # @return hash|nil
     #
     _getAircraft: func(icao, node, type) {
@@ -170,7 +192,7 @@ var LoadRwyUseXml = {
         };
 
         if (g_isDevMode) {
-            Log.print(type, " wind tail = ", data.wind.tail, ", wind cross = ", data.wind.cross);
+            Log.print(icao, ".rwyuse.xml, traffic = ", type, ", wind tail = ", data.wind.tail, ", wind cross = ", data.wind.cross);
         }
 
         foreach (var time; typeNode.getChildren("time")) {
@@ -190,13 +212,13 @@ var LoadRwyUseXml = {
                     hour  : num(endTime[0]),
                     minute: num(endTime[1]),
                 },
-                schedule   : time.getValue("___schedule"),
+                schedule: time.getValue("___schedule"),
             };
 
             if (g_isDevMode) {
                 Log.print(sprintf(
-                    "%s time start = %02d:%02d, end = %02d:%02d, schedule = %s",
-                    type, item.start.hour, item.start.minute, item.end.hour, item.end.minute, item.schedule,
+                    "%s.rwyuse.xml, traffic = %s, time start = %02d:%02d, end = %02d:%02d, schedule = %s",
+                    icao, type, item.start.hour, item.start.minute, item.end.hour, item.end.minute, item.schedule,
                 ));
             }
 
@@ -207,41 +229,54 @@ var LoadRwyUseXml = {
     },
 
     #
-    # @param  ghost  node
-    # @param  string  childName  It can be "takeoff" or "landing".
-    # @return vector
+    # @param  string  icao  ICAO code of the airport.
+    # @param  ghost  node  The props.Node of the <schedule> XML node.
+    # @return hahs  The takeoff and landing hash with vector of vectors with runway IDs.
     #
-    _getRunways: func(node, childName) {
-        var array = [];
+    _getRunways: func(icao, node) {
+        var takeoffs = [];
+        var landings = [];
 
         var minSize = nil;
-        var isTrimNeeded = false;
+        var maxSize = nil;
 
-        foreach (var runways; node.getChildren(childName)) {
-            if (runways != nil) {
+        foreach (var operation; ["takeoff", "landing"]) {
+            foreach (var runways; node.getChildren(operation)) {
+                if (runways == nil) {
+                    continue;
+                }
+
                 var ids = me._readRunwayIds(runways.getValue());
 
-                globals.append(array, ids);
+                globals.append(operation == "takeoff" ? takeoffs : landings, ids);
 
                 var size = globals.size(ids);
-                if (minSize == nil or minSize > size) {
-                    if (minSize != nil) {
-                        isTrimNeeded = true;
-                    }
 
-                    minSize = size;
-                }
+                if (minSize == nil or minSize > size) minSize = size;
+                if (maxSize == nil or maxSize < size) maxSize = size;
             }
         }
 
         # We make sure that each array has the same number of elements
-        if (isTrimNeeded) {
-            forindex (var index; array) {
-                globals.setsize(array[index], trimSize);
+        if (minSize != nil and minSize != maxSize) {
+            Log.alert(icao, ".rwyuse.xml - the schedule \"", node.getValue("___name"),
+                "\" has a different number of runways in columns. ",
+                "Trimming runways to size ", minSize, ".",
+            );
+
+            forindex (var index; takeoffs) {
+                globals.setsize(takeoffs[index], minSize);
+            }
+
+            forindex (var index; landings) {
+                globals.setsize(landings[index], minSize);
             }
         }
 
-        return array;
+        return {
+            takeoff: takeoffs,
+            landing: landings,
+        };
     },
 
     #

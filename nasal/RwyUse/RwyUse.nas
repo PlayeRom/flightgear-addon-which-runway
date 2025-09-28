@@ -160,6 +160,10 @@ var RwyUse = {
             return RwyUse.ERR_NO_SCHEDULE; # the indicated traffic does not operate at the specified time
         }
 
+        if (!globals.contains(me._data[icao].schedules, schedule)) {
+            return nil; # error, no such schedule in data structure
+        }
+
         return me._data[icao].schedules[schedule];
     },
 

@@ -116,42 +116,26 @@ var RunwaysData = {
         var takeoffs = preferredRunways.takeoff;
         var landings = preferredRunways.landing;
 
-        var takeoffRowSize = size(takeoffs);
-        var landingRowSize = size(landings);
+        var takeoffRowSize = globals.size(takeoffs);
+        var landingRowSize = globals.size(landings);
 
         var rowsSize = math.max(takeoffRowSize, landingRowSize);
-        var colSize = math.max(size(takeoffs[0]), size(landings[0])); # In case one of the arrays has size 0
+        var colSize = globals.size(takeoffs[0]); # All vectors in takeoffs and landings have the same number of columns
 
         var isPreferredColSet = false;
         for (var c = 0; c < colSize; c += 1) {
             var isColActive = true;
             var columnRunwayData = [];
             for (var r = 0; r < rowsSize; r += 1) {
-                if (r < takeoffRowSize and c < size(takeoffs[r])) {
-                    var rwyId = takeoffs[r][c];
-                    var runwayData = me._checkWindCriteria(airport, rwyId, wind);
-                    if (runwayData != nil) {
-                        if (!runwayData.isWindCriteriaMet) {
-                            isColActive = false;
-                        }
-
-                        if (isTakeoff) {
-                            append(columnRunwayData, runwayData);
-                        }
+                if (r < takeoffRowSize) {
+                    if (!me._processRwy(takeoffs, r, c, airport, wind, isTakeoff, columnRunwayData)) {
+                        isColActive = false;
                     }
                 }
 
-                if (r < landingRowSize and c < size(landings[r])) {
-                    var rwyId = landings[r][c];
-                    var runwayData = me._checkWindCriteria(airport, rwyId, wind);
-                    if (runwayData != nil) {
-                        if (!runwayData.isWindCriteriaMet) {
-                            isColActive = false;
-                        }
-
-                        if (!isTakeoff) {
-                            append(columnRunwayData, runwayData);
-                        }
+                if (r < landingRowSize) {
+                    if (!me._processRwy(landings, r, c, airport, wind, !isTakeoff, columnRunwayData)) {
+                        isColActive = false;
                     }
                 }
             }
@@ -194,6 +178,30 @@ var RunwaysData = {
 
         # Active first:
         return runwaysDataActive ~ runwaysDataInactive;
+    },
+
+    #
+    # @param  vector  matrix  Vector of vectors with runway IDs.
+    # @param  int  row  Row index.
+    # @param  int  col  Column index.
+    # @param  ghost  airport  Airport info object.
+    # @param  hash  wind  Wind hash with max tail and cross wind.
+    # @param  bool  isAppend  If true then append runway data to columnRunwayDataRef.
+    # @param  vector  columnRunwayDataRef  Reference to array of runways.
+    # @return bool  False if wind criteria is not met.
+    #
+    _processRwy: func(matrix, row, col, airport, wind, isAppend, columnRunwayDataRef) {
+        var rwyId = matrix[row][col];
+        var runwayData = me._checkWindCriteria(airport, rwyId, wind);
+        if (runwayData == nil) {
+            return true;
+        }
+
+        if (isAppend) {
+            globals.append(columnRunwayDataRef, runwayData);
+        }
+
+        return runwayData.isWindCriteriaMet;
     },
 
     #
@@ -254,7 +262,7 @@ var RunwaysData = {
 
             var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, runway.heading);
 
-            append(runwaysData, me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway));
+            globals.append(runwaysData, me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway));
         }
 
         foreach (var name; keys(airport.helipads)) {
@@ -262,7 +270,7 @@ var RunwaysData = {
 
             var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, helipad.heading);
 
-            append(runwaysData, me._getRunwayData("Helipad", normDiffDeg, hw, hwGust, xw, xwGust, helipad));
+            globals.append(runwaysData, me._getRunwayData("Helipad", normDiffDeg, hw, hwGust, xw, xwGust, helipad));
         }
 
         return windDir == nil
@@ -323,22 +331,22 @@ var RunwaysData = {
         var isTypeRunway = type == "Runway";
 
         return {
-            type         : type,
-            normDiffDeg  : normDiffDeg,
-            headwind     : hw,
-            headwindGust : hwGust,
-            crosswind    : xw,
-            crosswindGust: xwGust,
-            rwyId        : runway.id,
-            heading      : runway.heading,
-            length       : runway.length,
-            width        : runway.width,
-            surface      : runway.surface,
-            reciprocal   : isTypeRunway ? runway.reciprocal : nil,
-            ils          : isTypeRunway ? runway.ils : nil,
-            lat          : runway.lat,
-            lon          : runway.lon,
-            isPreferred  : nil, # = true if rwyuse.xml is using and this is preferred runway
+            type             : type,
+            normDiffDeg      : normDiffDeg,
+            headwind         : hw,
+            headwindGust     : hwGust,
+            crosswind        : xw,
+            crosswindGust    : xwGust,
+            rwyId            : runway.id,
+            heading          : runway.heading,
+            length           : runway.length,
+            width            : runway.width,
+            surface          : runway.surface,
+            reciprocal       : isTypeRunway ? runway.reciprocal : nil,
+            ils              : isTypeRunway ? runway.ils : nil,
+            lat              : runway.lat,
+            lon              : runway.lon,
+            isPreferred      : nil, # = true if rwyuse.xml is using and this is preferred runway
             isWindCriteriaMet: isWindCriteriaMet,
         };
     },
