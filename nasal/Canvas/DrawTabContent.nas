@@ -109,10 +109,10 @@ var DrawTabContent = {
 
         me._rwyUseLayout = me._drawRwyUseControls.createRwyUseLayout();
 
-        me._airportHasNotRwyUse = canvas.gui.widgets.Label.new(me._scrollContent, canvas.style, {})
-            .setText("The airport does not have data on preferred runways.")
+        me._rwyUseNoDataWarning = canvas.gui.widgets.Label.new(me._scrollContent, canvas.style, {})
+            .setText("The preferred runway cannot be selected, so the best headwind is used.")
             .setVisible(false);
-        me._airportHasNotRwyUse.setColor(Colors.AMBER);
+        me._rwyUseNoDataWarning.setColor(Colors.AMBER);
 
         me._runwaysLayout = canvas.VBoxLayout.new();
 
@@ -128,8 +128,8 @@ var DrawTabContent = {
         me._scrollLayout.addSpacing(20);
         me._scrollLayout.addItem(me._windLabel);
         me._scrollLayout.addSpacing(20);
-        me._scrollLayout.addItem(me._airportHasNotRwyUse);
         me._scrollLayout.addItem(me._rwyUseLayout);
+        me._scrollLayout.addItem(me._rwyUseNoDataWarning);
         me._scrollLayout.addSpacing(0);
         me._scrollLayout.addItem(me._runwaysLayout);
 
@@ -372,7 +372,7 @@ var DrawTabContent = {
         me._pressureLabelQnh.setVisible(false);
         me._pressureLabelQfe.setVisible(false);
         me._windLabel.setVisible(false);
-        me._airportHasNotRwyUse.setVisible(false);
+        me._rwyUseNoDataWarning.setVisible(false);
         me._rwyUseLayout.setVisible(false);
         me._drawRwyUseControls.getRwyUseInfoWidget().setVisible(false);
 
@@ -492,11 +492,22 @@ var DrawTabContent = {
         if (g_Settings.getRwyUseEnabled()) {
             var rwyUseStatus = me._runwaysData.getRwyUseStatus();
             if (rwyUseStatus == RunwaysData.CODE_NO_XML) {
-                me._airportHasNotRwyUse.setVisible(true);
                 me._rwyUseLayout.setVisible(false);
+                me._rwyUseNoDataWarning
+                    .setText("The airport does not have data on preferred runways, so the best headwind is used.")
+                    .setVisible(true);
             } else {
-                me._airportHasNotRwyUse.setVisible(false);
                 me._rwyUseLayout.setVisible(true);
+
+                if (rwyUseStatus == RunwaysData.CODE_NO_SCHEDULE
+                    or rwyUseStatus == RunwaysData.CODE_NO_WIND_CRITERIA
+                ) {
+                    me._rwyUseNoDataWarning
+                        .setText(me._getWarningMsgForNoRwyUse(rwyUseStatus))
+                        .setVisible(true);
+                } else {
+                    me._rwyUseNoDataWarning.setVisible(false);
+                }
 
                 var acType = me._drawRwyUseControls.getAircraftType();
                 var windCriteria = me._runwaysUse.getWind(me._icao, acType);
@@ -527,8 +538,8 @@ var DrawTabContent = {
                     .updateView();
             }
         } else {
-            me._airportHasNotRwyUse.setVisible(false);
             me._rwyUseLayout.setVisible(false);
+            me._rwyUseNoDataWarning.setVisible(false);
         }
 
         var runwaysSize = size(runways);
@@ -568,6 +579,23 @@ var DrawTabContent = {
                 .setVisible(true)
                 .updateView();
         }
+    },
+
+    #
+    # Get warning message for no rwyuse data.
+    #
+    # @param  int  rwyUseStatus
+    # @return string
+    #
+    _getWarningMsgForNoRwyUse: func(rwyUseStatus) {
+        if (rwyUseStatus == RunwaysData.CODE_NO_SCHEDULE) {
+            return "No preferred runway for the selected time, so the best headwind is used.";
+        } elsif (rwyUseStatus == RunwaysData.CODE_NO_WIND_CRITERIA) {
+            return "No preferred runway meets the wind criteria, so the best headwind is used.";
+        }
+
+        # General message
+        return "The preferred runway cannot be selected, so the best headwind is used.";
     },
 
     #

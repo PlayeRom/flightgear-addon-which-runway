@@ -16,10 +16,11 @@ var RunwaysData = {
     #
     # Constants:
     #
-    CODE_IGNORE : 0, # User not used preferred runways.
-    CODE_OK     : 1, # Data from rwyuse.xml was found and returned successfully.
-    CODE_NO_XML : 2, # Airport has not rwyuse.xml file.
-    CODE_NO_DATA: 3, # File rwyuse.xml exist but no data for given time.
+    CODE_IGNORE          : 0, # User not used preferred runways.
+    CODE_OK              : 1, # Data from rwyuse.xml was found and returned successfully.
+    CODE_NO_XML          : 2, # Airport has not rwyuse.xml file.
+    CODE_NO_SCHEDULE     : 3, # File rwyuse.xml exist but no data for given time.
+    CODE_NO_WIND_CRITERIA: 4, # File rwyuse.xml exist but no data because weather criteria are not met.
 
     #
     # Constructor.
@@ -72,18 +73,20 @@ var RunwaysData = {
             );
 
             if (preferredRunways == RwyUse.ERR_NO_SCHEDULE) {
-                me._rwyUseStatus = RunwaysData.CODE_NO_DATA;
+                me._rwyUseStatus = RunwaysData.CODE_NO_SCHEDULE;
             } else {
-                if (preferredRunways != nil) {
+                if (preferredRunways == nil) {
+                    me._rwyUseStatus = RunwaysData.CODE_NO_XML;
+                } else {
                     # Log.print("preferredRunways = ", string.join(", ", preferredRunways));
                     var result = me._getRunwaysByPreferred(airport, aircraftType, isTakeoff, preferredRunways);
                     if (result != nil) {
                         me._rwyUseStatus = RunwaysData.CODE_OK;
                         return result;
+                    } else {
+                        me._rwyUseStatus = RunwaysData.CODE_NO_WIND_CRITERIA;
                     }
                 }
-
-                me._rwyUseStatus = RunwaysData.CODE_NO_XML;
             }
         }
 
@@ -109,6 +112,8 @@ var RunwaysData = {
         if (wind == nil) {
             return nil;
         }
+
+        var isFoundPreferred = false;
 
         var runwaysDataActive = [];
         var runwaysDataInactive = [];
@@ -158,6 +163,7 @@ var RunwaysData = {
                 if (!me._isRwyIdAlreadyAdded(columnRunway.rwyId, runwaysDataActive ~ runwaysDataInactive)) {
                     if (columnRunway.isWindCriteriaMet and isPreferred) {
                         columnRunway.isPreferred = true; # mark runway as preferred
+                        isFoundPreferred = true;
                     }
 
                     globals.append(
@@ -169,6 +175,7 @@ var RunwaysData = {
                     forindex (var index; runwaysDataActive) {
                         if (runwaysDataActive[index].rwyId == columnRunway.rwyId) {
                             runwaysDataActive[index].isPreferred = true;
+                            isFoundPreferred = true;
                             break;
                         }
                     }
@@ -177,7 +184,7 @@ var RunwaysData = {
         }
 
         # Active first:
-        return runwaysDataActive ~ runwaysDataInactive;
+        return isFoundPreferred ? runwaysDataActive ~ runwaysDataInactive : nil;
     },
 
     #
@@ -225,7 +232,7 @@ var RunwaysData = {
 
         var isPassedWindCriteria = true;
         if (hw != nil and xw != nil) {
-            isPassedWindCriteria = (hw >= -wind.tail and xw <= wind.cross);
+            isPassedWindCriteria = (hw >= -wind.tail and math.abs(xw) <= wind.cross);
         }
 
         return me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway, isPassedWindCriteria);
