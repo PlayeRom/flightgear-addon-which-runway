@@ -35,8 +35,6 @@ Some airports, especially larger ones, include a file with the extension `*.rwyu
 
 "Which Runway" attempts to load the `rwyuse.xml` file, if it exists for a given airport, and takes into account the preferred runways there.
 
-NOTE: If you're flying to an airport for the first time and don't have the scenery downloaded (you'll download it automatically during the flight), you also won't have the `rwyuse.xml` file for that airport. You'll only get this file once you're near the airport and TerraSync downloads it. Therefore, it's a good idea to have the scenery downloaded beforehand, e.g., using TerraMaster, at least for the destination airport.
-
 If the airport has an `rwyuse.xml` file, it will be visible with an additional set of controls and information.
 
 ![alt Preferred runways options](docs/img/rwyuse-panel.png "Preferred runways options")
