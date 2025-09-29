@@ -38,7 +38,7 @@ var BottomBar = {
 
         if (me._isTabNearest() or me._isTabAlternate()) {
             for (var i = 0; i < 5; i += 1) {
-                var btn = canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
+                var btn = canvas.gui.widgets.Button.new(me._tabsContent)
                     .setText("----");
 
                 me._btnLoadIcaos.append(btn);
@@ -122,10 +122,10 @@ var BottomBar = {
             buttonBox.addItem(btn);
         }
 
-        var label = canvas.gui.widgets.Label.new(me._tabsContent, canvas.style, {})
+        var label = canvas.gui.widgets.Label.new(me._tabsContent)
             .setText("ICAO:");
 
-        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent, canvas.style, {})
+        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent)
             .setText(me._icao)
             .setFixedSize(80, 26)
             .listen("editingFinished", func(e) {
@@ -136,7 +136,7 @@ var BottomBar = {
             me._downloadMetarCallback.invoke(me._icaoEdit.text());
         });
 
-        var holdUpdateCheckbox = canvas.gui.widgets.CheckBox.new(me._tabsContent, canvas.style, { wordWrap: false })
+        var holdUpdateCheckbox = canvas.gui.widgets.CheckBox.new(parent: me._tabsContent, cfg: { wordWrap: false })
             .setText("Hold update")
             .setChecked(false)
             .listen("toggled", func(e) {
@@ -191,10 +191,10 @@ var BottomBar = {
             buttonBox.addItem(btn);
         }
 
-        var label = canvas.gui.widgets.Label.new(me._tabsContent, canvas.style, {})
+        var label = canvas.gui.widgets.Label.new(me._tabsContent)
             .setText("ICAO:");
 
-        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent, canvas.style, {})
+        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent)
             .setText(me._icao)
             .setFixedSize(80, 26)
             .listen("editingFinished", func(e) {
@@ -220,7 +220,7 @@ var BottomBar = {
     # @return ghost  Button widget.
     #
     _getButton: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
+        return canvas.gui.widgets.Button.new(me._tabsContent)
             .setText(text)
             .listen("clicked", callback);
     },

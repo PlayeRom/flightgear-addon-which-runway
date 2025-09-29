@@ -50,7 +50,7 @@ var WhichRwyDialog = {
 
         me._runwaysUse = RwyUse.new();
 
-        me._tabs = canvas.gui.widgets.TabWidget.new(me._group, canvas.style, { "tabs-closeable": false });
+        me._tabs = canvas.gui.widgets.TabWidget.new(parent: me._group, cfg: { "tabs-closeable": false });
         me._tabsContent = me._tabs.getContent();
         me._vbox.addItem(me._tabs);
 

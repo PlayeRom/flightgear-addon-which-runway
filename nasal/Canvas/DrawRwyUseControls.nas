@@ -64,7 +64,7 @@ var DrawRwyUseControls = {
         me._utcMinuteValue = 0;
         me._setUtcTimeToCurrentValue();
 
-        me._rwyUseInfoWidget = canvas.gui.widgets.RwyUseInfo.new(me._scrollContent, canvas.style, { colors: Colors })
+        me._rwyUseInfoWidget = canvas.gui.widgets.RwyUseInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
 
         me._listeners = Listeners.new();
@@ -198,7 +198,7 @@ var DrawRwyUseControls = {
         var aircraftTypeLayout = me._creteRwyUseComboBoxAircraft();
         var takeOffLandingLayout = me._creteRwyUseRadioBtnsTakeoffLanding();
 
-        me._checkboxRwyUse = canvas.gui.widgets.CheckBox.new(me._scrollContent, canvas.style, {})
+        me._checkboxRwyUse = canvas.gui.widgets.CheckBox.new(me._scrollContent)
             .setText("Use preferred airport runways")
             .setChecked(me._isRwyUse)
             .listen("toggled", func(e) {
@@ -249,7 +249,7 @@ var DrawRwyUseControls = {
     _creteRwyUseComboBoxAircraft: func() {
         me._labelAircraftType = me._getLabel("Aircraft type:");
 
-        me._comboBoxAircraftType = canvas.gui.widgets.ComboBox.new(me._scrollContent, canvas.style, {})
+        me._comboBoxAircraftType = canvas.gui.widgets.ComboBox.new(me._scrollContent)
             .setFixedSize(160, 28);
 
         var items = [
@@ -354,7 +354,7 @@ var DrawRwyUseControls = {
     # @return ghost  widgets.RadioButton
     #
     _getRadioButton: func(text, cfg = nil) {
-        return canvas.gui.widgets.RadioButton.new(me._scrollContent, canvas.style, cfg)
+        return canvas.gui.widgets.RadioButton.new(me._scrollContent)
             .setText(text);
     },
 
@@ -363,7 +363,7 @@ var DrawRwyUseControls = {
     # @return ghost  Label widget.
     #
     _getLabel: func(text) {
-        return canvas.gui.widgets.Label.new(me._scrollContent, canvas.style, {})
+        return canvas.gui.widgets.Label.new(me._scrollContent)
             .setText(text);
     },
 
@@ -373,7 +373,7 @@ var DrawRwyUseControls = {
     # @return ghost  Button widget.
     #
     _getButton: func(text, callback, height = 28) {
-        return canvas.gui.widgets.Button.new(me._scrollContent, canvas.style, {})
+        return canvas.gui.widgets.Button.new(me._scrollContent)
             .setText(text)
             .setFixedSize(height, 28)
             .listen("clicked", callback);

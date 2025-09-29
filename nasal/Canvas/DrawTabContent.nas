@@ -77,28 +77,28 @@ var DrawTabContent = {
         me._tabContent.addItem(me._getBottomBarByTabId());
         me._tabContent.addSpacing(10);
 
-        me._messageView = canvas.gui.widgets.MessageLabel.new(me._scrollContent, canvas.style, {colors: Colors})
+        me._messageView = canvas.gui.widgets.MessageLabel.new(parent: me._scrollContent, cfg: { colors: Colors })
             .setVisible(true);
 
-        me._airportInfoView = canvas.gui.widgets.AirportInfo.new(me._scrollContent, canvas.style, {})
+        me._airportInfoView = canvas.gui.widgets.AirportInfo.new(me._scrollContent)
             .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setVisible(false);
 
-        me._metarInfoView = canvas.gui.widgets.MetarInfo.new(me._scrollContent, canvas.style, {colors: Colors})
+        me._metarInfoView = canvas.gui.widgets.MetarInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
             # .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
-        me._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(me._scrollContent, canvas.style, {})
+        me._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(me._scrollContent)
             .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setLabel("QNH:")
             .setVisible(false);
 
-        me._pressureLabelQfe = canvas.gui.widgets.PressureLabel.new(me._scrollContent, canvas.style, {})
+        me._pressureLabelQfe = canvas.gui.widgets.PressureLabel.new(me._scrollContent)
             .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
             .setLabel("QFE:")
             .setVisible(false);
 
-        me._windLabel = canvas.gui.widgets.WindLabel.new(me._scrollContent, canvas.style, { colors: Colors })
+        me._windLabel = canvas.gui.widgets.WindLabel.new(parent: me._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
 
         me._drawRwyUseControls = DrawRwyUseControls.new(
@@ -109,7 +109,7 @@ var DrawTabContent = {
 
         me._rwyUseLayout = me._drawRwyUseControls.createRwyUseLayout();
 
-        me._rwyUseNoDataWarning = canvas.gui.widgets.Label.new(me._scrollContent, canvas.style, {})
+        me._rwyUseNoDataWarning = canvas.gui.widgets.Label.new(me._scrollContent)
             .setText("The preferred runway cannot be selected, so the best headwind is used.")
             .setVisible(false);
         me._rwyUseNoDataWarning.setColor(Colors.AMBER);
@@ -141,11 +141,11 @@ var DrawTabContent = {
         for (var i = 0; i < 16; i += 1) {
             var runwayHLayout = canvas.HBoxLayout.new();
 
-            var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(me._scrollContent, canvas.style, {colors: Colors})
+            var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
                 .setMarginForValue(DrawTabContent.VALUE_MARGIN_X)
                 .setVisible(false);
 
-            var windRoseView = canvas.gui.widgets.WindRose.new(me._scrollContent, canvas.style, {colors: Colors})
+            var windRoseView = canvas.gui.widgets.WindRose.new(parent: me._scrollContent, cfg: { colors: Colors })
                 .setVisible(false);
 
             var runwayVCenter = canvas.VBoxLayout.new(); # wrapper for set runway info vertically centered

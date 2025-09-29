@@ -100,7 +100,7 @@ var AboutDialog = {
     # @return ghost  Label widget.
     #
     _getLabel: func(text, wordWrap = false) {
-        var label = canvas.gui.widgets.Label.new(me._group, canvas.style, {wordWrap: wordWrap})
+        var label = canvas.gui.widgets.Label.new(parent: me._group, cfg: {wordWrap: wordWrap})
             .setText(text);
 
         label.setTextAlign("center");
@@ -114,7 +114,7 @@ var AboutDialog = {
     # @return ghost  Button widget.
     #
     _getButton: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me._group, canvas.style, {})
+        return canvas.gui.widgets.Button.new(me._group)
             .setText(text)
             .setFixedSize(200, 26)
             .listen("clicked", callback);
@@ -128,7 +128,7 @@ var AboutDialog = {
     _drawBottomBar: func(label, callback) {
         var buttonBox = canvas.HBoxLayout.new();
 
-        var btnClose = canvas.gui.widgets.Button.new(me._group, canvas.style, {})
+        var btnClose = canvas.gui.widgets.Button.new(me._group)
             .setText(label)
             .setFixedSize(75, 26)
             .listen("clicked", callback);
