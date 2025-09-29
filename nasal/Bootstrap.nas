@@ -102,21 +102,23 @@ var Bootstrap = {
     # @return void
     #
     _initDevMode: func() {
-        var reloadMenu = DevReloadMenu.new();
         var env = DevEnv.new();
-
-        g_isDevMode = env.getValue("DEV_MODE");
-        if (g_isDevMode == nil) {
-            g_isDevMode = false;
-        }
-
-        g_isDevMode
-            ? reloadMenu.addMenu()
-            : reloadMenu.removeMenu();
 
         var logLevel = env.getValue("MY_LOG_LEVEL");
         if (logLevel != nil) {
             MY_LOG_LEVEL = logLevel;
+        }
+
+        g_isDevMode = env.getBoolValue("DEV_MODE");
+
+        if (g_isDevMode) {
+            var reloadMenu = DevReloadMenu.new();
+
+            env.getBoolValue("ADD_RELOAD_MENU")
+                ? reloadMenu.addMenu()
+                : reloadMenu.removeMenu();
+
+            DevReloadMultiKey.addMultiKeyCmd(env.getValue("RELOAD_MULTIKEY_CMD"));
         }
     },
 };

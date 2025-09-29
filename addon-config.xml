@@ -26,8 +26,12 @@
                         <page-move-size type="int">110</page-move-size>
                     </keys>
 
+                    <!-- Options for using rwyuse.xml files. -->
                     <rwyuse>
+                        <!-- Set to false to completely disable the use of rwyuse.xml files. -->
                         <enabled type="bool">true</enabled>
+
+                        <!-- Default aircraft type, it can be: "com", "gen", "mil", "ul" -->
                         <aircraft-type type="string">com</aircraft-type>
                     </rwyuse>
                 </settings>
@@ -56,33 +60,4 @@
             </org.flightgear.addons.which-runway>
         </by-id>
     </addons>
-    <input>
-        <keyboard>
-            <multikey>
-                <key n="89">
-                    <name>Y</name>
-                    <!-- <desc>Development functions</desc> -->
-
-                    <key n="97">
-                        <name>a</name>
-                        <desc>Addon</desc>
-
-                        <key n="119">
-                            <name>w</name>
-                            <desc>Reload "Which Runway" Addon</desc>
-                            <exit/>
-                            <binding>
-                                <command>nasal</command>
-                                <script><![CDATA[
-                                    fgcommand("addon-reload", props.Node.new({
-                                        id: whichRunway.g_Addon.id,
-                                    }));
-                                ]]></script>
-                            </binding>
-                        </key>
-                    </key>
-                </key>
-            </multikey>
-        </keyboard>
-    </input>
 </PropertyList>
