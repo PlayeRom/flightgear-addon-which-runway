@@ -19,8 +19,8 @@ gui.widgets.RunwayInfo = {
     # Constructor.
     #
     # @param  ghost  parent
-    # @param  hash  style
-    # @param  hash  cfg
+    # @param  hash|nil  style
+    # @param  hash|nil  cfg
     # @return ghost
     #
     new: func(parent, style = nil, cfg = nil) {
