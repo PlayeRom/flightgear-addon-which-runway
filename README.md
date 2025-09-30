@@ -48,7 +48,6 @@ Airport information is always displayed at the top of the tab:
 11. **QEF** – atmospheric pressure relative to the airport elevation as given by MATAR, in 3 units. This information may change as the METAR changes.
 12. **Wind** – information from METAR about the true direction of the wind and its speed (and wind gusts, if any).
 
-
 ## Preferred Runways
 
 Some airports, especially larger ones, include a file with the extension `*.rwyuse.xml` in their scenery. This file defines schedules for specific aircraft types and the preferred runways for takeoff and landing within a given schedule. The `rwyuse.xml` file also contains information about the maximum allowable tailwind and crosswind. If the first column of preferred runways does not meet the wind requirements, the next column is considered, and so on, until a column containing preferred runways is found. This means that the preferred runway may not necessarily be the one best located for the headwind. This is due to noise reduction, traffic volume, runway length, and other factors.
@@ -76,8 +75,8 @@ Controls:
 On the right side, you'll find additional information:
 
 1. **UTC Time** – the time used for the schedule. Remember to set the correct takeoff/landing time, which won't necessarily be the current time.
-2. **Max Tailwind** – the maximum allowable tailwind. If the runway has a tailwind greater than the value specified here, it is excluded from the preferred runways.
-3. **Max Crosswind** – the maximum allowable crosswind. If the runway has a crosswind greater than the value specified here, it is excluded from the preferred runways.
+2. **Max tailwind** – the maximum allowable tailwind. If the runway has a tailwind greater than the value specified here, it is excluded from the preferred runways.
+3. **Max crosswind** – the maximum allowable crosswind. If the runway has a crosswind greater than the value specified here, it is excluded from the preferred runways.
 4. **Traffic** – the aircraft type used. This should be the same type as you selected in the "Aircraft type" combo box, but this won't always be the case. If the airport doesn't contain any data for the selected aircraft, this value is changed as described above, for the "Aircraft type" option.
 5. **Schedule** – the name of the schedule from the `rwyuse.xml` file that corresponds to the given UTC time and aircraft/traffic. If `n/a` is displayed, it means the airport is not operational for the selected aircraft type at the selected UTC time. Runways will then be displayed simply by the highest headwind, without preferred runways. The values ​​found here may vary and depend on the airport, but here are some of them:
     - `night` – night schedule, where preferred runways may be selected specifically for noise reasons;
@@ -98,13 +97,16 @@ If you're using preferred runways for an airport, then:
 4. If no runway is suitable due to unfavorable wind conditions, everyone will receive the information **Is preferred: No**. You can then deselect the "Use preferred airport runways" option and simply check the runways by the highest headwind.
 5. If the wind is variable, the criteria for max tailwind and crosswind are not checked, which means that no runways are rejected from the preferred ones.
 
+
+![alt Preferred Runway](docs/img/6-preferred-rwyuse.png "Preferred Runway")
+
 ### Comments
 
 Some runways have incorrectly created `rwyuse.xml` files. For example, the number of runways in a column is not the same, or they have multiple schedule entries for the same aircraft type, each with the same time range. Such cases can produce illogical results or won't be fully supported. The example of how this should be done correctly, and what I used as a basis, is the `EHAM.rwyuse.xml` file, where the aircraft type has a single schedule from 00:00 to 24:00, and the preferred runway lists have the same number of columns.
 
 ### Preferred runways and compatibility issues
 
-Currently, FlightGear uses the airport's preferred runways (if any) only for computer-controlled traffic. Therefore, if you start a session on a runway, your aircraft will be placed on the runway based on the highest headwind, without taking into account the airport's preferred runways. The good news is that this is recognized and marked with a FIXME comment in the FlightGear code :)
+Currently, FlightGear uses the airport's preferred runways (if available) only for computer-controlled traffic. Therefore, if you start a session on a runway, your aircraft will be placed on the runway based on the highest headwind, without taking into account the airport's preferred runways. The good news is that this is recognized and marked with a FIXME comment in the FlightGear code :)
 
 Other add-ons, such as "Red Griffin ATC" (version 2.3.0 at the moment), work similarly. If you ask "Red Griffin ATC" for departure information, you'll receive a takeoff runway based on the highest headwind, and this will usually not be consistent with what “Which Runway” indicates when using preferred runways.
 
@@ -145,12 +147,12 @@ Some options are stored in a property tree, so they can be changed during a flig
 1. `max-metar-range-nm` – maximum search range of the nearest airport with METAR, used if the current airport does not have a METAR. Default 30 NM.
 2. `keys/arrow-move-size` – by how many pixels the content should move when scrolling with the Up/Down arrow keys. Default 20 px.
 3. `keys/page-move-size` – by how many pixels the content should move when scrolling with the PageUp/PageDown keys. Default 110 px.
-4. `rwyuse/enabled` – whether the use of rwyuse.xml files should be enabled. Default `true`.
-5. `rwyuse/aircraft-type` – default aircraft type (traffic) for rwyuse.xml files. Default `com` (commercial).
+4. `rwyuse/enabled` – whether the use of preferred airport runways (`rwyuse.xml` files) should be enabled. Default `true`.
+5. `rwyuse/aircraft-type` – default aircraft type (traffic) for `rwyuse.xml` files. Default `com` (commercial).
 
 ## Development
 
-This section is for developers only, if you are a user who just uses the add-on, you should not bother with this.
+This section is for developers only, if you are a user who just uses the add-on, you should not bother with this section.
 
 ### The `.env` file
 
@@ -158,15 +160,12 @@ For more convenient development, this add-on recognizes an `.env` file, where yo
 
 The add-on recognizes the following variables in the `.env` file:
 
-1. `DEV_MODE` which takes the values `​​true` or `false` (or `1`/`0`). Setting this variable to `true` will add a "Dev Reload" item to the add-on's menu. This menu is used to reload all of the add-on's Nasal code.
+1. `DEV_MODE` which takes the values `​​true` or `false` (or `1`/`0`). Setting this variable to `true` will enable possibility to use `ADD_RELOAD_MENU` and `RELOAD_MULTIKEY_CMD` variable.
+2. `ADD_RELOAD_MENU` which takes the values `​​true` or `false` (or `1`/`0`). Setting this variable to `true` will add a "Dev Reload" item to the add-on's menu. This menu is used to reload all of the add-on's Nasal code.
+3. `RELOAD_MULTIKEY_CMD` is using to set multi-key command to reload the add-on's Nasal code. As default `:Yawr`.
+4. `MY_LOG_LEVEL` – here you can specify the logging level for logs added using the `Log.print()` method. Possible values: `LOG_ALERT`, `LOG_WARN`, `LOG_INFO`, `LOG_DEBUG` or `LOG_BULK`. If you set, for example, `LOG_INFO`, then logs using `Log.print()` will be logged with this flag, which means that to see them you need to run the simulator with the log level at the same level or higher: `--log-level=info`.
 
-2. `MY_LOG_LEVEL` – here you can specify the logging level for logs added using the `Log.print()` method. Possible values: `LOG_ALERT`, `LOG_WARN`, `LOG_INFO`, `LOG_DEBUG` or `LOG_BULK`.
-
-After changing these values, you need to reload the Nasal code using the "Dev Reload" menu item or the `:Yaw` multi-key command, or, as a last resort, restart the entire simulator.
-
-### Multi-key command
-
-To reset the add-on's Nasal scripts, you can also use the multi-key command: `:Yaw`, which always works regardless of the `DEV_MODE` value in the `.env` file. This way, you are always able to reset the add-on's Nasal code, even if you don't have a "Dev Reload" menu item.
+After changing these values, you need to reload the Nasal code using the "Dev Reload" menu item or the `:Yawr` multi-key command, or, as a last resort, restart the entire simulator.
 
 ### Class Diagram
 
