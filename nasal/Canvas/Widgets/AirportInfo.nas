@@ -75,4 +75,13 @@ gui.widgets.AirportInfo = {
     updateView: func() {
         me._view.reDrawContent(me);
     },
+
+    #
+    # Timer callback
+    #
+    # @return void
+    #
+    updateDynamicData: func() {
+        me._view.updateDynamicData(me);
+    },
 };

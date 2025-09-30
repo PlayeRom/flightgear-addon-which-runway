@@ -54,6 +54,13 @@ DefaultStyle.widgets["airport-info-view"] = {
             me._draw.createTextValue("n/a"),
         ];
 
+        me._bestRunwayForPos = [
+            me._draw.createTextLabel("Best runway:"),
+            me._draw.createTextValue("n/a"),
+            me._draw.createTextUnit("from aircraft position:"),
+            me._draw.createTextValue("n/a"),
+        ];
+
         me._hasMetar = [
             me._draw.createTextLabel("Has METAR:"),
             me._draw.createTextValue("n/a"),
@@ -112,6 +119,16 @@ DefaultStyle.widgets["airport-info-view"] = {
     },
 
     #
+    # Redraw data for timer.
+    #
+    # @param  ghost  model  AirportInfo model.
+    # @return void
+    #
+    updateDynamicData: func(model) {
+        me._updateBestRwyByAcPos(model);
+    },
+
+    #
     # @param  ghost  model  AirportInfo model.
     # @return double  New Y position.
     #
@@ -125,6 +142,7 @@ DefaultStyle.widgets["airport-info-view"] = {
         y += me._draw.setTextTranslations(y, me._latLon, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._elevation, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._magVar, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._bestRunwayForPos, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._hasMetar, model._valueMarginX, true);
 
         return y;
@@ -149,6 +167,9 @@ DefaultStyle.widgets["airport-info-view"] = {
         me._draw.setTextTranslations(yT, me._elevation, model._valueMarginX);
 
         me._magVar[me._VAL].setText(sprintf("%.2f°", model._aptMagVar));
+
+        me._updateBestRwyByAcPos(model);
+
         me._hasMetar[me._VAL].setText(model._airport.has_metar ? "Yes" : "No");
     },
 
@@ -176,5 +197,19 @@ DefaultStyle.widgets["airport-info-view"] = {
         );
 
         return decimal ~ "  /  " ~ sexagesimal;
+    },
+
+    #
+    # @param  ghost  model  AirportInfo model.
+    # @return string
+    #
+    _updateBestRwyByAcPos: func(model) {
+        var acPos = geo.aircraft_position();
+        var bestRwy = model._airport.findBestRunwayForPos(acPos);
+
+        me._bestRunwayForPos[me._VAL].setText(sprintf("%s", bestRwy == nil ? "n/a" : bestRwy.id));
+        me._bestRunwayForPos[me._VAL2].setText(sprintf("%.4f, %.4f", acPos.lat(), acPos.lon()));
+        var (xT, yT) = me._bestRunwayForPos[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yT, me._bestRunwayForPos, model._valueMarginX);
     },
 };

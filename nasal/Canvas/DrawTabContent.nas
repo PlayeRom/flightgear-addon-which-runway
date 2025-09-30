@@ -42,6 +42,8 @@ var DrawTabContent = {
         me._icao = "";
         me._icaoEdit = nil;
 
+        me._timer = Timer.make(3, me, me._updateDynamicData);
+
         me._metar = Metar.new(
             me._tabId,
             Callback.new(me._metarUpdatedCallback, me),
@@ -185,6 +187,8 @@ var DrawTabContent = {
         me._metar.del();
         me._bottomBar.del();
         me._drawRwyUseControls.del();
+
+        me._timer.stop();
 
         call(DrawTabBase.del, [], me);
     },
@@ -385,6 +389,8 @@ var DrawTabContent = {
 
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
+
+        me._timer.stop();
     },
 
     #
@@ -465,6 +471,8 @@ var DrawTabContent = {
 
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
+
+        me._timer.start();
 
         if (g_isDevMode) {
             Profiler.stop();
@@ -619,5 +627,9 @@ var DrawTabContent = {
     #
     vertScrollBarBy: func(dy) {
         me._scrollArea.vertScrollBarBy(dy);
+    },
+
+    _updateDynamicData: func() {
+        me._airportInfoView.updateDynamicData();
     },
 };
