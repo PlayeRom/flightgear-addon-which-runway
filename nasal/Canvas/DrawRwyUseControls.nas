@@ -227,7 +227,7 @@ var DrawRwyUseControls = {
                 me._btnUtcMinuteMinus.setEnabled(me._isRwyUse);
                 me._btnUtcMinutePlus.setEnabled(me._isRwyUse);
 
-                me._redrawCallback.invoke();
+                me._redrawCallback.invoke(false);
             });
 
         var vBox = canvas.VBoxLayout.new();
@@ -288,7 +288,7 @@ var DrawRwyUseControls = {
     #
     # Get default aircraft operation (takeoff or landing) according do tab ID.
     #
-    # #return string
+    # #return int
     #
     _getDefaultAircraftOperationByTabId: func() {
            if (me._isTabNearest())   return RwyUse.LANDING;
@@ -325,6 +325,10 @@ var DrawRwyUseControls = {
                 ? radioGroup.getCheckedRadioButton()
                 : radioGroup.getCheckedRadio();
 
+            #
+            # @param  ghost  item
+            # @return int
+            #
             var getRadioValueByLabel = func(item) {
                 if (item != nil) {
                        if (item._text == "Takeoff") return RwyUse.TAKEOFF;
@@ -335,7 +339,7 @@ var DrawRwyUseControls = {
             };
 
             me._aircraftOperation = getRadioValueByLabel(checkedRadio);
-            me._redrawCallback.invoke();
+            me._redrawCallback.invoke(false);
         });
 
         var hBox = canvas.HBoxLayout.new();
@@ -354,7 +358,7 @@ var DrawRwyUseControls = {
     # @return ghost  widgets.RadioButton
     #
     _getRadioButton: func(text, cfg = nil) {
-        return canvas.gui.widgets.RadioButton.new(me._scrollContent)
+        return canvas.gui.widgets.RadioButton.new(parent: me._scrollContent, cfg: cfg)
             .setText(text);
     },
 
@@ -412,7 +416,7 @@ var DrawRwyUseControls = {
             }
 
             me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
-            me._redrawCallback.invoke();
+            me._redrawCallback.invoke(false);
         });
 
         me._btnUtcHourPlus = me._getButton("+", func() {
@@ -422,7 +426,7 @@ var DrawRwyUseControls = {
             }
 
             me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
-            me._redrawCallback.invoke();
+            me._redrawCallback.invoke(false);
         });
 
         me._btnUtcMinuteMinus = me._getButton("-", func() {
@@ -439,7 +443,7 @@ var DrawRwyUseControls = {
             }
 
             me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
-            me._redrawCallback.invoke();
+            me._redrawCallback.invoke(false);
         });
 
         me._btnUtcMinutePlus = me._getButton("+", func() {
@@ -456,7 +460,7 @@ var DrawRwyUseControls = {
             }
 
             me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
-            me._redrawCallback.invoke();
+            me._redrawCallback.invoke(false);
         });
 
         var hBox = canvas.HBoxLayout.new();

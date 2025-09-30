@@ -22,8 +22,8 @@ var RwyUse = {
     MILITARY  : "mil",
     ULTRALIGHT: "ul",
 
-    TAKEOFF   : "takeoff",
-    LANDING   : "landing",
+    TAKEOFF   : 1,
+    LANDING   : 2,
 
     ERR_NO_SCHEDULE: "err code no scheduler", # The airport does not operate at the specified time for the given aircraft type
 

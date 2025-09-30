@@ -238,7 +238,7 @@ var DrawTabContent = {
             code: func(node) {
                 if (node != nil) {
                     me._drawRwyUseControls.setAircraftType(node.getValue());
-                    me._reDrawContent();
+                    me._reDrawContent(false);
                 }
             },
             type: Listeners.ON_CHANGE_ONLY,
@@ -408,9 +408,10 @@ var DrawTabContent = {
     #
     # Draw whole content.
     #
+    # @param  bool  isResetScroll  True means that the scroll position will be set to 0, 0 (top-left position).
     # @return void
     #
-    _reDrawContent: func() {
+    _reDrawContent: func(isResetScroll = true) {
         if (g_isDevMode) {
             Profiler.start("DrawTabContent._reDrawContent " ~ me._tabId);
         }
@@ -469,8 +470,10 @@ var DrawTabContent = {
 
         me._reDrawRunways(airport, aptMagVar);
 
-        me._scrollArea.scrollToTop();
-        me._scrollArea.scrollToLeft();
+        if (isResetScroll) {
+            me._scrollArea.scrollToTop();
+            me._scrollArea.scrollToLeft();
+        }
 
         me._timer.start();
 
@@ -629,7 +632,14 @@ var DrawTabContent = {
         me._scrollArea.vertScrollBarBy(dy);
     },
 
+    #
+    # Timer callback function
+    #
+    # @return void
+    #
     _updateDynamicData: func() {
-        me._airportInfoView.updateDynamicData();
+        if (me._airportInfoView != nil) {
+            me._airportInfoView.updateDynamicData();
+        }
     },
 };
