@@ -42,8 +42,6 @@ var DrawTabContent = {
         me._icao = "";
         me._icaoEdit = nil;
 
-        me._timer = Timer.make(3, me, me._updateDynamicData);
-
         me._metar = Metar.new(
             me._tabId,
             Callback.new(me._metarUpdatedCallback, me),
@@ -187,8 +185,6 @@ var DrawTabContent = {
         me._metar.del();
         me._bottomBar.del();
         me._drawRwyUseControls.del();
-
-        me._timer.stop();
 
         call(DrawTabBase.del, [], me);
     },
@@ -389,8 +385,6 @@ var DrawTabContent = {
 
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
-
-        me._timer.stop();
     },
 
     #
@@ -474,8 +468,6 @@ var DrawTabContent = {
             me._scrollArea.scrollToTop();
             me._scrollArea.scrollToLeft();
         }
-
-        me._timer.start();
 
         if (g_isDevMode) {
             Profiler.stop();
@@ -633,12 +625,12 @@ var DrawTabContent = {
     },
 
     #
-    # Timer callback function
+    # Called periodically to update dynamic data.
     #
     # @return void
     #
-    _updateDynamicData: func() {
-        if (me._airportInfoView != nil) {
+    updateDynamicData: func() {
+        if (me._airportInfoView != nil and me._airportInfoView.isVisible()) {
             me._airportInfoView.updateDynamicData();
         }
     },

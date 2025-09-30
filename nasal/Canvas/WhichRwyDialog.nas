@@ -50,6 +50,9 @@ var WhichRwyDialog = {
 
         me._runwaysUse = RwyUse.new();
 
+        me._timer = Timer.make(3, me, me._updateDynamicData);
+        me._timer.simulatedTime = true;
+
         me._tabs = canvas.gui.widgets.TabWidget.new(parent: me._group, cfg: { "tabs-closeable": false });
         me._tabsContent = me._tabs.getContent();
         me._vbox.addItem(me._tabs);
@@ -88,11 +91,52 @@ var WhichRwyDialog = {
     # @override PersistentDialog
     #
     del: func() {
+        me._timer.stop();
+
         foreach (var tabId; keys(me._tabContents)) {
             me._tabContents[tabId].del();
         }
 
         me.parents[1].del();
+    },
+
+    #
+    # Show the dialog.
+    #
+    # @return void
+    # @override PersistentDialog
+    #
+    show: func() {
+        me._updateDynamicData();
+        me._timer.start();
+
+        me.parents[1].show();
+    },
+
+    #
+    # Hide the dialog.
+    #
+    # @return void
+    # @override PersistentDialog
+    #
+    hide: func() {
+        me._timer.stop();
+
+        me.parents[1].hide();
+    },
+
+    #
+    # Timer callback function to update dynamic data on the selected tab.
+    #
+    # @return void
+    #
+    _updateDynamicData: func() {
+        # TODO: TabWidget does not have a method to get the currently selected tab,
+        # so I get it via the private member _currentTabId. Fix this when the method is added.
+        var currentTabId = me._tabs._currentTabId;
+        if (currentTabId != nil and globals.contains(me._tabContents, currentTabId)) {
+            me._tabContents[currentTabId].updateDynamicData();
+        }
     },
 
     #
