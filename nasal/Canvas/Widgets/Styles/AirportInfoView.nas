@@ -61,6 +61,22 @@ DefaultStyle.widgets["airport-info-view"] = {
             me._draw.createTextValue("n/a"),
         ];
 
+        me._distance = [
+            me._draw.createTextLabel("Distance:"),
+            me._draw.createTextValue("n/a"),
+            me._draw.createTextUnit("NM /"),
+            me._draw.createTextValue("n/a"),
+            me._draw.createTextUnit("km"),
+        ];
+
+        me._course = [
+            me._draw.createTextLabel("Course:"),
+            me._draw.createTextValue("n/a"),
+            me._draw.createTextUnit("true /"),
+            me._draw.createTextValue("n/a"),
+            me._draw.createTextUnit("mag"),
+        ];
+
         me._hasMetar = [
             me._draw.createTextLabel("Has METAR:"),
             me._draw.createTextValue("n/a"),
@@ -125,7 +141,12 @@ DefaultStyle.widgets["airport-info-view"] = {
     # @return void
     #
     updateDynamicData: func(model) {
-        me._updateBestRwyByAcPos(model);
+        var acGeoPos = geo.aircraft_position();
+        var airportGeoPos = geo.Coord.new().set_latlon(model._airport.lat, model._airport.lon);
+
+        me._updateBestRwyByAcPos(model, acGeoPos);
+        me._updateDistance(model, acGeoPos, airportGeoPos);
+        me._updateCourse(model, acGeoPos, airportGeoPos);
     },
 
     #
@@ -143,6 +164,8 @@ DefaultStyle.widgets["airport-info-view"] = {
         y += me._draw.setTextTranslations(y, me._elevation, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._magVar, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._bestRunwayForPos, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._distance, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._course, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._hasMetar, model._valueMarginX, true);
 
         return y;
@@ -168,9 +191,9 @@ DefaultStyle.widgets["airport-info-view"] = {
 
         me._magVar[me._VAL].setText(sprintf("%.2f°", model._aptMagVar));
 
-        me._updateBestRwyByAcPos(model);
-
         me._hasMetar[me._VAL].setText(model._airport.has_metar ? "Yes" : "No");
+
+        me.updateDynamicData(model);
     },
 
     #
@@ -199,17 +222,58 @@ DefaultStyle.widgets["airport-info-view"] = {
         return decimal ~ "  /  " ~ sexagesimal;
     },
 
-    #
+   #
     # @param  ghost  model  AirportInfo model.
-    # @return string
+    # @param  hash  acGeoPos  The geo.Coord object of aircraft position.
+    # @return void
     #
-    _updateBestRwyByAcPos: func(model) {
-        var acPos = geo.aircraft_position();
-        var bestRwy = model._airport.findBestRunwayForPos(acPos);
+    _updateBestRwyByAcPos: func(model, acGeoPos) {
+        var bestRwy = model._airport.findBestRunwayForPos(acGeoPos);
 
         me._bestRunwayForPos[me._VAL].setText(sprintf("%s", bestRwy == nil ? "n/a" : bestRwy.id));
-        me._bestRunwayForPos[me._VAL2].setText(sprintf("%.4f, %.4f", acPos.lat(), acPos.lon()));
+        me._bestRunwayForPos[me._VAL2].setText(sprintf("%.4f, %.4f", acGeoPos.lat(), acGeoPos.lon()));
         var (xT, yT) = me._bestRunwayForPos[me._VAL].getTranslation();
         me._draw.setTextTranslations(yT, me._bestRunwayForPos, model._valueMarginX);
+    },
+
+    #
+    # @param  ghost  model  AirportInfo model.
+    # @param  hash  acGeoPos  The geo.Coord object of aircraft position.
+    # @param  hash  airportGeoPos  The geo.Coord object of airport position.
+    # @return void
+    #
+    _updateDistance: func(model, acGeoPos, airportGeoPos) {
+        var distanceM = airportGeoPos.distance_to(acGeoPos);
+
+        me._distance[me._VAL].setText(sprintf("%.1f", distanceM == nil ? "n/a" : distanceM * globals.M2NM));
+        me._distance[me._VAL2].setText(sprintf("%.1f", distanceM == nil ? "n/a" : distanceM / 1000));
+        var (xT, yT) = me._distance[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yT, me._distance, model._valueMarginX);
+    },
+
+    #
+    # @param  ghost  model  AirportInfo model.
+    # @param  hash  acGeoPos  The geo.Coord object of aircraft position.
+    # @param  hash  airportGeoPos  The geo.Coord object of airport position.
+    # @return void
+    #
+    _updateCourse: func(model, acGeoPos, airportGeoPos) {
+        var courseTrue = acGeoPos.course_to(airportGeoPos);
+        var courseMag = geo.normdeg(courseTrue - globals.magvar(acGeoPos.lat(), acGeoPos.lon()));
+
+        me._course[me._VAL].setText(me._getCourseString(courseTrue));
+        me._course[me._VAL2].setText(me._getCourseString(courseMag));
+        var (xT, yT) = me._course[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yT, me._course, model._valueMarginX);
+    },
+
+    #
+    # @param  double  course
+    # @return string
+    #
+    _getCourseString: func(course) {
+        return course == nil
+            ? "n/a"
+            : sprintf("%.0f°", course);
     },
 };

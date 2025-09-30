@@ -217,7 +217,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         }
 
         var rwyHdgTrue = math.round(rwy.heading);
-        var rwyHdgMag = math.round(globals.geo.normdeg(rwy.heading - model._aptMagVar));
+        var rwyHdgMag = math.round(geo.normdeg(rwy.heading - model._aptMagVar));
 
         me._hdgTrue[me._VAL].setText(sprintf("%d°", rwyHdgTrue));
         me._hdgMag[me._VAL].setText(sprintf("%d°", rwyHdgMag));
@@ -383,7 +383,7 @@ DefaultStyle.widgets["runway-info-view"] = {
             return "No";
         }
 
-        var ilsCourse = math.round(globals.geo.normdeg(rwy.ils.course - aptMagVar));
+        var ilsCourse = math.round(geo.normdeg(rwy.ils.course - aptMagVar));
         if (ilsCourse != rwyHdgMag) {
             # Here's the question: should we use the course from the ILS object,
             # or should we take the runway mag heading?
