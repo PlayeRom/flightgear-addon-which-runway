@@ -383,18 +383,27 @@ DefaultStyle.widgets["runway-info-view"] = {
             return "No";
         }
 
-        # TODO: Here's the question: should we use the course from the ILS object, or should we take the runway heading?
-        # From what I've checked, the ILS course sometimes differs from the runway heading (assuming FG always uses true,
-        # which it does, which isn't entirely correct for ILS). So, to avoid any visual discrepancies of 1 degree,
-        # I just use the runway heading for now.
-        var ilsCourse = rwyHdgMag;
+        var ilsCourse = math.round(globals.geo.normdeg(rwy.ils.course - aptMagVar));
+        if (ilsCourse != rwyHdgMag) {
+            # Here's the question: should we use the course from the ILS object,
+            # or should we take the runway mag heading?
+            logprint(LOG_ALERT, "RunwayInfo widget, ILS \"", rwy.ils.name,
+                "\" course (", ilsCourse, ") != runway mag heading (", rwyHdgMag, ")");
+            # ilsCourse = rwyHdgMag;
+        }
 
-        # var ilsCourse = math.round(rwy.ils.course);
-        # if (ilsCourse == rwyHdgTrue and ilsCourse != rwyHdgMag) {
-        #     # FG gives ILS course as true, what is incorrect, convert true to magnetic.
-        #     # ilsCourse = Utils.normalizeCourse(ilsCourse - aptMagVar);
-        # }
+        # 0 - ICAO,
+        # 1 - runway ID,
+        # 2 - category: "LOC", "ILS-cat-II", etc.
+        var nameParts = globals.split(" ", rwy.ils.name);
+        var category = "";
+        if (size(nameParts) >= 3) {
+            category = nameParts[2];
+        }
 
-        return sprintf("%s %.3f/%d°", rwy.ils.id, rwy.ils.frequency / 100, ilsCourse);
+        var frequency = sprintf("%f", rwy.ils.frequency / 100); # e.g "110.3000000"
+        frequency = string.trim(frequency, 1, func(char) char == `0`); # trim zeros on right, e.g. "110.3"
+
+        return sprintf("%s %s/%d° %s", rwy.ils.id, frequency, ilsCourse, category);
     },
 };
