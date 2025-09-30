@@ -29,6 +29,26 @@ If there is no other airport with a METAR within 30 NM, information about the ai
 
 **NOTE**: To download and use METAR data with this add-on, the add-on requires the "Live Data" weather scenario to be enabled. You can use this add-on with the weather scenario in offline mode, but wind and METAR data will not be displayed.
 
+## Airport information
+
+![alt Airport Information](docs/img/airport-info.png "Airport Information")
+
+Airport information is always displayed at the top of the tab:
+
+1. **ICAO** code and airport name.
+2. **Lat, Lon** – geographical coordinates of the airport in 2 formats.
+3. **Elevation** – airport elevation in feet and meters.
+4. **Mag Var** – magnetic variation at the airport.
+5. **Best runway from aircraft position** – this is not the best runway due to the wind, nor is it the airport's preferred runway, it is the runway you can choose if you need to land immediately in case of an emergency, as it's the runway your aircraft is most conveniently positioned to land on. This means you won't have to perform as many maneuvers to land on it. This value will change dynamically.
+6. **Distance** – distance from your position to the airport in nautical miles and kilometers. This value will change dynamically.
+7. **Course** – course from your position to the airport (true and magnetic). This value will change dynamically.
+8. **Has METAR** – information as to whether the airport provides its own METAR report.
+9. **METAR** – raw METAR from the current airport, if available, or the nearest other airport.
+10. **QNH** – atmospheric pressure relative to mean sea level as given by MATAR, in 3 units. This information may change as the METAR changes.
+11. **QEF** – atmospheric pressure relative to the airport elevation as given by MATAR, in 3 units. This information may change as the METAR changes.
+12. **Wind** – information from METAR about the true direction of the wind and its speed (and wind gusts, if any).
+
+
 ## Preferred Runways
 
 Some airports, especially larger ones, include a file with the extension `*.rwyuse.xml` in their scenery. This file defines schedules for specific aircraft types and the preferred runways for takeoff and landing within a given schedule. The `rwyuse.xml` file also contains information about the maximum allowable tailwind and crosswind. If the first column of preferred runways does not meet the wind requirements, the next column is considered, and so on, until a column containing preferred runways is found. This means that the preferred runway may not necessarily be the one best located for the headwind. This is due to noise reduction, traffic volume, runway length, and other factors.
