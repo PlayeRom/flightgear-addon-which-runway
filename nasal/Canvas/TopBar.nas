@@ -34,6 +34,7 @@ var TopBar = {
         me._airportBtn = canvas.gui.widgets.Button.new(me._tabsContent)
             .setText("----")
             .setFixedSize(58, 28)
+            .setVisible(false)
             .listen("clicked", func() {
                 me._clickAptCallback.invoke();
             });
@@ -43,7 +44,8 @@ var TopBar = {
         for (var i = 0; i < DrawTabContent.MAX_RUNWAY_SLOTS; i += 1) {
             var btn = canvas.gui.widgets.Button.new(me._tabsContent)
                 .setText("---")
-                .setFixedSize(38, 28);
+                .setFixedSize(38, 28)
+                .setVisible(false);
 
             me._runwayBtns.append(btn);
         }
@@ -68,7 +70,9 @@ var TopBar = {
     # @return void
     #
     updateRunwayButtons: func(icao, runwaysData) {
-        me._airportBtn.setText(icao);
+        me._airportBtn
+            .setText(icao)
+            .setVisible(true);
 
         var rwySize = size(runwaysData);
         forindex (var index; me._runwayBtns.vector) {
