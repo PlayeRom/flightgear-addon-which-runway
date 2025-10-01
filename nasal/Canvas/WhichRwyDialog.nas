@@ -50,6 +50,9 @@ var WhichRwyDialog = {
 
         me._runwayUse = RwyUse.new();
 
+        me._aircraftTypeFinder = AircraftTypeFinder.new();
+        me._aircraftType = me._aircraftTypeFinder.getType();
+
         me._timer = Timer.make(3, me, me._updateDynamicData);
         me._timer.simulatedTime = true;
 
@@ -81,7 +84,7 @@ var WhichRwyDialog = {
     _createTab: func(tabId, label) {
         var layout = canvas.VBoxLayout.new();
         me._tabs.addTab(tabId, label, layout);
-        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwayUse);
+        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwayUse, me._aircraftType);
     },
 
     #
@@ -98,6 +101,7 @@ var WhichRwyDialog = {
         }
 
         me._runwayUse.del();
+        me._aircraftTypeFinder.del();
 
         me._parentDialog.del();
     },

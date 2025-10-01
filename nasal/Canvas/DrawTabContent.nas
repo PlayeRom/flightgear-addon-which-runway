@@ -28,9 +28,10 @@ var DrawTabContent = {
     # @param  ghost  tabContent  Single tab canvas content.
     # @param  string  tabId
     # @param  hash  runwayUse  RwyUse object.
+    # @param  string  aircraftType  As "com", "gen", "mil, "ul".
     # @return hash
     #
-    new: func(tabsContent, tabContent, tabId, runwayUse) {
+    new: func(tabsContent, tabContent, tabId, runwayUse, aircraftType) {
         var me = {
             parents: [
                 DrawTabContent,
@@ -39,6 +40,7 @@ var DrawTabContent = {
             _tabsContent: tabsContent,
             _tabContent: tabContent,
             _runwayUse: runwayUse,
+            _aircraftType: aircraftType,
         };
 
         me._icao = "";
@@ -118,6 +120,7 @@ var DrawTabContent = {
             me._tabId,
             me._scrollContent,
             Callback.new(me._reDrawContent, me),
+            me._aircraftType,
         );
 
         me._rwyUseLayout = me._drawRwyUseControls.createRwyUseLayout();

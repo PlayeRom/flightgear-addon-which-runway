@@ -79,7 +79,7 @@ var Settings = {
     },
 
     #
-    # Get aircraft type for runway use.
+    # Get default aircraft type for runway use.
     #
     # @return string
     #

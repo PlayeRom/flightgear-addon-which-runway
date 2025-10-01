@@ -24,21 +24,22 @@ var DrawRwyUseControls = {
     # @param  string  tabId
     # @param  ghost  scrollContent
     # @param  hash  redrawCallback  Callback object.
+    # @param  string  aircraftType  As "com", "gen", "mil, "ul".
     # @return hash
     #
-    new: func(tabId, scrollContent, redrawCallback) {
+    new: func(tabId, scrollContent, redrawCallback, aircraftType) {
         var me = {
             parents: [
                 DrawRwyUseControls,
                 DrawTabBase.new(tabId),
             ],
             _scrollContent: scrollContent,
-            _redrawCallback: redrawCallback
+            _redrawCallback: redrawCallback,
+            _aircraftType: aircraftType,
         };
 
         me._isRwyUse = true;
 
-        me._aircraftType = g_Settings.getRwyUseAircraftType();
         me._aircraftOperation = me._getDefaultAircraftOperationByTabId();
 
         me._checkboxRwyUse = nil;
