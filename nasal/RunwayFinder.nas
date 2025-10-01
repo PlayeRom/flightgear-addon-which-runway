@@ -10,9 +10,9 @@
 #
 
 #
-# RunwaysData class.
+# RunwayFinder class.
 #
-var RunwaysData = {
+var RunwayFinder = {
     #
     # Constants:
     #
@@ -31,12 +31,12 @@ var RunwaysData = {
     #
     new: func(metar, runwaysUse) {
         var me = {
-            parents: [RunwaysData],
+            parents: [RunwayFinder],
             _metar: metar,
             _runwaysUse: runwaysUse,
         };
 
-        me._rwyUseStatus = RunwaysData.CODE_IGNORE;
+        me._rwyUseStatus = RunwayFinder.CODE_IGNORE;
 
         return me;
     },
@@ -62,7 +62,7 @@ var RunwaysData = {
     # @return vector  Array of runways data.
     #
     getRunways: func(airport, isRwyUse, aircraftType, isTakeoff, utcHour, utcMinute) {
-        me._rwyUseStatus = RunwaysData.CODE_IGNORE;
+        me._rwyUseStatus = RunwayFinder.CODE_IGNORE;
 
         if (g_Settings.getRwyUseEnabled() and isRwyUse) {
             var preferredRunways = me._runwaysUse.getAllPreferredRunways(
@@ -73,18 +73,18 @@ var RunwaysData = {
             );
 
             if (preferredRunways == RwyUse.ERR_NO_SCHEDULE) {
-                me._rwyUseStatus = RunwaysData.CODE_NO_SCHEDULE;
+                me._rwyUseStatus = RunwayFinder.CODE_NO_SCHEDULE;
             } else {
                 if (preferredRunways == nil) {
-                    me._rwyUseStatus = RunwaysData.CODE_NO_XML;
+                    me._rwyUseStatus = RunwayFinder.CODE_NO_XML;
                 } else {
                     # Log.print("preferredRunways = ", string.join(", ", preferredRunways));
                     var result = me._getRunwaysByPreferred(airport, aircraftType, isTakeoff, preferredRunways);
                     if (result != nil) {
-                        me._rwyUseStatus = RunwaysData.CODE_OK;
+                        me._rwyUseStatus = RunwayFinder.CODE_OK;
                         return result;
                     } else {
-                        me._rwyUseStatus = RunwaysData.CODE_NO_WIND_CRITERIA;
+                        me._rwyUseStatus = RunwayFinder.CODE_NO_WIND_CRITERIA;
                     }
                 }
             }

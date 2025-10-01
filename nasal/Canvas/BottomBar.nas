@@ -33,7 +33,7 @@ var BottomBar = {
 
         me._icaoEdit = nil;
         me._icao = "";
-        me._btnLoadIcaos = std.Vector.new();
+        me._loadIcaoBtns = std.Vector.new();
         me._isHoldUpdateNearest = false;
 
         if (me._isTabNearest() or me._isTabAlternate()) {
@@ -41,7 +41,7 @@ var BottomBar = {
                 var btn = canvas.gui.widgets.Button.new(me._tabsContent)
                     .setText("----");
 
-                me._btnLoadIcaos.append(btn);
+                me._loadIcaoBtns.append(btn);
             }
         }
 
@@ -54,6 +54,8 @@ var BottomBar = {
     # @return void
     #
     del: func() {
+        me._loadIcaoBtns.clear();
+
         call(DrawTabBase.del, [], me);
     },
 
@@ -87,11 +89,11 @@ var BottomBar = {
         var airports = globals.findAirportsWithinRange(50); # range in NM
         var airportSize = size(airports);
 
-        forindex (var index; me._btnLoadIcaos.vector) {
+        forindex (var index; me._loadIcaoBtns.vector) {
             var airport = index < airportSize ? airports[index] : nil;
 
             if (airport == nil) {
-                me._btnLoadIcaos.vector[index]
+                me._loadIcaoBtns.vector[index]
                     .setText("----")
                     .setVisible(false)
                     .listen("clicked", nil);
@@ -101,7 +103,7 @@ var BottomBar = {
             func() {
                 var icao = airport.id;
 
-                me._btnLoadIcaos.vector[index]
+                me._loadIcaoBtns.vector[index]
                     .setText(icao)
                     .setVisible(true)
                     .listen("clicked", func() {
@@ -118,7 +120,7 @@ var BottomBar = {
         var buttonBox = canvas.HBoxLayout.new();
 
         buttonBox.addStretch(1);
-        foreach (var btn; me._btnLoadIcaos.vector) {
+        foreach (var btn; me._loadIcaoBtns.vector) {
             buttonBox.addItem(btn);
         }
 
@@ -187,7 +189,7 @@ var BottomBar = {
         var buttonBox = canvas.HBoxLayout.new();
 
         buttonBox.addStretch(1);
-        foreach (var btn; me._btnLoadIcaos.vector) {
+        foreach (var btn; me._loadIcaoBtns.vector) {
             buttonBox.addItem(btn);
         }
 

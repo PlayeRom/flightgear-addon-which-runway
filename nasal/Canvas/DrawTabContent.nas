@@ -19,6 +19,7 @@ var DrawTabContent = {
     PADDING           :  10,
     APT_VALUE_MARGIN_X: 100, # the distance between label and value for airport info.
     RWY_VALUE_MARGIN_X:  95, # the distance between label and value for runways info.
+    MAX_RUNWAY_SLOTS  :  16,
 
     #
     # Constructor
@@ -48,12 +49,19 @@ var DrawTabContent = {
             Callback.new(me._metarUpdatedCallback, me),
             Callback.new(me._realWxUpdatedCallback, me),
         );
-        me._runwaysData = RunwaysData.new(me._metar, me._runwaysUse);
+
+        me._runwayFinder = RunwayFinder.new(me._metar, me._runwaysUse);
+
+        me._topBar = TopBar.new(
+            me._tabsContent,
+            Callback.new(me._scrollToAirport, me),
+            Callback.new(me._scrollToRunway, me),
+        );
 
         me._bottomBar = BottomBar.new(
-            tabsContent: me._tabsContent,
-            tabId: me._tabId,
-            downloadMetarCallback: Callback.new(me._downloadMetar, me),
+            me._tabsContent,
+            me._tabId,
+            Callback.new(me._downloadMetar, me),
         );
 
         var scrollMargins = {
@@ -73,6 +81,10 @@ var DrawTabContent = {
 
         me._scrollLayout = canvas.VBoxLayout.new();
         me._scrollArea.setLayout(me._scrollLayout);
+
+        me._tabContent.addSpacing(10);
+        me._tabContent.addItem(me._topBar.drawTopBar());
+        me._tabContent.addSpacing(10);
         me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
         me._tabContent.addSpacing(10);
         me._tabContent.addItem(me._getBottomBarByTabId());
@@ -137,9 +149,9 @@ var DrawTabContent = {
         # Add some stretch in case the scroll area is larger than the content
         me._scrollLayout.addStretch(1);
 
-        # Build 16 slots for runways
+        # Build x slots for runways
         me._runwayWidgets = std.Vector.new();
-        for (var i = 0; i < 16; i += 1) {
+        for (var i = 0; i < DrawTabContent.MAX_RUNWAY_SLOTS; i += 1) {
             var runwayHLayout = canvas.HBoxLayout.new();
 
             var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
@@ -182,7 +194,7 @@ var DrawTabContent = {
     #
     del: func() {
         me._listeners.del();
-        me._runwaysData.del();
+        me._runwayFinder.del();
         me._metar.del();
         me._bottomBar.del();
         me._drawRwyUseControls.del();
@@ -384,8 +396,7 @@ var DrawTabContent = {
             .setVisible(true)
             .updateView();
 
-        me._scrollArea.scrollToTop();
-        me._scrollArea.scrollToLeft();
+        me._scrollToAirport();
     },
 
     #
@@ -466,8 +477,7 @@ var DrawTabContent = {
         me._reDrawRunways(airport, aptMagVar);
 
         if (isResetScroll) {
-            me._scrollArea.scrollToTop();
-            me._scrollArea.scrollToLeft();
+            me._scrollToAirport();
         }
 
         if (g_isDevMode) {
@@ -484,7 +494,7 @@ var DrawTabContent = {
         var scheduleUtcHour   = me._drawRwyUseControls.getScheduleUtcHour();
         var scheduleUtcMinute = me._drawRwyUseControls.getScheduleUtcMinute();
 
-        var runways = me._runwaysData.getRunways(
+        var runways = me._runwayFinder.getRunways(
             airport: airport,
             isRwyUse: me._drawRwyUseControls.isRwyUse(),
             aircraftType: me._drawRwyUseControls.getAircraftType(),
@@ -494,8 +504,8 @@ var DrawTabContent = {
         );
 
         if (g_Settings.getRwyUseEnabled()) {
-            var rwyUseStatus = me._runwaysData.getRwyUseStatus();
-            if (rwyUseStatus == RunwaysData.CODE_NO_XML) {
+            var rwyUseStatus = me._runwayFinder.getRwyUseStatus();
+            if (rwyUseStatus == RunwayFinder.CODE_NO_XML) {
                 me._rwyUseLayout.setVisible(false);
                 me._rwyUseNoDataWarning
                     .setText("The airport does not have data on preferred runways, so the best headwind is used.")
@@ -503,8 +513,8 @@ var DrawTabContent = {
             } else {
                 me._rwyUseLayout.setVisible(true);
 
-                if (rwyUseStatus == RunwaysData.CODE_NO_SCHEDULE
-                    or rwyUseStatus == RunwaysData.CODE_NO_WIND_CRITERIA
+                if (rwyUseStatus == RunwayFinder.CODE_NO_SCHEDULE
+                    or rwyUseStatus == RunwayFinder.CODE_NO_WIND_CRITERIA
                 ) {
                     me._rwyUseNoDataWarning
                         .setText(me._getWarningMsgForNoRwyUse(rwyUseStatus))
@@ -583,6 +593,8 @@ var DrawTabContent = {
                 .setVisible(true)
                 .updateView();
         }
+
+        me._topBar.updateRunwayButtons(me._icao, runways);
     },
 
     #
@@ -592,9 +604,9 @@ var DrawTabContent = {
     # @return string
     #
     _getWarningMsgForNoRwyUse: func(rwyUseStatus) {
-        if (rwyUseStatus == RunwaysData.CODE_NO_SCHEDULE) {
+        if (rwyUseStatus == RunwayFinder.CODE_NO_SCHEDULE) {
             return "No preferred runway for the selected time, so the best headwind is used.";
-        } elsif (rwyUseStatus == RunwaysData.CODE_NO_WIND_CRITERIA) {
+        } elsif (rwyUseStatus == RunwayFinder.CODE_NO_WIND_CRITERIA) {
             return "No preferred runway meets the wind criteria, so the best headwind is used.";
         }
 
@@ -623,6 +635,55 @@ var DrawTabContent = {
     #
     vertScrollBarBy: func(dy) {
         me._scrollArea.vertScrollBarBy(dy);
+    },
+
+    #
+    # Scroll content to show airport info.
+    #
+    # @return void
+    #
+    _scrollToAirport: func() {
+        me._scrollArea.scrollToTop();
+        me._scrollArea.scrollToLeft();
+    },
+
+    #
+    # Scroll content to show runway by given runway index.
+    #
+    # @param  int  index
+    # @return void
+    #
+    _scrollToRunway: func(index) {
+        if (me._runwaysLayout == nil) {
+            return;
+        }
+
+        var count = me._runwaysLayout.count();
+        if (index < 0 or index >= count) {
+            return;
+        }
+
+        var item = me._runwaysLayout.itemAt(index);
+        if (item == nil) {
+            return;
+        }
+
+        var (x, y, w, h) = item.geometry();
+        if (h == 0) {
+            # The runwayInfoView and windRoseView widgets inside item are invisible
+            return;
+        }
+
+        # TODO: use ScrollArea methods as they become available.
+        var scrollTrackHeight = me._scrollArea._scroller_delta[1];
+        var contentHeight     = me._scrollArea._max_scroll[1];
+        if (contentHeight == 0) {
+            contentHeight = 1;
+        }
+
+        var scale = scrollTrackHeight / contentHeight;
+
+        me._scrollArea.vertScrollBarTo(y * scale);
     },
 
     #
