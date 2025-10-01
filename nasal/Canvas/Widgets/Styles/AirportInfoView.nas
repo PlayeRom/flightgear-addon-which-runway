@@ -72,9 +72,9 @@ DefaultStyle.widgets["airport-info-view"] = {
         me._bearing = [
             me._draw.createTextLabel("Bearing:"),
             me._draw.createTextValue("n/a"),
-            me._draw.createTextUnit("true /"),
+            me._draw.createTextUnit("mag /"),
             me._draw.createTextValue("n/a"),
-            me._draw.createTextUnit("mag"),
+            me._draw.createTextUnit("true"),
         ];
 
         me._hasMetar = [
@@ -261,8 +261,8 @@ DefaultStyle.widgets["airport-info-view"] = {
         var bearingTrue = acGeoPos.course_to(airportGeoPos);
         var bearingMag = geo.normdeg(bearingTrue - globals.magvar(acGeoPos.lat(), acGeoPos.lon()));
 
-        me._bearing[me._VAL].setText(me._getBearingString(bearingTrue));
-        me._bearing[me._VAL2].setText(me._getBearingString(bearingMag));
+        me._bearing[me._VAL].setText(me._getBearingString(bearingMag));
+        me._bearing[me._VAL2].setText(me._getBearingString(bearingTrue));
         var (xT, yT) = me._bearing[me._VAL].getTranslation();
         me._draw.setTextTranslations(yT, me._bearing, model._valueMarginX);
     },

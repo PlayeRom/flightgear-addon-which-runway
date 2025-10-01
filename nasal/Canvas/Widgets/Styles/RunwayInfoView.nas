@@ -54,14 +54,12 @@ DefaultStyle.widgets["runway-info-view"] = {
             me._draw.createTextUnit("kts", me._colors.BLUE),
         ];
 
-        me._hdgTrue = [
-            me._draw.createTextLabel("Heading true:"),
-            me._draw.createTextValue("°"),
-        ];
-
-        me._hdgMag = [
-            me._draw.createTextLabel("Heading mag:"),
-            me._draw.createTextValue("°"),
+        me._heading = [
+            me._draw.createTextLabel("Heading:"),
+            me._draw.createTextValue("0"),
+            me._draw.createTextUnit("mag /"),
+            me._draw.createTextValue("0"),
+            me._draw.createTextUnit("true"),
         ];
 
         me._rwyLength = [
@@ -168,8 +166,7 @@ DefaultStyle.widgets["runway-info-view"] = {
 
         y += me._draw.setTextTranslations(y, me._hdTw, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._crosswind, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._hdgTrue, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._hdgMag, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._heading, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._rwyLength, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._rwyWidth, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._surface, model._valueMarginX);
@@ -219,8 +216,10 @@ DefaultStyle.widgets["runway-info-view"] = {
         var rwyHdgTrue = math.round(rwy.heading);
         var rwyHdgMag = math.round(geo.normdeg(rwy.heading - model._aptMagVar));
 
-        me._hdgTrue[me._VAL].setText(sprintf("%d°", rwyHdgTrue));
-        me._hdgMag[me._VAL].setText(sprintf("%d°", rwyHdgMag));
+        me._heading[me._VAL].setText(sprintf("%d°", rwyHdgMag));
+        me._heading[me._VAL2].setText(sprintf("%d°", rwyHdgTrue));
+        var (xTH, yTH) = me._heading[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yTH, me._heading, model._valueMarginX);
 
         me._rwyLength[me._VAL].setText(sprintf("%d", math.round(rwy.length * globals.M2FT)));
         me._rwyLength[me._VAL2].setText(sprintf("%d", math.round(rwy.length)));
