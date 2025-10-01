@@ -69,8 +69,8 @@ DefaultStyle.widgets["airport-info-view"] = {
             me._draw.createTextUnit("km"),
         ];
 
-        me._course = [
-            me._draw.createTextLabel("Course:"),
+        me._bearing = [
+            me._draw.createTextLabel("Bearing:"),
             me._draw.createTextValue("n/a"),
             me._draw.createTextUnit("true /"),
             me._draw.createTextValue("n/a"),
@@ -146,7 +146,7 @@ DefaultStyle.widgets["airport-info-view"] = {
 
         me._updateBestRwyByAcPos(model, acGeoPos);
         me._updateDistance(model, acGeoPos, airportGeoPos);
-        me._updateCourse(model, acGeoPos, airportGeoPos);
+        me._updateBearing(model, acGeoPos, airportGeoPos);
     },
 
     #
@@ -165,7 +165,7 @@ DefaultStyle.widgets["airport-info-view"] = {
         y += me._draw.setTextTranslations(y, me._magVar, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._bestRunwayForPos, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._distance, model._valueMarginX);
-        y += me._draw.setTextTranslations(y, me._course, model._valueMarginX);
+        y += me._draw.setTextTranslations(y, me._bearing, model._valueMarginX);
         y += me._draw.setTextTranslations(y, me._hasMetar, model._valueMarginX, true);
 
         return y;
@@ -257,23 +257,23 @@ DefaultStyle.widgets["airport-info-view"] = {
     # @param  hash  airportGeoPos  The geo.Coord object of airport position.
     # @return void
     #
-    _updateCourse: func(model, acGeoPos, airportGeoPos) {
-        var courseTrue = acGeoPos.course_to(airportGeoPos);
-        var courseMag = geo.normdeg(courseTrue - globals.magvar(acGeoPos.lat(), acGeoPos.lon()));
+    _updateBearing: func(model, acGeoPos, airportGeoPos) {
+        var bearingTrue = acGeoPos.course_to(airportGeoPos);
+        var bearingMag = geo.normdeg(bearingTrue - globals.magvar(acGeoPos.lat(), acGeoPos.lon()));
 
-        me._course[me._VAL].setText(me._getCourseString(courseTrue));
-        me._course[me._VAL2].setText(me._getCourseString(courseMag));
-        var (xT, yT) = me._course[me._VAL].getTranslation();
-        me._draw.setTextTranslations(yT, me._course, model._valueMarginX);
+        me._bearing[me._VAL].setText(me._getBearingString(bearingTrue));
+        me._bearing[me._VAL2].setText(me._getBearingString(bearingMag));
+        var (xT, yT) = me._bearing[me._VAL].getTranslation();
+        me._draw.setTextTranslations(yT, me._bearing, model._valueMarginX);
     },
 
     #
-    # @param  double  course
+    # @param  double  bearing
     # @return string
     #
-    _getCourseString: func(course) {
-        return course == nil
+    _getBearingString: func(bearing) {
+        return bearing == nil
             ? "n/a"
-            : sprintf("%.0f°", course);
+            : sprintf("%.0f°", bearing);
     },
 };
