@@ -2,7 +2,7 @@
 FlightGear "Which Runway" Add-on
 ================================
 
-This add-on uses the METAR to indicate which runway is best for takeoff or landing. It also calculates headwind, crosswind and tailwind forces for the each runway of the airport.
+This add-on uses METAR data and airport preferred runways (ICAO.rwyuse.xml files) to indicate the best runway for takeoff or landing. It also calculates headwinds, crosswinds, and tailwinds for each airport runway (which can be useful for input into the MCDU), and provides a wealth of information about the airport and its runways, along with a graphical representation on a wind rose.
 
 ## Installation
 
