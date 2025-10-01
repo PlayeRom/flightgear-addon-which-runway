@@ -26,14 +26,14 @@ var RunwayFinder = {
     # Constructor.
     #
     # @param  hash  metar  Metar object.
-    # @param  hash  runwaysUse  RwyUse object.
+    # @param  hash  runwayUse  RwyUse object.
     # @return hash
     #
-    new: func(metar, runwaysUse) {
+    new: func(metar, runwayUse) {
         var me = {
             parents: [RunwayFinder],
             _metar: metar,
-            _runwaysUse: runwaysUse,
+            _runwayUse: runwayUse,
         };
 
         me._rwyUseStatus = RunwayFinder.CODE_IGNORE;
@@ -65,7 +65,7 @@ var RunwayFinder = {
         me._rwyUseStatus = RunwayFinder.CODE_IGNORE;
 
         if (g_Settings.getRwyUseEnabled() and isRwyUse) {
-            var preferredRunways = me._runwaysUse.getAllPreferredRunways(
+            var preferredRunways = me._runwayUse.getAllPreferredRunways(
                 airport.id,
                 aircraftType,
                 utcHour,
@@ -108,7 +108,7 @@ var RunwayFinder = {
     # @return vector|nil  Array of runways data or nil if false.
     #
     _getRunwaysByPreferred: func(airport, aircraftType, isTakeoff, preferredRunways) {
-        var wind = me._runwaysUse.getWind(airport.id, aircraftType);
+        var wind = me._runwayUse.getWind(airport.id, aircraftType);
         if (wind == nil) {
             return nil;
         }

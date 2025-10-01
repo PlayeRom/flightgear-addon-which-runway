@@ -48,7 +48,7 @@ var WhichRwyDialog = {
         me._parentDialog.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
         me._parentDialog.setPositionOnCenter();
 
-        me._runwaysUse = RwyUse.new();
+        me._runwayUse = RwyUse.new();
 
         me._timer = Timer.make(3, me, me._updateDynamicData);
         me._timer.simulatedTime = true;
@@ -81,7 +81,7 @@ var WhichRwyDialog = {
     _createTab: func(tabId, label) {
         var layout = canvas.VBoxLayout.new();
         me._tabs.addTab(tabId, label, layout);
-        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwaysUse);
+        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwayUse);
     },
 
     #
@@ -96,6 +96,8 @@ var WhichRwyDialog = {
         foreach (var tabId; keys(me._tabContents)) {
             me._tabContents[tabId].del();
         }
+
+        me._runwayUse.del();
 
         me._parentDialog.del();
     },

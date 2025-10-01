@@ -27,10 +27,10 @@ var DrawTabContent = {
     # @param  ghost  tabsContent  Tabs canvas content.
     # @param  ghost  tabContent  Single tab canvas content.
     # @param  string  tabId
-    # @param  hash  runwaysUse  RwyUse object.
+    # @param  hash  runwayUse  RwyUse object.
     # @return hash
     #
-    new: func(tabsContent, tabContent, tabId, runwaysUse) {
+    new: func(tabsContent, tabContent, tabId, runwayUse) {
         var me = {
             parents: [
                 DrawTabContent,
@@ -38,7 +38,7 @@ var DrawTabContent = {
             ],
             _tabsContent: tabsContent,
             _tabContent: tabContent,
-            _runwaysUse: runwaysUse,
+            _runwayUse: runwayUse,
         };
 
         me._icao = "";
@@ -50,7 +50,7 @@ var DrawTabContent = {
             Callback.new(me._realWxUpdatedCallback, me),
         );
 
-        me._runwayFinder = RunwayFinder.new(me._metar, me._runwaysUse);
+        me._runwayFinder = RunwayFinder.new(me._metar, me._runwayUse);
 
         me._topBar = TopBar.new(
             me._tabsContent,
@@ -524,11 +524,11 @@ var DrawTabContent = {
                 }
 
                 var acType = me._drawRwyUseControls.getAircraftType();
-                var windCriteria = me._runwaysUse.getWind(me._icao, acType);
-                var traffic = me._runwaysUse.getUsedTrafficFullName(me._icao, acType);
-                var dailyOpHours = me._runwaysUse.getDailyOperatingHours(me._icao, acType);
+                var windCriteria = me._runwayUse.getWind(me._icao, acType);
+                var traffic = me._runwayUse.getUsedTrafficFullName(me._icao, acType);
+                var dailyOpHours = me._runwayUse.getDailyOperatingHours(me._icao, acType);
 
-                var schedule = me._runwaysUse.getScheduleByTime(
+                var schedule = me._runwayUse.getScheduleByTime(
                     me._icao,
                     me._drawRwyUseControls.getAircraftType(),
                     scheduleUtcHour,
