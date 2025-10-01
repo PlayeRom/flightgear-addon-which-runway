@@ -39,9 +39,9 @@ var AboutDialog = {
             ],
         };
 
-        var dialogParent = me.parents[1];
-        dialogParent.setChild(me, AboutDialog); # Let the parent know who their child is.
-        dialogParent.setPositionOnCenter();
+        me._parentDialog = me.parents[1];
+        me._parentDialog.setChild(me, AboutDialog); # Let the parent know who their child is.
+        me._parentDialog.setPositionOnCenter();
 
         me._vbox.addSpacing(AboutDialog.PADDING);
         me._drawContent();
@@ -61,7 +61,7 @@ var AboutDialog = {
     # @override PersistentDialog
     #
     del: func() {
-        me.parents[1].del();
+        me._parentDialog.del();
     },
 
     #

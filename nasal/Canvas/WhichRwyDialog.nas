@@ -44,9 +44,9 @@ var WhichRwyDialog = {
             ],
         };
 
-        var dialogParent = me.parents[1];
-        dialogParent.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
-        dialogParent.setPositionOnCenter();
+        me._parentDialog = me.parents[1];
+        me._parentDialog.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
+        me._parentDialog.setPositionOnCenter();
 
         me._runwaysUse = RwyUse.new();
 
@@ -97,7 +97,7 @@ var WhichRwyDialog = {
             me._tabContents[tabId].del();
         }
 
-        me.parents[1].del();
+        me._parentDialog.del();
     },
 
     #
@@ -110,7 +110,7 @@ var WhichRwyDialog = {
         me._updateDynamicData();
         me._timer.start();
 
-        me.parents[1].show();
+        me._parentDialog.show();
     },
 
     #
@@ -122,7 +122,7 @@ var WhichRwyDialog = {
     hide: func() {
         me._timer.stop();
 
-        me.parents[1].hide();
+        me._parentDialog.hide();
     },
 
     #
