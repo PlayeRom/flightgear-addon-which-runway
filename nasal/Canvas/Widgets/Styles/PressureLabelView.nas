@@ -59,16 +59,6 @@ DefaultStyle.widgets["pressure-label-view"] = {
     },
 
     #
-    # Set remembered content height to nil for recalculate translations during redraw.
-    #
-    # @param  ghost  model  AirportInfo model.
-    # @return void
-    #
-    resetContentHeight: func(model) {
-        me._contentHeight = nil;
-    },
-
-    #
     # @param  ghost  model  PressureLabel model.
     # @return void
     #

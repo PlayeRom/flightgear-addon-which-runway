@@ -47,7 +47,6 @@ gui.widgets.PressureLabel = {
     #
     setMarginForValue: func(margin) {
         me._valueMarginX = margin;
-        me._view.resetContentHeight(me);
         return me;
     },
 
