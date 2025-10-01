@@ -47,7 +47,7 @@ var Profiler = {
 
         var time = systime() - item.startTime;
 
-        Log.print("profiler time = ", time, " seconds. ", item.message);
+        Log.print("profiler time = ", (time * 1000), " ms. ", item.message);
 
         return time;
     },
