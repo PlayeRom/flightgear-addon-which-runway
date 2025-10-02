@@ -52,6 +52,7 @@ var WhichRwyDialog = {
 
         me._aircraftTypeFinder = AircraftTypeFinder.new();
         me._aircraftType = me._aircraftTypeFinder.getType();
+        g_Settings.setRwyUseAircraftType(me._aircraftType);
 
         me._timer = Timer.make(3, me, me._updateDynamicData);
         me._timer.simulatedTime = true;
