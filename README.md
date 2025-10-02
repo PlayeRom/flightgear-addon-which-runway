@@ -151,6 +151,8 @@ From the "Which Runway" -> "Settings..." menu, you can open the global settings 
 1. `Max range for nearest METAR in NM` – here you can specify, in nautical miles, how far away the nearest METAR will be searched if the airport does not have its own METAR. The default value is 30 NM.
 2. `Preferred runways at the airport` – here you can enable/disable the use of preferred runways by the airport (`ICAO.rwyuse.xml` files). This is enabled by default. If you disable this option, the preferred runways at the airport will not be included at all (even if they exist), and the add-on will always display runways sorted by best headwind.
 
+To see the effects of the changes, you must reload the tab by clicking the "Load" or "Update METAR" button on the bottom bar.
+
 ## Development
 
 This section is for developers only, if you are a user who just uses the add-on, you should not bother with this section.
