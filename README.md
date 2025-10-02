@@ -2,7 +2,7 @@
 FlightGear "Which Runway" Add-on
 ================================
 
-This add-on uses METAR data and airport preferred runways (ICAO.rwyuse.xml files) to indicate the best runway for takeoff or landing. It also calculates headwinds, crosswinds, and tailwinds for each airport runway (which can be useful for input into the MCDU), and provides a wealth of information about the airport and its runways, along with a graphical representation on a wind rose.
+This add-on uses METAR data and preferred runways at the airport (ICAO.rwyuse.xml files) to indicate the best runway for takeoff or landing. It also calculates headwinds, crosswinds, and tailwinds for each airport runway (which can be useful for input into the MCDU), and provides a wealth of information about the airport and its runways, along with a graphical representation on a wind rose.
 
 ## Installation
 
@@ -41,18 +41,18 @@ Airport information is always displayed at the top of the tab:
 4. **Mag Var** – magnetic variation at the airport.
 5. **Best runway from aircraft position** – this is not the best runway due to the wind, nor is it the airport's preferred runway, it is the runway you can choose if you need to land immediately in case of an emergency, as it's the runway your aircraft is most conveniently positioned to land on. This means you won't have to perform as many maneuvers to land on it. This value will change dynamically.
 6. **Distance** – distance from your position to the airport in nautical miles and kilometers. This value will change dynamically.
-7. **Bearing** – bearing from your position to the airport (true and magnetic). This value will change dynamically.
+7. **Bearing** – bearing from your position to the airport (magnetic and true). This value will change dynamically.
 8. **Has METAR** – information as to whether the airport provides its own METAR report.
 9. **METAR** – raw METAR from the current airport, if available, or the nearest other airport.
 10. **QNH** – atmospheric pressure relative to mean sea level as given by MATAR, in 3 units. This information may change as the METAR changes.
 11. **QEF** – atmospheric pressure relative to the airport elevation as given by MATAR, in 3 units. This information may change as the METAR changes.
 12. **Wind** – information from METAR about the true direction of the wind and its speed (and wind gusts, if any).
 
-## Preferred Runways
+## Preferred runways at the airport
 
-Some airports, especially larger ones, include a file with the extension `*.rwyuse.xml` in their scenery. This file defines schedules for specific aircraft types and the preferred runways for takeoff and landing within a given schedule. The `rwyuse.xml` file also contains information about the maximum allowable tailwind and crosswind. If the first column of preferred runways does not meet the wind requirements, the next column is considered, and so on, until a column containing preferred runways is found. This means that the preferred runway may not necessarily be the one best located for the headwind. This is due to noise reduction, traffic volume, runway length, and other factors.
+Some airports, especially larger ones, include a file with the extension `*.rwyuse.xml` in their scenery. This file defines schedules for specific aircraft types and the preferred runways for takeoff and landing within a given schedule. The `rwyuse.xml` file also contains information about the maximum allowable tailwind and crosswind. Runways in the `rwyuse.xml` file are presented in columns, as pairs for takeoff and landing (or threes, e.g. 1 runway for landing, 2 for takeoff). If at least one runway in the first column of preferred runways does not meet the wind requirements, the next column is considered, and so on, until a column containing preferred runways is found. This means that the preferred runway may not necessarily be the one best located for the headwind. This is due to noise reduction, traffic volume, runway length, and other factors.
 
-"Which Runway" attempts to load the `rwyuse.xml` file, if it exists for a given airport, and takes into account the preferred runways there.
+The "Which Runway" add-on by default tries to load the `rwyuse.xml` file (if it exists for a given airport), and takes into account the preferred runways there.
 
 If the airport has an `rwyuse.xml` file, it will be visible with an additional set of controls and information.
 
@@ -60,7 +60,7 @@ If the airport has an `rwyuse.xml` file, it will be visible with an additional s
 
 Controls:
 
-1. **Use preferred airport runways** checkbox – this will be enabled by default to use information from `rwyuse.xml`. However, you can always uncheck this option, which means disabling the `rwyuse.xml` file, and then the runways will be presented simply by the highest headwind.
+1. **Use the preferred runways at the airport** checkbox – this will be enabled by default to use information from `rwyuse.xml` in current tab. However, you can always uncheck this option, which means disabling the `rwyuse.xml` file, and then the runways will be presented simply by the highest headwind. If you want to globally disable the use of preferred runways, go to the "Which runway" -> "Settings..." menu.
 2. **Aircraft type** combobox – schedules for specific aircraft types are created in the `rwyuse.xml` file. Therefore, first make sure you have the correct aircraft type set:
     1. `Commercial` – airliners,
     2. `General Aviation`,
@@ -95,20 +95,22 @@ If you're using preferred runways for an airport, then:
 
 1. The preferred runways will be displayed first. They will have the additional information **Is preferred: Yes**. Typically, there will be only one runway, or possibly two, for large airports. This is the runway you should select.
 2. Not all runways will be displayed here, only those that were on the airport's preferred list for a given schedule.
-3. If a runway doesn't meet the maximum tailwind or crosswind criteria, it will be marked with the additional information **Is preferred: No**.
-4. If no runway is suitable due to unfavorable wind conditions, everyone will receive the information **Is preferred: No**. You can then deselect the "Use preferred airport runways" option and simply check the runways by the highest headwind.
+3. If at least one of the runways from a column in the `rwyuse.xml` file does not meet the tailwind and crosswind criteria, then all runways in that column are marked as **Is preferred: No**.
+4. If no runway is suitable due to unfavorable wind conditions, everyone will receive the information **Is preferred: No**. You can then deselect the "Use the preferred runways at the airport" option and simply check the runways by the highest headwind.
 5. If the wind is variable, the criteria for max tailwind and crosswind are not checked, which means that no runways are rejected from the preferred ones.
 
 
 ![alt Preferred Runway](docs/img/6-preferred-rwyuse.png "Preferred Runway")
 
+For more information about `rwyuse.xml` file see [article on the FG wiki](https://wiki.flightgear.org/AI_Traffic#Runway_Usage_Configuration).
+
 ### Comments
 
 Some airports have incorrectly created `rwyuse.xml` files. For example, the number of runways in a column is not the same, or they have multiple schedule entries for the same aircraft type, each with the same time range. Such cases can produce illogical results or won't be fully supported. The example of how this should be done correctly, and what I used as a basis, is the `EHAM.rwyuse.xml` file, where the aircraft type has a single schedule from 00:00 to 24:00, and the preferred runway lists have the same number of columns.
 
-### Preferred runways and compatibility issues
+### Preferred runways at the airport and compatibility issues
 
-Currently, FlightGear uses the airport's preferred runways (if available) only for computer-controlled traffic. Therefore, if you start a session on a runway, your aircraft will be placed on the runway based on the highest headwind, without taking into account the airport's preferred runways. The good news is that this is recognized and marked with a FIXME comment in the FlightGear code :)
+Currently, FlightGear uses the preferred runways at the airport (if available) only for computer-controlled traffic. Therefore, if you start a session on a runway, your aircraft will be placed on the runway based on the highest headwind, without taking into account the preferred runways at the airport. The good news is that this is recognized and marked with a FIXME comment in the FlightGear code :)
 
 Other add-ons, such as "Red Griffin ATC" (version 2.3.0 at the moment), work similarly. If you haven't created flight plan yet, and you ask "Red Griffin ATC" for departure information, you'll receive a takeoff runway based on the highest headwind, and this will usually not be consistent with what “Which Runway” indicates when using preferred runways.
 
@@ -142,15 +144,12 @@ The illustration shows a case of gusty wind:
 - `PageUp`/`PageDown` – scroll content with large increments (110 px).
 - `Esc` – close the window.
 
-## Customization
+## Settings Dialog
 
-Some options are stored in a property tree, so they can be changed during a flight session. To do this, go to the `Debug` menu -> `Browse Internal Properties` and then go to the `/addons/by-id/org.flightgear.addons.which-runway/setting` property. The following properties can be changed here:
+From the "Which Runway" -> "Settings..." menu, you can open the global settings window. The following options are available:
 
-1. `max-metar-range-nm` – maximum search range of the nearest airport with METAR, used if the current airport does not have a METAR. Default 30 NM.
-2. `keys/arrow-move-size` – by how many pixels the content should move when scrolling with the Up/Down arrow keys. Default 20 px.
-3. `keys/page-move-size` – by how many pixels the content should move when scrolling with the PageUp/PageDown keys. Default 110 px.
-4. `rwyuse/enabled` – whether the use of preferred airport runways (`rwyuse.xml` files) should be enabled. Default `true`.
-5. `rwyuse/aircraft-type` – default aircraft type (traffic) for `rwyuse.xml` files. Default `com` (commercial).
+1. `Max range for nearest METAR in NM` – here you can specify, in nautical miles, how far away the nearest METAR will be searched if the airport does not have its own METAR. The default value is 30 NM.
+2. `Preferred runways at the airport` – here you can enable/disable the use of preferred runways by the airport (`ICAO.rwyuse.xml` files). This is enabled by default. If you disable this option, the preferred runways at the airport will not be included at all (even if they exist), and the add-on will always display runways sorted by best headwind.
 
 ## Development
 
