@@ -101,9 +101,6 @@ var SettingsDialog = {
     _drawNearestMetarRange: func() {
         var label = me._getLabel("Max range for nearest METAR in NM:");
 
-        me._rangeComboBox = canvas.gui.widgets.ComboBox.new(me._group)
-            .setFixedSize(100, 28);
-
         var items = [
             { label: "20",  value:  20 },
             { label: "30",  value:  30 }, # default
@@ -113,17 +110,7 @@ var SettingsDialog = {
             { label: "200", value: 200 },
         ];
 
-        if (Utils.tryCatch(func { typeof(me._rangeComboBox.createItem) == "func"; }, [])) {
-            # For next addMenuItem is deprecated
-            foreach (var item; items) {
-                me._rangeComboBox.createItem(item.label, item.value);
-            }
-        } else { # for 2024.1
-            foreach (var item; items) {
-                me._rangeComboBox.addMenuItem(item.label, item.value);
-            }
-        }
-
+        me._rangeComboBox = ComboBoxHelper.create(me._group, items, 100, 28);
         me._rangeComboBox.setSelectedByValue(me._maxMetarRangeNm);
         me._rangeComboBox.listen("selected-item-changed", func(e) {
             me._maxMetarRangeNm = e.detail.value;

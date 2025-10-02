@@ -250,9 +250,6 @@ var DrawRwyUseControls = {
     _creteRwyUseComboBoxAircraft: func() {
         me._labelAircraftType = me._getLabel("Aircraft type:");
 
-        me._comboBoxAircraftType = canvas.gui.widgets.ComboBox.new(me._scrollContent)
-            .setFixedSize(160, 28);
-
         var items = [
             { label: "Commercial",       value: RwyUse.COMMERCIAL },
             { label: "General Aviation", value: RwyUse.GENERAL },
@@ -260,18 +257,7 @@ var DrawRwyUseControls = {
             { label: "Military",         value: RwyUse.MILITARY },
         ];
 
-        if (Utils.tryCatch(func { typeof(me._comboBoxAircraftType.createItem) == "func"; }, [])) {
-            # For next addMenuItem is deprecated
-            foreach (var item; items) {
-                me._comboBoxAircraftType.createItem(item.label, item.value);
-            }
-        }
-        else { # for 2024.1
-            foreach (var item; items) {
-                me._comboBoxAircraftType.addMenuItem(item.label, item.value);
-            }
-        }
-
+        me._comboBoxAircraftType = ComboBoxHelper.create(me._scrollContent, items, 160, 28);
         me._comboBoxAircraftType.setSelectedByValue(me._aircraftType);
         me._comboBoxAircraftType.listen("selected-item-changed", func(e) {
             # This setprop will trigger listener for every tab to change aircraft type and redraw:
@@ -322,7 +308,7 @@ var DrawRwyUseControls = {
 
             # In the dev version of the FG, the getCheckedRadio() method has been changed to getCheckedRadioButton().
             # TODO: Remove the check and only use getCheckedRadioButton when version 2024 becomes obsolete.
-            var checkedRadio = Utils.tryCatch(func { typeof(radioGroup.getCheckedRadioButton) == "func"; }, [])
+            var checkedRadio = Utils.tryCatch(func typeof(radioGroup.getCheckedRadioButton), [])
                 ? radioGroup.getCheckedRadioButton()
                 : radioGroup.getCheckedRadio();
 
