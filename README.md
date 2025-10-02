@@ -23,7 +23,7 @@ This add-on adds a "Which Runway" item to the main menu, from which you select "
 
 Each tab contains information about the airport, the METAR, and the runways and their winds. Runways are sorted by which one is most exposed to headwinds. Wind data is always taken from the actual METAR. The METAR will be updated automatically every 15 minutes by FlightGear's mechanisms or by using the "Load"/"Update METAR" buttons.
 
-If the airport does not have a METAR, the METAR is taken from another nearest airport, within a maximum range of 30 NM. A warning is then displayed, indicating which airport the METAR is from and how far away that airport is. This is useful in situations where smaller airports don't have METARs but are close enough to another larger airport that it can be assumed there won't be much, if any, difference in weather. This allows you to obtain some weather conditions, such as wind and barometric pressure, even at airports without a METAR, which wasn't so easily possible without this add-on.
+If the airport does not have a METAR, the METAR is taken from another nearest airport, within a maximum range of 30 NM by default. A warning is then displayed, indicating which airport the METAR is from and how far away that airport is. This is useful in situations where smaller airports don't have METARs but are close enough to another larger airport that it can be assumed there won't be much, if any, difference in weather. This allows you to obtain some weather conditions, such as wind and barometric pressure, even at airports without a METAR, which wasn't so easily possible without this add-on.
 
 If there is no other airport with a METAR within 30 NM, information about the airport and its runways will be displayed, but without wind and other weather data. This means that the runways are displayed as they appear in the database and are not sorted by best wind.
 
@@ -70,7 +70,7 @@ Controls:
     Not all airports have schedules for `Ultralight` and `Military`. If `Ultralight` is not present, `General` will be used, even though `Ultralight` is selected. If `Military` is not present, `Commercial` will be used. And if `General` is not specified, `Commercial` will also be used. Changing the aircraft in any tab will change the aircraft in every tab. This is convenient because we don't have to repeat this for every tab.
 
     ![alt Aircraft Type Changes](docs/img/aircraft-type-changes.png "Aircraft Type Changes")
-3. Radio buttons **Takeoff** and **Lending** – here you must select whether you are interested in taking off or landing at a given airport. For the `Departure` tab, `takeoff` is selected and cannot be changed. For `Arrival`, `landing` is always selected. The values ​​can be changed on the `Nearest` and `Alternate` tabs.
+3. Radio buttons **Takeoff** and **Lending** – here you must select whether you are interested in taking off or landing at a given airport. For the "Departure" tab, `takeoff` is selected and cannot be changed. For "Arrival", `landing` is always selected. The values ​​can be changed on the "Nearest" and "Alternate" tabs.
 4. **Current UTC time** simply displays the current UTC time in the simulator to help set the schedule time. This time automatically updates.
 5. **Schedule UTC time** – here you should select the UTC time for takeoff or landing. As I mentioned, airports have their schedules based on time intervals in UTC, so it's important to enter the correct time. For example, if your flight will last another 2 hours, set the UTC time 2 hours ahead to match your expected landing time. You will then receive the correct landing schedule. The minutes change every 10 minutes so that you don't have to click too much, which I think is enough to determine the arrival/departure time.
 
@@ -141,7 +141,7 @@ The illustration shows a case of gusty wind:
 - `3` – switch to the Arrival tab.
 - `4` – switch to the Alternate tab.
 - `Up`/`Down` – scroll content with small increments (20 px).
-- `PageUp`/`PageDown` – scroll content with large increments (110 px).
+- `PageUp`/`PageDown` – scroll the content by one visible screen.
 - `Esc` – close the window.
 
 ## Settings Dialog
