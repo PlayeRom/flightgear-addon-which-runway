@@ -23,7 +23,6 @@
                     <!-- Scroll by keyboard -->
                     <keys>
                         <arrow-move-size type="int">20</arrow-move-size>
-                        <page-move-size type="int">110</page-move-size>
                     </keys>
 
                     <!-- Options for using rwyuse.xml files. -->

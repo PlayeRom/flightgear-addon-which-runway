@@ -61,15 +61,6 @@ var Settings = {
     },
 
     #
-    # Get key page up/down move size.
-    #
-    # @return int
-    #
-    getKeyPageMoveSize: func() {
-        return me._keyPageMoveSize.getValue() or 110;
-    },
-
-    #
     # Check if runway use is enabled.
     #
     # @return bool

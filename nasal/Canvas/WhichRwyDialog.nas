@@ -162,23 +162,31 @@ var WhichRwyDialog = {
             #   event.altKey
             #   event.metaKey
 
-            if (event.key == "Up") {
-                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(-g_Settings.getKeyArrowMoveSize());
-            } elsif (event.key == "Down") {
-                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(g_Settings.getKeyArrowMoveSize());
-            } elsif (event.key == "PageUp") {
-                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(-g_Settings.getKeyPageMoveSize());
-            } elsif (event.key == "PageDown") {
-                me._tabContents[me._tabs._currentTabId].vertScrollBarBy(g_Settings.getKeyPageMoveSize());
-            } elsif (event.key == "1") {
-                me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
-            } elsif (event.key == "2") {
-                me._tabs.setCurrentTab(WhichRwyDialog.TAB_DEPARTURE);
-            } elsif (event.key == "3") {
-                me._tabs.setCurrentTab(WhichRwyDialog.TAB_ARRIVAL);
-            } elsif (event.key == "4") {
-                me._tabs.setCurrentTab(WhichRwyDialog.TAB_ALTERNATE);
-            }
+               if (event.key == "Up"     or event.key == "Down")     me._handleScrollKey(true,  event.key == "Up");
+            elsif (event.key == "PageUp" or event.key == "PageDown") me._handleScrollKey(false, event.key == "PageUp");
+            elsif (event.key == "1") me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
+            elsif (event.key == "2") me._tabs.setCurrentTab(WhichRwyDialog.TAB_DEPARTURE);
+            elsif (event.key == "3") me._tabs.setCurrentTab(WhichRwyDialog.TAB_ARRIVAL);
+            elsif (event.key == "4") me._tabs.setCurrentTab(WhichRwyDialog.TAB_ALTERNATE);
         });
+    },
+
+    #
+    # @param  bool  isArrow  If true then arrow up/down keys, otherwise page up/down keys.
+    # @param  bool  isUp  If true then dy must be converted to negative.
+    # @return void
+    #
+    _handleScrollKey: func(isArrow, isUp) {
+        var tab = me._tabContents[me._tabs._currentTabId];
+
+        var dy = isArrow
+            ? g_Settings.getKeyArrowMoveSize()
+            : tab.getScrollPageHeight();
+
+        if (isUp) {
+            dy = -dy;
+        }
+
+        tab.vertScrollBarBy(dy);
     },
 };

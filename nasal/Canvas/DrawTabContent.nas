@@ -677,14 +677,7 @@ var DrawTabContent = {
             return;
         }
 
-        # TODO: use ScrollArea methods as they become available.
-        var scrollTrackHeight = me._scrollArea._scroller_delta[1];
-        var contentHeight     = me._scrollArea._max_scroll[1];
-        if (contentHeight == 0) {
-            contentHeight = 1;
-        }
-
-        var scale = scrollTrackHeight / contentHeight;
+        var scale = me._getScrollHeightScale();
 
         me._scrollArea.vertScrollBarTo(y * scale);
     },
@@ -698,5 +691,36 @@ var DrawTabContent = {
         if (me._airportInfoView != nil and me._airportInfoView.isVisible()) {
             me._airportInfoView.updateDynamicData();
         }
+    },
+
+    #
+    # @return double
+    #
+    _getScrollHeightScale: func() {
+        # TODO: use ScrollArea methods as they become available.
+        var scrollTrackHeight = me._scrollArea._scroller_delta[1];
+        var contentHeight     = me._scrollArea._max_scroll[1];
+        if (contentHeight == 0) {
+            contentHeight = 1; # prevent divide by 0
+        }
+
+        return scrollTrackHeight / contentHeight;
+    },
+
+    #
+    # @return double
+    #
+    getScrollPageHeight: func() {
+        # TODO: use ScrollArea methods as they become available.
+        var contentHeight = me._scrollArea._content_size[1];
+        var maxScroll     = me._scrollArea._max_scroll[1];
+        var scrollerTrack = me._scrollArea._scroller_delta[1];
+
+        if (maxScroll == 0 or scrollerTrack == 0) {
+            return 0;
+        }
+
+        var visibleHeight = contentHeight - maxScroll;
+        return (visibleHeight / maxScroll) * scrollerTrack;
     },
 };
