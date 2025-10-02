@@ -65,28 +65,9 @@ var RunwayFinder = {
         me._rwyUseStatus = RunwayFinder.CODE_IGNORE;
 
         if (g_Settings.getRwyUseEnabled() and isRwyUse) {
-            var preferredRunways = me._runwayUse.getAllPreferredRunways(
-                airport.id,
-                aircraftType,
-                utcHour,
-                utcMinute,
-            );
-
-            if (preferredRunways == RwyUse.ERR_NO_SCHEDULE) {
-                me._rwyUseStatus = RunwayFinder.CODE_NO_SCHEDULE;
-            } else {
-                if (preferredRunways == nil) {
-                    me._rwyUseStatus = RunwayFinder.CODE_NO_XML;
-                } else {
-                    # Log.print("preferredRunways = ", string.join(", ", preferredRunways));
-                    var result = me._getRunwaysByPreferred(airport, aircraftType, isTakeoff, preferredRunways);
-                    if (result != nil) {
-                        me._rwyUseStatus = RunwayFinder.CODE_OK;
-                        return result;
-                    } else {
-                        me._rwyUseStatus = RunwayFinder.CODE_NO_WIND_CRITERIA;
-                    }
-                }
+            var result = me._getRunwaysByAirportPreferred(airport, aircraftType, isTakeoff, utcHour, utcMinute);
+            if (result != nil) {
+                return result;
             }
         }
 
@@ -101,13 +82,52 @@ var RunwayFinder = {
     },
 
     #
+    # Get runways data for given airport.
+    #
+    # @param  ghost  airport  Airport info object.
+    # @param  string  aircraftType  Aircraft type: "com", "gen", "mil", "ul".
+    # @param  bool  isTakeoff  True for takeoff, false for landing.
+    # @param  int  utcHour
+    # @param  int  utcMinute
+    # @return vector|nil  Array of runways data.
+    #
+    _getRunwaysByAirportPreferred: func(airport, aircraftType, isTakeoff, utcHour, utcMinute) {
+        var preferredRunways = me._runwayUse.getAllPreferredRunways(
+            airport.id,
+            aircraftType,
+            utcHour,
+            utcMinute,
+        );
+
+        if (preferredRunways == nil) {
+            me._rwyUseStatus = RunwayFinder.CODE_NO_XML;
+            return nil;
+        } elsif (preferredRunways == RwyUse.ERR_NO_SCHEDULE) {
+            me._rwyUseStatus = RunwayFinder.CODE_NO_SCHEDULE;
+            return nil;
+        }
+
+        # Log.print("preferredRunways = ", string.join(", ", preferredRunways));
+        var result = me._getFilteredAirportPreferredRwy(airport, aircraftType, isTakeoff, preferredRunways);
+        if (result == nil) {
+            me._rwyUseStatus = RunwayFinder.CODE_NO_WIND_CRITERIA;
+            return nil;
+        }
+
+        me._rwyUseStatus = RunwayFinder.CODE_OK;
+        return result;
+    },
+
+    #
+    # Check the runways to see if they meet the wind criteria, we check them by columns.
+    #
     # @param  ghost  airport
     # @param  string  aircraftType  Aircraft type can be "com", "gen", "mil", "ul".
     # @param  bool  isTakeoff  True for takeoff, false for landing.
     # @param  hash  preferredRunways
     # @return vector|nil  Array of runways data or nil if false.
     #
-    _getRunwaysByPreferred: func(airport, aircraftType, isTakeoff, preferredRunways) {
+    _getFilteredAirportPreferredRwy: func(airport, aircraftType, isTakeoff, preferredRunways) {
         var wind = me._runwayUse.getWind(airport.id, aircraftType);
         if (wind == nil) {
             return nil;
@@ -131,6 +151,7 @@ var RunwayFinder = {
         for (var c = 0; c < colSize; c += 1) {
             var isColActive = true;
             var columnRunwayData = [];
+
             for (var r = 0; r < rowsSize; r += 1) {
                 if (r < takeoffRowSize) {
                     if (!me._processRwy(takeoffs, r, c, airport, wind, isTakeoff, columnRunwayData)) {
