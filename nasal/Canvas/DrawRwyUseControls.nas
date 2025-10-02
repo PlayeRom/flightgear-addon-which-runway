@@ -200,7 +200,7 @@ var DrawRwyUseControls = {
         var takeOffLandingLayout = me._creteRwyUseRadioBtnsTakeoffLanding();
 
         me._checkboxRwyUse = canvas.gui.widgets.CheckBox.new(me._scrollContent)
-            .setText("Use preferred airport runways")
+            .setText("Use the airport's preferred runways")
             .setChecked(me._isRwyUse)
             .listen("toggled", func(e) {
                 # I don't why but convert to true/false is important for me._rwyUseInfoWidget.setVisible()

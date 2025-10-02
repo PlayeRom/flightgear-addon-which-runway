@@ -18,7 +18,7 @@
             <org.flightgear.addons.which-runway>
                 <settings>
                     <!-- Maximum search range of the nearest airport with METAR. -->
-                    <max-metar-range-nm type="double">30</max-metar-range-nm>
+                    <max-metar-range-nm type="double" userarchive="y">30</max-metar-range-nm>
 
                     <!-- Scroll by keyboard -->
                     <keys>
@@ -28,7 +28,7 @@
                     <!-- Options for using rwyuse.xml files. -->
                     <rwyuse>
                         <!-- Set to false to completely disable the use of rwyuse.xml files. -->
-                        <enabled type="bool">true</enabled>
+                        <enabled type="bool" userarchive="y">true</enabled>
 
                         <!-- Default aircraft type, it can be: "com", "gen", "mil", "ul" -->
                         <aircraft-type type="string">com</aircraft-type>

@@ -19,6 +19,18 @@
                 </binding>
             </item>
             <item>
+                <label>----------</label>
+                <enabled type="bool">false</enabled>
+            </item>
+            <item>
+                <label>Settings...</label>
+                <name>which-runway-addon-settings</name>
+                <binding>
+                    <command>nasal</command>
+                    <script>whichRunway.g_SettingsDialog.show();</script>
+                </binding>
+            </item>
+            <item>
                 <label>About...</label>
                 <name>which-runway-addon-about</name>
                 <binding>

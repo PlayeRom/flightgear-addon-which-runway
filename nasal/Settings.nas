@@ -11,6 +11,7 @@
 
 #
 # Settings class to set/get settings from property list.
+# FlightGear will save them to the autosave.xml file automatically by using userarchive="y" in addon-config.xml file.
 #
 var Settings = {
     #
@@ -45,10 +46,20 @@ var Settings = {
     #
     # Get maximum search range of the nearest airport with METAR.
     #
-    # @return int
+    # @return int  Range in NM.
     #
     getMaxMetarRangeNm: func() {
         return me._maxMetarRangeNm.getValue() or 30;
+    },
+
+    #
+    # Set maximum search range of the nearest airport with METAR.
+    #
+    # @param  int  value  Range in NM.
+    # @return void
+    #
+    setMaxMetarRangeNm: func(value) {
+        me._maxMetarRangeNm.setIntValue(value);
     },
 
     #
@@ -61,12 +72,22 @@ var Settings = {
     },
 
     #
-    # Check if runway use is enabled.
+    # Check if rwyuse is enabled.
     #
     # @return bool
     #
     getRwyUseEnabled: func() {
         return me._rwyUseEnabled.getBoolValue();
+    },
+
+    #
+    # Set rwyuse enable/disable.
+    #
+    # @param  bool
+    # @return void
+    #
+    setRwyUseEnabled: func(value) {
+        return me._rwyUseEnabled.setBoolValue(value);
     },
 
     #
