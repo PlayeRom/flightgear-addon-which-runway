@@ -145,7 +145,7 @@ var SettingsDialog = {
     #
     _drawEnableRwyUse: func() {
         me._checkboxRwyUse = canvas.gui.widgets.CheckBox.new(me._group)
-            .setText("Airport's preferred runways")
+            .setText("Preferred runways at the airport")
             .setChecked(me._rwyUseEnable)
             .listen("toggled", func(e) {
                 me._rwyUseEnable = e.detail.checked ? true : false; # conversion on true/false is needed ¯\_(ツ)_/¯
