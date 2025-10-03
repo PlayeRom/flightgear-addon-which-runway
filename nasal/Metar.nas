@@ -24,14 +24,16 @@ var Metar = {
     # Constructor
     #
     # @param  string  tabId  Tab ID.
+    # @param  hash  basicWeather  BasicWeather object.
     # @param  hash  updateMetarCallback  Callback object invoked for update Metar.
     # @param  hash  updateRealWxCallback  Callback object invoked for update real weather.
     # @return hash
     #
-    new: func(tabId, updateMetarCallback, updateRealWxCallback) {
+    new: func(tabId, basicWeather, updateMetarCallback, updateRealWxCallback) {
         var me = {
             parents: [Metar],
             _tabId: tabId,
+            _basicWeather: basicWeather,
             _updateMetarCallback: updateMetarCallback,
             _updateRealWxCallback: updateRealWxCallback,
         };
@@ -67,12 +69,25 @@ var Metar = {
     # @return void
     #
     _setListeners: func() {
-        # Redraw canvas if METAR has been changed.
+        # Redraw canvas if live data METAR has been changed.
         me._listeners.add(
             node: me._pathToMyMetar ~ "/data",
             code: func() {
-                Log.print("METAR for ", me._tabId, " has been updated");
-                me._updateMetarCallback.invoke();
+                if (me.isRealWeatherEnabled()) {
+                    Log.print("METAR for ", me._tabId, " has been updated");
+                    me._updateMetarCallback.invoke();
+                }
+            },
+        );
+
+        # Redraw canvas if offline METAR has been changed.
+        me._listeners.add(
+            node: "/environment/metar/data",
+            code: func() {
+                if (!me.isRealWeatherEnabled()) {
+                    Log.print("Offline METAR for ", me._tabId, " has been updated");
+                    me._updateMetarCallback.invoke();
+                }
             },
         );
 
@@ -111,7 +126,7 @@ var Metar = {
         }
 
         fgcommand("request-metar", props.Node.new({
-            "path": me._pathToMyMetar,
+            "path": me._pathToMyMetar, # property where the METAR will be stored
             "station": icao,
         }));
     },
@@ -141,11 +156,15 @@ var Metar = {
     # @return double|nil
     #
     getWindDir: func(airport) {
-        if (!me.canUseMetar(airport) or me._isWindVariable(airport)) {
-            return nil;
+        if (me._basicWeather.isBasicWxManCfgEnabled()) {
+            return me._basicWeather.getWindDir();
         }
 
-        return getprop(me._pathToMyMetar ~ "/base-wind-dir-deg");
+        if (me.canUseMetar(airport) and !me._isWindVariable(airport)) {
+            return getprop(me._getPropPathToMetar() ~ "/base-wind-dir-deg");
+        }
+
+        return nil;
     },
 
     #
@@ -154,7 +173,11 @@ var Metar = {
     # @return double
     #
     getWindSpeedKt: func() {
-        var speed = getprop(me._pathToMyMetar ~ "/base-wind-speed-kt");
+        if (me._basicWeather.isBasicWxManCfgEnabled()) {
+            return me._basicWeather.getWindKt();
+        }
+
+        var speed = getprop(me._getPropPathToMetar() ~ "/base-wind-speed-kt");
         if (speed != nil) {
             return speed;
         }
@@ -168,7 +191,11 @@ var Metar = {
     # @return double
     #
     getWindGustSpeedKt: func() {
-        var speed = getprop(me._pathToMyMetar ~ "/gust-wind-speed-kt");
+        if (me._basicWeather.isBasicWxManCfgEnabled()) {
+            return 0;
+        }
+
+        var speed = getprop(me._getPropPathToMetar() ~ "/gust-wind-speed-kt");
         if (speed != nil) {
             return speed;
         }
@@ -177,10 +204,12 @@ var Metar = {
     },
 
     #
+    # Return true if real weather is enabled
+    #
     # @return bool
     #
     isRealWeatherEnabled: func() {
-        return me._realWxEnabledNode.getValue();
+        return me._realWxEnabledNode.getBoolValue();
     },
 
     #
@@ -190,8 +219,8 @@ var Metar = {
     # @return string|nil
     #
     getMetar: func(airport) {
-        if (airport != nil and (airport.has_metar or me._isMetarFromNearestAirport)) {
-            return getprop(me._pathToMyMetar ~ "/data");
+        if (me.canUseMetar(airport)) {
+            return getprop(me._getPropPathToMetar() ~ "/data");
         }
 
         return nil;
@@ -208,7 +237,9 @@ var Metar = {
             return false;
         }
 
-        return me.isRealWeatherEnabled() and (airport.has_metar or me._isMetarFromNearestAirport);
+        var isMetarAnywhere = airport.has_metar or me._isMetarFromNearestAirport;
+
+        return !me._basicWeather.isBasicWxManCfgEnabled() and (isMetarAnywhere or !me.isRealWeatherEnabled());
     },
 
     #
@@ -218,11 +249,7 @@ var Metar = {
     # @return hash|nil
     #
     getQnhValues: func(airport) {
-        if (!me.canUseMetar(airport)) {
-            return nil;
-        }
-
-        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-inhg");
+        var pressQnh = me._getPressureQnh(airport);
         if (pressQnh == nil) {
             return nil;
         }
@@ -241,11 +268,7 @@ var Metar = {
     # @return hash|nil
     #
     getQfeValues: func(airport) {
-        if (!me.canUseMetar(airport)) {
-            return nil;
-        }
-
-        var pressQnh = getprop(me._pathToMyMetar ~ "/pressure-inhg");
+        var pressQnh = me._getPressureQnh(airport);
         if (pressQnh == nil) {
             return nil;
         }
@@ -257,6 +280,24 @@ var Metar = {
             hPa : math.round(me._inHgToHPa(pressQfe)),
             mmHg: math.round(me._inHgToMmHg(pressQfe)),
         };
+    },
+
+    #
+    # Get pressure QNH in inHg depending of weather configuration.
+    #
+    # @param  ghost|nil  airport  Airport object.
+    # @return double|nil
+    #
+    _getPressureQnh: func(airport) {
+        if (me._basicWeather.isBasicWxManCfgEnabled()) {
+            return me._basicWeather.getQnh();
+        }
+
+        if (me.canUseMetar(airport)) {
+            return getprop(me._getPropPathToMetar() ~ "/pressure-inhg");
+        }
+
+        return nil;
     },
 
     #
@@ -323,6 +364,17 @@ var Metar = {
         }
 
         return false;
+    },
+
+    #
+    # Get base path to METAR property according to using live data METAR or not.
+    #
+    # @return string
+    #
+    _getPropPathToMetar: func() {
+        return me.isRealWeatherEnabled()
+            ? me._pathToMyMetar
+            : "/environment/metar";
     },
 
     #

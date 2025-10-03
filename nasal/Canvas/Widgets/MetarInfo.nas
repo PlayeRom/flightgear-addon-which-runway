@@ -31,6 +31,7 @@ gui.widgets.MetarInfo = {
         me._setView(style.createWidget(parent, "metar-info-view", me._cfg));
 
         me._isRealWeatherEnabled = false;
+        me._isBasicWxEnabled = false;
 
         # If true then METAR is taken from nearest airport.
         me._isMetarFromNearestAirport = false;
@@ -56,6 +57,15 @@ gui.widgets.MetarInfo = {
     #
     setIsRealWeatherEnabled: func(isRealWeatherEnabled) {
         me._isRealWeatherEnabled = isRealWeatherEnabled;
+        return me;
+    },
+
+    #
+    # @param  bool  isBasicWxEnabled
+    # @return ghost
+    #
+    setIsBasicWxEnabled: func(isBasicWxEnabled) {
+        me._isBasicWxEnabled = isBasicWxEnabled;
         return me;
     },
 

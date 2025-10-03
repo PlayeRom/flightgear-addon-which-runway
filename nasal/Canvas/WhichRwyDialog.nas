@@ -49,6 +49,7 @@ var WhichRwyDialog = {
         me._parentDialog.setPositionOnCenter();
 
         me._runwayUse = RwyUse.new();
+        me._basicWeather = BasicWeather.new();
 
         me._aircraftTypeFinder = AircraftTypeFinder.new();
         me._aircraftType = me._aircraftTypeFinder.getType();
@@ -85,7 +86,7 @@ var WhichRwyDialog = {
     _createTab: func(tabId, label) {
         var layout = canvas.VBoxLayout.new();
         me._tabs.addTab(tabId, label, layout);
-        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwayUse, me._aircraftType);
+        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwayUse, me._basicWeather, me._aircraftType);
     },
 
     #
@@ -101,6 +102,7 @@ var WhichRwyDialog = {
             me._tabContents[tabId].del();
         }
 
+        me._basicWeather.del();
         me._runwayUse.del();
         me._aircraftTypeFinder.del();
 

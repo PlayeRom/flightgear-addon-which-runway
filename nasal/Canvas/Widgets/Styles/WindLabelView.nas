@@ -74,7 +74,7 @@ DefaultStyle.widgets["wind-label-view"] = {
     # @return string
     #
     _getWindInfoText: func(model) {
-        if (!model._isMetarData) {
+        if (!model._isWindData) {
             return "n/a";
         }
 

@@ -30,7 +30,7 @@ gui.widgets.WindLabel = {
         me._focus_policy = me.NoFocus;
         me._setView(style.createWidget(parent, "wind-label-view", me._cfg));
 
-        me._isMetarData = false;
+        me._isWindData = false;
         me._windDir = nil;
         me._windKt = 0;
         me._windGustKt = 0;
@@ -39,11 +39,11 @@ gui.widgets.WindLabel = {
     },
 
     #
-    # @param  bool  isMetarData  Set true to confirm weather data. If false then wind will be draw as "n/a".
+    # @param  bool  isWindData  Set true to confirm weather data. If false then wind will be draw as "n/a".
     # @return ghost
     #
-    setIsMetarData: func(isMetarData) {
-        me._isMetarData = isMetarData;
+    setIsWindData: func(isWindData) {
+        me._isWindData = isWindData;
         return me;
     },
 

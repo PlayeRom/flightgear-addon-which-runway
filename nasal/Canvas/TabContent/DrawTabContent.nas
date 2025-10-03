@@ -28,10 +28,11 @@ var DrawTabContent = {
     # @param  ghost  tabContent  Single tab canvas content.
     # @param  string  tabId
     # @param  hash  runwayUse  RwyUse object.
+    # @param  hash  basicWeather  BasicWeather object.
     # @param  string  aircraftType  As "com", "gen", "mil, "ul".
     # @return hash
     #
-    new: func(tabsContent, tabContent, tabId, runwayUse, aircraftType) {
+    new: func(tabsContent, tabContent, tabId, runwayUse, basicWeather, aircraftType) {
         var me = {
             parents: [
                 DrawTabContent,
@@ -40,6 +41,7 @@ var DrawTabContent = {
             _tabsContent: tabsContent,
             _tabContent: tabContent,
             _runwayUse: runwayUse,
+            _basicWeather: basicWeather,
             _aircraftType: aircraftType,
         };
 
@@ -48,9 +50,13 @@ var DrawTabContent = {
 
         me._metar = Metar.new(
             me._tabId,
+            me._basicWeather,
             Callback.new(me._metarUpdatedCallback, me),
             Callback.new(me._realWxUpdatedCallback, me),
         );
+
+        me._basicWeather.registerEngineWxChangeCallback(Callback.new(me._weatherEngineChangedCallback, me));
+        me._basicWeather.registerWxChangeCallback(Callback.new(me._metarUpdatedCallback, me));
 
         me._runwayFinder = RunwayFinder.new(me._metar, me._runwayUse);
 
@@ -313,8 +319,10 @@ var DrawTabContent = {
             return;
         }
 
-        if (!me._metar.isRealWeatherEnabled()) {
-            # Redraw without METAR data.
+        if (me._basicWeather.isBasicWxManCfgEnabled() or !me._metar.isRealWeatherEnabled()) {
+            # Redraw with basic weather without METAR
+            # or
+            # Redraw with offline METAR data.
             me._metar.disableMetarFromNearestAirport();
             me._reDrawContent();
             return;
@@ -363,7 +371,7 @@ var DrawTabContent = {
     # @return void
     #
     _metarUpdatedCallback: func() {
-        me._reDrawContent();
+        me._reDrawContent(false);
     },
 
     #
@@ -372,6 +380,15 @@ var DrawTabContent = {
     # @return void
     #
     _realWxUpdatedCallback: func() {
+        me._downloadMetar(me._icao);
+    },
+
+    #
+    # Callback function, called when weather engine han been changed.
+    #
+    # @return void
+    #
+    _weatherEngineChangedCallback: func() {
         me._downloadMetar(me._icao);
     },
 
@@ -443,6 +460,7 @@ var DrawTabContent = {
 
         me._metarInfoView
             .setMetarRangeNm(g_Settings.getMaxMetarRangeNm())
+            .setIsBasicWxEnabled(me._basicWeather.isBasicWxManCfgEnabled())
             .setIsRealWeatherEnabled(me._metar.isRealWeatherEnabled())
             .setIsMetarFromNearestAirport(me._metar.isMetarFromNearestAirport())
             .setDistanceToStation(me._metar.getDistanceToStation(airport))
@@ -468,7 +486,7 @@ var DrawTabContent = {
             .updateView();
 
         me._windLabel
-            .setIsMetarData(me._metar.canUseMetar(airport))
+            .setIsWindData(me._basicWeather.isBasicWxManCfgEnabled() or me._metar.canUseMetar(airport))
             .setWind(
                 me._metar.getWindDir(airport),
                 me._metar.getWindSpeedKt(),

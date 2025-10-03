@@ -39,7 +39,7 @@ var Listeners = {
     # @return void
     #
     del: func() {
-        me._removeListeners();
+        me.clear();
     },
 
     #
@@ -62,11 +62,18 @@ var Listeners = {
     },
 
     #
+    # @return int
+    #
+    size: func() {
+        return me._listeners.size();
+    },
+
+    #
     # Remove all listeners added to me._listeners vector.
     #
     # @return void
     #
-    _removeListeners: func() {
+    clear: func() {
         foreach (var listener; me._listeners.vector) {
             globals.removelistener(listener);
         }

@@ -27,8 +27,8 @@ DefaultStyle.widgets["metar-info-view"] = {
 
         me._draw = Draw.new(me._root);
 
-        me._noLiveDataText = me._draw.createText("For METAR, it is necessary to select the \"Live Data\" weather scenario!")
-            .setColor(me._colors.RED)
+        me._warningText = me._draw.createText("Dummy text")
+            .setColor(me._colors.AMBER)
             .setVisible(false);
 
         me._foreignMetarText = me._draw.createText() # "METAR comes from %s, %.1f NM (%.1f km) away:",
@@ -73,7 +73,7 @@ DefaultStyle.widgets["metar-info-view"] = {
         var x = 0;
         var y = 0;
 
-        me._noLiveDataText.setVisible(false);
+        me._warningText.setVisible(false);
         me._foreignMetarText.setVisible(false);
         me._metarLine1Text.setVisible(false);
         me._metarLine2Text.setVisible(false);
@@ -94,8 +94,12 @@ DefaultStyle.widgets["metar-info-view"] = {
     # @return double  New position of y shifted by height of printed line.
     #
     _drawMetar: func(x, y, model) {
+        if (model._isBasicWxEnabled) {
+            return me._printNoteDetailWeatherDisabled(x, y);
+        }
+
         if (!model._isRealWeatherEnabled) {
-            return me._printNoteLiveDataDisabled(x, y);
+            y += me._printNoteLiveDataDisabled(x, y);
         }
 
         if (model._isMetarFromNearestAirport) {
@@ -130,6 +134,22 @@ DefaultStyle.widgets["metar-info-view"] = {
     },
 
     #
+    # Draw note that no METAR for global/basic weather.
+    #
+    # @param  double  x  Init position of x.
+    # @param  double  y  Init position of y.
+    # @return double  New position of y shifted by height of printed line.
+    #
+    _printNoteDetailWeatherDisabled: func(x, y) {
+        me._warningText
+            .setText("No METAR for \"Basic Weather\" with \"Manual Configuration\".")
+            .setTranslation(x, y)
+            .setVisible(true);
+
+        return y + me._draw.shiftY(me._warningText, 0);
+    },
+
+    #
     # Draw note that Live Data weather scenario is disabled.
     #
     # @param  double  x  Init position of x.
@@ -137,11 +157,12 @@ DefaultStyle.widgets["metar-info-view"] = {
     # @return double  New position of y shifted by height of printed line.
     #
     _printNoteLiveDataDisabled: func(x, y) {
-        me._noLiveDataText
+        me._warningText
+            .setText("METAR from an offline scenario.")
             .setTranslation(x, y)
             .setVisible(true);
 
-        return y + me._draw.shiftY(me._noLiveDataText, 0);
+        return y + me._draw.shiftY(me._warningText);
     },
 
     #
