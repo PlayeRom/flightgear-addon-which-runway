@@ -380,7 +380,7 @@ var DrawTabContent = {
     # @return void
     #
     _realWxUpdatedCallback: func() {
-        me._downloadMetar(me._icao);
+        me.reload();
     },
 
     #
@@ -389,6 +389,15 @@ var DrawTabContent = {
     # @return void
     #
     _weatherEngineChangedCallback: func() {
+        me.reload();
+    },
+
+    #
+    # Reload all view with METAR.
+    #
+    # @return void
+    #
+    reload: func() {
         me._downloadMetar(me._icao);
     },
 

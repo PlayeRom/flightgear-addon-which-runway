@@ -135,6 +135,17 @@ var WhichRwyDialog = {
     },
 
     #
+    # Reload all tabs.
+    #
+    # @return void
+    #
+    reloadAllTabs: func() {
+        foreach (var tabId; keys(me._tabContents)) {
+            me._tabContents[tabId].reload();
+        }
+    },
+
+    #
     # Timer callback function to update dynamic data on the selected tab.
     #
     # @return void

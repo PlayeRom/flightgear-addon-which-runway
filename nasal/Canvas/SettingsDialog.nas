@@ -196,9 +196,28 @@ var SettingsDialog = {
     # @return void
     #
     _save: func() {
+        var isNeedReload = me._isChangesNeedReload();
+
         g_Settings.setMaxMetarRangeNm(me._maxMetarRangeNm);
         g_Settings.setRwyUseEnabled(me._rwyUseEnable);
 
+        if (isNeedReload) {
+            g_WhichRwyDialog.reloadAllTabs();
+        }
+
         me.hide();
+    },
+
+    #
+    # Return true if WhichRwyDialog needs reload all tabs.
+    #
+    # @return bool
+    #
+    _isChangesNeedReload: func() {
+        var maxMetarRangeNm = g_Settings.getMaxMetarRangeNm();
+        var rwyUseEnable    = g_Settings.getRwyUseEnabled();
+
+        return me._maxMetarRangeNm != maxMetarRangeNm
+            or me._rwyUseEnable != rwyUseEnable;
     },
 };
