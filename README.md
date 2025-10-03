@@ -14,20 +14,38 @@ Installation is standard:
 
 ## Using
 
-This add-on adds a "Which Runway" item to the main menu, from which you select "Runways". A dialog box will open with 4 tabs:
+This add-on adds a "Which Runway" item to the main menu, from which you select "Runways...". A dialog box will open with 4 tabs:
 
 1. **Nearest** displays the nearest airport, which will be automatically updated during the flight. At the bottom, there's a field to enter the ICAO code of any other airport and you also find buttons with the nearest airports within a 50 nautical mile radius. If you reach a different nearest airport, the data will always change to that nearest airport. To prevent the nearest airport from changing automatically, you can check the "Hold update" checkbox.
-2. **Departure** show the airport selected as departure in Route Manager. This airport is automatically change only when you change it in Route Manager. At the bottom you can force a refresh of the METAR with the "Update METAR" button.
-3. **Arrival** show the airport selected as arrival in Route Manager. This airport is automatically change only when you change it in Route Manager. At the bottom you can force a refresh of the METAR with the "Update METAR" button.
+2. **Departure** show the airport selected as departure in Route Manager. This airport is automatically change only when you change it in Route Manager. At the bottom you can force a refresh of the weather conditions with the "Update METAR" button.
+3. **Arrival** show the airport selected as arrival in Route Manager. This airport is automatically change only when you change it in Route Manager. At the bottom you can force a refresh of the weather conditions with the "Update METAR" button.
 4. **Alternate** where at the bottom you can use input field for entering the ICAO code of any airport. This is the best place to enter any ICAO code because here the airport will never be changed by the program. Here you will also find buttons with the nearest airports within a 50 nautical mile radius.
 
-Each tab contains information about the airport, METAR, and runways and their winds. Runways are sorted by preferred runways at the airport or by those most exposed to headwinds. Wind data is always taken from the current METAR. The METAR will be updated automatically every 15 minutes by FlightGear's mechanisms or by using the "Load"/"Update METAR" buttons.
+Each tab contains information about the airport, METAR, and runways and their winds. Runways are sorted by preferred runways at the airport or by those most exposed to headwinds. Wind data is always taken from the current METAR or manual configuration if used for Basic Weather.
 
-If the airport does not have a METAR, the METAR is taken from another nearest airport, within a maximum range of 30 NM by default (it can be change in Settings). A warning is then displayed, indicating which airport the METAR is from and how far away that airport is. This is useful in situations where smaller airports don't have METARs but are close enough to another larger airport that it can be assumed there won't be much, if any, difference in weather. This allows you to obtain some weather conditions, such as wind and barometric pressure, even at airports without a METAR, which wasn't so easily possible without this add-on.
+The add-on fully recognizes your weather usage, including the following configurations:
 
-If there is no other airport with a METAR within 30 NM, information about the airport and its runways will be displayed, but without wind and other weather data. This means that the runways are displayed as they appear in the database and are not sorted by best wind.
+1. Real-time METARs ("Live Data" scenario).
+2. Weather scenarios with an offline METAR.
+3. Basic Weather with Manual Configuration (without a METAR).
 
-**NOTE**: To download and use METAR data with this add-on, the add-on requires the "Live Data" weather scenario to be enabled. You can use this add-on with the weather scenario in offline mode, but wind and METAR data will not be displayed.
+### Real-time METARs
+
+Using real weather conditions is the best option for this add-on, and the most realistic. With "Live Data" scenario, the add-on retrieves the METAR for a given airport and obtains weather information from it.
+
+If the airport does not have a METAR, the METAR is taken from another nearest airport, within a maximum range of 30 NM by default (it can be change in Settings). A warning is then displayed, indicating which airport the METAR is from and how far away that airport is. This is useful in situations where smaller airports don't have METARs but are close enough to another larger airport that it can be assumed there won't be much, if any, difference in weather. This allows you to obtain some weather conditions, such as wind and barometric pressure, even at airports without a METAR, which wasn't so easily possible in FlightGear without this add-on.
+
+If there is no other airport with a METAR within 30 NM, information about the airport and its runways will be displayed, but without wind and other weather data.
+
+The METAR will be updated automatically every 15 minutes by FlightGear's mechanisms or by using the "Load"/"Update METAR" buttons.
+
+### Weather scenarios with an offline METAR.
+
+If you choose the offline weather scenario, the same METAR will be used for all airports. The add-on will display a warning that the METAR is from offline scenario.
+
+### Basic Weather with Manual Configuration
+
+With this configuration, METAR is not used, but weather conditions, such as QNH pressure, wind direction and speed, are taken from the manual configuration. Therefore, weather conditions are still available and are the same for all airports (Basic Weather with manual configuration it's a global weather).
 
 ## Airport information
 

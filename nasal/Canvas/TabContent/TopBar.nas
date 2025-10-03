@@ -10,11 +10,11 @@
 #
 
 #
-# TopBar class
+# Top Bar for tag.
 #
 var TopBar = {
     #
-    # Constructor
+    # Constructor.
     #
     # @param  ghost  tabsContent  Tabs canvas content.
     # @param  hash  clickAptCallback  Callback object to click airport button.
@@ -63,7 +63,7 @@ var TopBar = {
     },
 
     #
-    # Update buttons runways
+    # Update buttons runways.
     #
     # @param  string  icao
     # @param  array  runwaysData

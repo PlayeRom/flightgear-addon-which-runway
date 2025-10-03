@@ -10,11 +10,11 @@
 #
 
 #
-# BottomBar class
+# Bottom Bar for tab.
 #
 var BottomBar = {
     #
-    # Constructor
+    # Constructor.
     #
     # @param  ghost  tabsContent  Tabs canvas content.
     # @param  string  tabId

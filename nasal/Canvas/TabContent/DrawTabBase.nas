@@ -10,11 +10,11 @@
 #
 
 #
-# DrawTabBase class
+# DrawTabBase class.
 #
 var DrawTabBase = {
     #
-    # Constructor
+    # Constructor.
     #
     # @param  string  tabId
     # @return hash
@@ -31,7 +31,7 @@ var DrawTabBase = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -39,7 +39,7 @@ var DrawTabBase = {
     },
 
     #
-    # Return true if current tab it's "Nearest" tab
+    # Return true if current tab it's "Nearest" tab.
     #
     # @return bool
     #
@@ -48,7 +48,7 @@ var DrawTabBase = {
     },
 
     #
-    # Return true if current tab it's "Departure" tab
+    # Return true if current tab it's "Departure" tab.
     #
     # @return bool
     #
@@ -57,7 +57,7 @@ var DrawTabBase = {
     },
 
     #
-    # Return true if current tab it's "Arrival" tab
+    # Return true if current tab it's "Arrival" tab.
     #
     # @return bool
     #
@@ -66,7 +66,7 @@ var DrawTabBase = {
     },
 
     #
-    # Return true if current tab it's "Alternate" tab
+    # Return true if current tab it's "Alternate" tab.
     #
     # @return bool
     #

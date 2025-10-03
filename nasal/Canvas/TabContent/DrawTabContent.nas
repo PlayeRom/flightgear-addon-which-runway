@@ -10,7 +10,7 @@
 #
 
 #
-# DrawTabContent class
+# DrawTabContent class.
 #
 var DrawTabContent = {
     #
@@ -22,7 +22,7 @@ var DrawTabContent = {
     MAX_RUNWAY_SLOTS  :  16,
 
     #
-    # Constructor
+    # Constructor.
     #
     # @param  ghost  tabsContent  Tabs canvas content.
     # @param  ghost  tabContent  Single tab canvas content.
@@ -107,7 +107,6 @@ var DrawTabContent = {
 
         me._metarInfoView = canvas.gui.widgets.MetarInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
-            # .setMetarRangeNm(DrawTabContent.METAR_RANGE_NM);
 
         me._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(me._scrollContent)
             .setMarginForValue(DrawTabContent.APT_VALUE_MARGIN_X)
@@ -197,7 +196,7 @@ var DrawTabContent = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -212,7 +211,7 @@ var DrawTabContent = {
     },
 
     #
-    # Set listeners
+    # Set listeners.
     #
     # @return void
     #

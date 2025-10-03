@@ -338,7 +338,7 @@ var DrawRwyUseControls = {
     },
 
     #
-    # Get widgets.RadioButton
+    # Get RadioButton widget.
     #
     # @param  string  text  Label text
     # @param  hash|nil  cfg  Config hash or nil
@@ -350,6 +350,8 @@ var DrawRwyUseControls = {
     },
 
     #
+    # Get Label widget.
+    #
     # @param  string  text
     # @return ghost  Label widget.
     #
@@ -358,6 +360,8 @@ var DrawRwyUseControls = {
             .setText(text);
     },
 
+    #
+    # Get Button widget.
     #
     # @param  string  text  Label of button.
     # @param  func  callback  Function which will be executed after click the button.
@@ -371,7 +375,7 @@ var DrawRwyUseControls = {
     },
 
     #
-    # @return ghost  Label widget.
+    # @return ghost  Canvas layout.
     #
     _createCurrentUtcTimeLayout: func() {
         me._labelCurrentUtcTime = me._getLabel("Current UTC time:");
@@ -388,7 +392,7 @@ var DrawRwyUseControls = {
     },
 
     #
-    # @return ghost  Label widget.
+    # @return ghost  Canvas layout.
     #
     _createUtcTimeControlLayout: func() {
         me._labelUtcTimeCtrl = me._getLabel("Schedule UTC time:");

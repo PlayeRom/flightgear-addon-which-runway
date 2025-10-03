@@ -10,20 +10,20 @@
 #
 
 #
-# SettingsDialog class to display about info
+# SettingsDialog class.
 #
 var SettingsDialog = {
     CLASS: "SettingsDialog",
 
     #
-    # Constants
+    # Constants:
     #
     WINDOW_WIDTH  : 400,
     WINDOW_HEIGHT : 150,
     PADDING       : 10,
 
     #
-    # Constructor
+    # Constructor.
     #
     # @return hash
     #
@@ -61,7 +61,7 @@ var SettingsDialog = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     # @override PersistentDialog
@@ -173,7 +173,7 @@ var SettingsDialog = {
     },
 
     #
-    # @return ghost  HBoxLayout object with button
+    # @return ghost  Canvas layout with buttons.
     #
     _drawBottomBar: func() {
         var hBox = canvas.HBoxLayout.new();

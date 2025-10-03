@@ -166,15 +166,6 @@ var WhichRwyDialog = {
     #
     _keyActions: func() {
         me._window.addEventListener("keydown", func(event) {
-            # Possible fields of event:
-            #   event.key - key as name
-            #   event.keyCode - key as code
-            # Modifiers:
-            #   event.shiftKey
-            #   event.ctrlKey
-            #   event.altKey
-            #   event.metaKey
-
                if (event.key == "Up"     or event.key == "Down")     me._handleScrollKey(true,  event.key == "Up");
             elsif (event.key == "PageUp" or event.key == "PageDown") me._handleScrollKey(false, event.key == "PageUp");
             elsif (event.key == "1") me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
