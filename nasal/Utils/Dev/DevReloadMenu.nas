@@ -105,7 +105,7 @@ var DevReloadMenu = {
     },
 
     #
-    # Prevent to add menu item more than once, e.g. after reload the sim by <Shift-Esc>
+    # Prevent to add menu item more than once, e.g. after reload the sim by <Shift-Esc>.
     #
     # @param  ghost  menuNode
     # @return bool

@@ -76,7 +76,7 @@ gui.widgets.RwyUseInfo = {
     },
 
     #
-    # @param  string  traffic
+    # @param  string|nil  traffic
     # @return ghost
     #
     setTraffic: func(traffic) {
@@ -85,7 +85,7 @@ gui.widgets.RwyUseInfo = {
     },
 
     #
-    # @param  string  schedule
+    # @param  string|nil  schedule
     # @return ghost
     #
     setSchedule: func(schedule) {

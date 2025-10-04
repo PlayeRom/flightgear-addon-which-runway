@@ -277,7 +277,7 @@ var DrawTabContent = {
     },
 
     #
-    # Get error message if ICAO is null or empty.
+    # Get error message if ICAO is nil or empty.
     #
     # @return string
     #

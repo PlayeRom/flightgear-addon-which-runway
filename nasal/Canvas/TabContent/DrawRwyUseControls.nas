@@ -340,9 +340,9 @@ var DrawRwyUseControls = {
     #
     # Get RadioButton widget.
     #
-    # @param  string  text  Label text
-    # @param  hash|nil  cfg  Config hash or nil
-    # @return ghost  widgets.RadioButton
+    # @param  string  text  Label text.
+    # @param  hash|nil  cfg  Config hash or nil.
+    # @return ghost  RadioButton widget.
     #
     _getRadioButton: func(text, cfg = nil) {
         return canvas.gui.widgets.RadioButton.new(parent: me._scrollContent, cfg: cfg)
@@ -401,22 +401,12 @@ var DrawRwyUseControls = {
         me._labelUtcMinute = me._getLabel(me._getPrintTimeFormat(me._utcMinuteValue));
 
         me._btnUtcHourMinus = me._getButton("-", func() {
-            me._utcHourValue -= 1;
-            if (me._utcHourValue <= -1) {
-                me._utcHourValue = 23;
-            }
-
-            me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+            me._minuHour();
             me._redrawCallback.invoke(false);
         });
 
         me._btnUtcHourPlus = me._getButton("+", func() {
-            me._utcHourValue += 1;
-            if (me._utcHourValue >= 24) {
-                me._utcHourValue = 0;
-            }
-
-            me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+            me._plusHour();
             me._redrawCallback.invoke(false);
         });
 
@@ -425,12 +415,7 @@ var DrawRwyUseControls = {
             if (me._utcMinuteValue < 0) {
                 me._utcMinuteValue = 60 - DrawRwyUseControls.MIN_INTERVAL;
 
-                me._utcHourValue -= 1;
-                if (me._utcHourValue <= -1) {
-                    me._utcHourValue = 23;
-                }
-
-                me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+                me._minuHour();
             }
 
             me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
@@ -442,12 +427,7 @@ var DrawRwyUseControls = {
             if (me._utcMinuteValue >= 60) {
                 me._utcMinuteValue = 0;
 
-                me._utcHourValue += 1;
-                if (me._utcHourValue >= 24) {
-                    me._utcHourValue = 0;
-                }
-
-                me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+                me._plusHour();
             }
 
             me._labelUtcMinute.setText(me._getPrintTimeFormat(me._utcMinuteValue));
@@ -465,6 +445,30 @@ var DrawRwyUseControls = {
         hBox.addStretch(1);
 
         return hBox;
+    },
+
+    #
+    # @return void
+    #
+    _minuHour: func() {
+        me._utcHourValue -= 1;
+        if (me._utcHourValue <= -1) {
+            me._utcHourValue = 23;
+        }
+
+        me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
+    },
+
+    #
+    # @return void
+    #
+    _plusHour: func() {
+        me._utcHourValue += 1;
+        if (me._utcHourValue >= 24) {
+            me._utcHourValue = 0;
+        }
+
+        me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
     },
 
     #

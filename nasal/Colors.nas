@@ -10,7 +10,7 @@
 #
 
 #
-# Colors static declarations
+# Colors static declarations.
 #
 var Colors = {
     RED  : [0.8, 0.3, 0.3],

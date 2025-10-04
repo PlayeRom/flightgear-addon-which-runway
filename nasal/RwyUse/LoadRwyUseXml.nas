@@ -14,7 +14,7 @@
 #
 var LoadRwyUseXml = {
     #
-    # Constructor
+    # Constructor.
     #
     # @return hash
     #
@@ -27,7 +27,7 @@ var LoadRwyUseXml = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -36,7 +36,7 @@ var LoadRwyUseXml = {
 
     #
     # @param  string  icao
-    # @return hash|nill
+    # @return hash|nil
     #
     load: func(icao) {
         var path = me._findPathToAirportFile(icao, "rwyuse");
@@ -126,7 +126,7 @@ var LoadRwyUseXml = {
     #
     # @param  string  icao
     # @param  string  file
-    # @return string|nil  Get full path to airport XML file, or nil if not found
+    # @return string|nil  Get full path to airport XML file, or nil if not found.
     #
     _findPathToAirportFile: func(icao, file) {
         var pathToRwyUse = me._getPathToAirportFile(icao, file);

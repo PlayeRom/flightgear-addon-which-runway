@@ -200,8 +200,8 @@ var BasicWeather = {
     },
 
     #
-    # Add listeners for check value changes for elevation, wind direction and wind speed for boundary layers
-    # in manual configuration.
+    # Add listeners for check value changes for elevation, wind direction and
+    # wind speed for boundary layers in manual configuration.
     #
     # @return void
     #

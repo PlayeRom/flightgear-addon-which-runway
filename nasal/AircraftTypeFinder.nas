@@ -66,7 +66,7 @@ var AircraftTypeFinder = {
     },
 
     #
-    # Get aircraft type according to tags
+    # Get aircraft type according to tags.
     #
     # @return string|nil
     #

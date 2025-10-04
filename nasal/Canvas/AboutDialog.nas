@@ -78,7 +78,7 @@ var AboutDialog = {
         me._vbox.addItem(me._getLabel("Written by:"));
 
         foreach (var author; g_Addon.authors) {
-            me._vbox.addItem(me._getLabel(Utils.toString(author.name)));
+            me._vbox.addItem(me._getLabel(author.name));
         }
 
         me._vbox.addStretch(1);
@@ -121,8 +121,8 @@ var AboutDialog = {
     },
 
     #
-    # @param  string  label  Label of button
-    # @param  func  callback  function which will be executed after click the button
+    # @param  string  label  Label of button.
+    # @param  func  callback  function which will be executed after click the button.
     # @return ghost  Canvas layout with buttons.
     #
     _drawBottomBar: func(label, callback) {

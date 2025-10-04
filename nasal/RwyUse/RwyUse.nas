@@ -28,7 +28,7 @@ var RwyUse = {
     ERR_NO_SCHEDULE: "err code no scheduler", # The airport does not operate at the specified time for the given aircraft type
 
     #
-    # Constructor
+    # Constructor.
     #
     # @return hash
     #
@@ -136,7 +136,7 @@ var RwyUse = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -152,7 +152,6 @@ var RwyUse = {
     # @return hash
     #
     getAllPreferredRunways: func(icao, acType, utcHour, utcMinute) {
-        # Find schedule by time
         var schedule = me.getScheduleByTime(icao, acType, utcHour, utcMinute);
         if (schedule == nil) {
             return nil; # error, no icao or traffic
@@ -188,7 +187,7 @@ var RwyUse = {
     #
     # @param  string  icao  Airport ICAO code.
     # @param  string  acType  Aircraft type: "com", "gen", "mil", "ul".
-    # @return string
+    # @return string|nil
     #
     getUsedTrafficFullName: func(icao, acType) {
         if (!me._isIcaoLoaded(icao)) {
@@ -302,8 +301,8 @@ var RwyUse = {
     },
 
     #
-    # @param  int  hour  Current UTC time hour
-    # @param  int  minute  Current UTC time minute
+    # @param  int  hour  Current UTC time hour.
+    # @param  int  minute  Current UTC time minute.
     # @param  hash  start  Schedule start time.
     # @param  hash  end  Schedule end time.
     # @return bool  True if current UTC time is in start-end range.

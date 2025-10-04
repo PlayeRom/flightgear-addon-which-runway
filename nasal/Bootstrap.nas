@@ -30,7 +30,7 @@ var g_isDevMode = false;
 var g_Addon = nil;
 
 #
-# Global object of Settings
+# Global object of Settings.
 #
 var g_Settings = nil;
 
@@ -40,7 +40,7 @@ var g_Settings = nil;
 var g_WhichRwyDialog = nil;
 
 #
-# Global object of SettingsDialog
+# Global object of SettingsDialog.
 #
 var g_SettingsDialog = nil;
 
@@ -88,7 +88,7 @@ var Bootstrap = {
     },
 
     #
-    # Uninitialize Which Runway
+    # Uninitialize Which Runway.
     #
     # @return void
     #

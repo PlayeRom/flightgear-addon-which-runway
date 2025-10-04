@@ -10,18 +10,18 @@
 #
 
 #
-# Class to handle METAR
+# Class to handle METAR.
 #
 var Metar = {
     #
-    # Static constants
+    # Static constants:
     #
     HEADWIND_THRESHOLD : 45, # Headwind from 0 to 45
     CROSSWIND_THRESHOLD: 90, # Crosswind from 46 to 90, tailwind from 91
     QNH_TO_QFE_FACTOR  : 1.06,
 
     #
-    # Constructor
+    # Constructor.
     #
     # @param  string  tabId  Tab ID.
     # @param  hash  basicWeather  BasicWeather object.
@@ -55,7 +55,7 @@ var Metar = {
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -204,7 +204,7 @@ var Metar = {
     },
 
     #
-    # Return true if real weather is enabled
+    # Return true if real weather is enabled.
     #
     # @return bool
     #
@@ -229,7 +229,7 @@ var Metar = {
     #
     # Return true if we can use the downloaded METAR.
     #
-    # @param  ghost|nill  airport  Airport object.
+    # @param  ghost|nil  airport  Airport object.
     # @return bool
     #
     canUseMetar: func(airport) {

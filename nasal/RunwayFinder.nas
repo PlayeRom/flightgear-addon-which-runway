@@ -322,7 +322,7 @@ var RunwayFinder = {
 
         if (windDir != nil) {
             var diff = windDir - trueHdg;
-            normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
+            normDiffDeg = geo.normdeg180(diff); # normalize to [-180, 180]
             var normDiffRad = normDiffDeg * globals.D2R;
 
             var cosNormDiffRad = math.cos(normDiffRad);
