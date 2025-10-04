@@ -114,8 +114,9 @@ If you're using preferred runways for an airport, then:
 1. The preferred runways will be displayed first. They will have the additional information **Is preferred: Yes**. Typically, there will be only one runway, or possibly two, for large airports. This is the runway you should select.
 2. Not all runways will be displayed here, only those that were on the airport's preferred list for a given schedule.
 3. If at least one of the runways from a column in the `rwyuse.xml` file does not meet the tailwind and crosswind criteria, then all runways in that column are marked as **Is preferred: No**.
-4. If no runway is suitable due to unfavorable wind conditions, everyone will receive the information **Is preferred: No**. You can then deselect the "Use the preferred runways at the airport" option and simply check the runways by the highest headwind.
-5. If the wind is variable, the criteria for max tailwind and crosswind are not checked, which means that no runways are rejected from the preferred ones.
+4. If all runways are rejected due to failure to meet the tailwind and crosswind criteria, then the runways will simply be sorted according to the highest headwind. This will be accompanied by the warning "No preferred runway meets the wind criteria, so the best headwind is used."
+5. If, for the selected aircraft type, the airport is not operational at the selected UTC time, then the runways will simply be sorted according to the highest headwind. This will be accompanied by the warning "No preferred runway for the selected time, so the best headwind is used."
+6. If the wind is variable, the criteria for max tailwind and crosswind are not checked, which means that no runways are rejected from the preferred ones.
 
 
 ![alt Preferred Runway](docs/img/6-preferred-rwyuse.png "Preferred Runway")
@@ -154,6 +155,8 @@ The illustration shows a case of gusty wind:
 
 ## Keys
 
+The main window of the add-on supports the following keys:
+
 - `1` – switch to the Nearest tab.
 - `2` – switch to the Departure tab.
 - `3` – switch to the Arrival tab.
@@ -168,8 +171,6 @@ From the "Which Runway" -> "Settings..." menu, you can open the global settings 
 
 1. `Max range for nearest METAR in NM` – here you can specify, in nautical miles, how far away the nearest METAR will be searched if the airport does not have its own METAR. The default value is 30 NM.
 2. `Preferred runways at the airport` – here you can enable/disable the use of preferred runways by the airport (`ICAO.rwyuse.xml` files). This is enabled by default. If you disable this option, the preferred runways at the airport will not be included at all (even if they exist), and the add-on will always display runways sorted by best headwind.
-
-To see the effects of the changes, you must reload the tab by clicking the "Load" or "Update METAR" button on the bottom bar.
 
 ## Development
 
