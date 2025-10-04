@@ -102,7 +102,7 @@ var RwyUse = {
         #         schedules: {
         #             inbound: {
         #                 takeoff: [
-        #                     [36L, 24, 18C, 36L, 06, 24, 24, 36L, 24],
+        #                     [36L,  24, 18L, 36L,  24,  24, 18L, 09],
         #                 ],
         #                 landing: [
         #                     [ 06, 18R, 18R, 36R,  27, 18R, 18R, 06],
