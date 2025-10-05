@@ -13,14 +13,10 @@
 # AboutDialog class to display about info.
 #
 var AboutDialog = {
-    CLASS: "AboutDialog",
-
     #
     # Constants:
     #
-    WINDOW_WIDTH  : 280,
-    WINDOW_HEIGHT : 400,
-    PADDING       : 10,
+    PADDING: 10,
 
     #
     # Constructor.
@@ -32,9 +28,9 @@ var AboutDialog = {
             parents: [
                 AboutDialog,
                 PersistentDialog.new(
-                    AboutDialog.WINDOW_WIDTH,
-                    AboutDialog.WINDOW_HEIGHT,
-                    "About Which Runway",
+                    width: 280,
+                    height: 400,
+                    title: "About Which Runway",
                 ),
             ],
         };

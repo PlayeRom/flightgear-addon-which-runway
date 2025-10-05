@@ -13,14 +13,10 @@
 # SettingsDialog class.
 #
 var SettingsDialog = {
-    CLASS: "SettingsDialog",
-
     #
     # Constants:
     #
-    WINDOW_WIDTH  : 400,
-    WINDOW_HEIGHT : 150,
-    PADDING       : 10,
+    PADDING: 10,
 
     #
     # Constructor.
@@ -32,9 +28,9 @@ var SettingsDialog = {
             parents: [
                 SettingsDialog,
                 PersistentDialog.new(
-                    SettingsDialog.WINDOW_WIDTH,
-                    SettingsDialog.WINDOW_HEIGHT,
-                    "Settings Which Runway",
+                    width: 400,
+                    height: 150,
+                    title: "Settings Which Runway",
                 ),
             ],
         };

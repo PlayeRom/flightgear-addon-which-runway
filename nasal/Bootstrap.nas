@@ -76,6 +76,7 @@ var Bootstrap = {
         # its canvas textures earlier than the airplane, which will cause that at index 15 there will be no MCDU texture
         # but the texture from the add-on. So thanks to this delay, the textures of the plane will be created first, and
         # then the textures of this add-on.
+
         Timer.singleShot(3, func() {
             g_WhichRwyDialog = WhichRwyDialog.new();
             g_SettingsDialog = SettingsDialog.new();
@@ -88,7 +89,7 @@ var Bootstrap = {
     },
 
     #
-    # Uninitialize Which Runway.
+    # Uninitialize object from add-on namespace.
     #
     # @return void
     #

@@ -13,14 +13,9 @@
 # WhichRwyDialog dialog class.
 #
 var WhichRwyDialog = {
-    CLASS: "WhichRwyDialog",
-
     #
     # Constants:
     #
-    WINDOW_WIDTH : 800,
-    WINDOW_HEIGHT: 700,
-
     TAB_NEAREST  : "tab-nearest",
     TAB_DEPARTURE: "tab-departure",
     TAB_ARRIVAL  : "tab-arrival",
@@ -36,8 +31,8 @@ var WhichRwyDialog = {
             parents: [
                 WhichRwyDialog,
                 PersistentDialog.new(
-                    width : WhichRwyDialog.WINDOW_WIDTH,
-                    height: WhichRwyDialog.WINDOW_HEIGHT,
+                    width : 800,
+                    height: 700,
                     title : sprintf("Which Runway %s", g_Addon.version.str()),
                     resize: true,
                 ),
