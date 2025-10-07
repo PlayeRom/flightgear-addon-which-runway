@@ -130,7 +130,7 @@ var VersionChecker = {
         }
 
         var user = parts[1]; # 0 is a domain, so 1 is a user name
-        var repo = string.join("/", parts[1:]); # Repo can have subdirectories
+        var repo = string.join("/", parts[2:]); # Repo can have subdirectories
 
         return [user, repo];
     },
