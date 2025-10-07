@@ -25,10 +25,17 @@ var Loader = {
             _addon: addon,
         };
 
-        me._excludedForLevel0 = std.Vector.new([
-            "addon-main.nas",
-            "Loader.nas",
-        ]);
+        # List of files that should not be loaded.
+        me._excluded = std.Hash.new({
+            "/addon-main.nas":,
+            "/Loader.nas":,
+            "/nasal/Utils/VersionCheck/Base/XmlVersionChecker.nas":,
+            "/nasal/Utils/VersionCheck/GitLabVersionChecker.nas":,
+            "/nasal/Utils/VersionCheck/MetaDataVersionChecker.nas":,
+            # TODO: add more file names here if needed...
+        });
+
+        me._fullPath = os.path.new();
 
         return me;
     },
@@ -36,28 +43,32 @@ var Loader = {
     #
     # Search for ".nas" files recursively and load them.
     #
-    # @param  string  path  Starts as base path of add-on.
+    # @param  string  path  Starts as base absolute path of add-on.
     # @param  string  namespace  Namespace of add-on.
     # @param  int  level  Starts from 0, each subsequent subdirectory gets level + 1.
+    # @param  string  relPath  Relative path to the add-on's root directory.
     # @return void
     #
-    load: func(path, namespace, level = 0) {
+    load: func(path, namespace, level = 0, relPath = "") {
         var entries = globals.directory(path);
 
         foreach (var entry; entries) {
-            if ((level == 0 and me._excludedForLevel0.contains(entry))
-                or entry == "."
-                or entry == ".."
-            ) {
+            if (entry == "." or entry == "..") {
                 continue;
             }
 
-            var fullPath = os.path.new(path);
-            fullPath.append(entry);
+            var fullRelPath = relPath ~ "/" ~ entry;
+            if (me._excluded.contains(fullRelPath)) {
+                logprint(LOG_WARN, level, ". ", namespace, " excluded -> ", fullRelPath);
+                continue;
+            }
 
-            if (fullPath.isFile() and fullPath.lower_extension == "nas") {
-                logprint(LOG_WARN, level, ". ", namespace, " -> ", fullPath.realpath);
-                io.load_nasal(fullPath.realpath, namespace);
+            me._fullPath.set(path);
+            me._fullPath.append(entry);
+
+            if (me._fullPath.isFile() and me._fullPath.lower_extension == "nas") {
+                logprint(LOG_WARN, level, ". ", namespace, " -> ", me._fullPath.realpath);
+                io.load_nasal(me._fullPath.realpath, namespace);
                 continue;
             }
 
@@ -66,25 +77,27 @@ var Loader = {
                 continue;
             }
 
-            if (!fullPath.isDir()) {
+            if (!me._fullPath.isDir()) {
                 continue;
             }
 
-            if (me._isDirInPath("Widgets", fullPath)) me.load(fullPath.realpath, "canvas",  level + 1);
-            else                                      me.load(fullPath.realpath, namespace, level + 1);
+            if (me._isDirInPath("Widgets")) {
+                me.load(me._fullPath.realpath, "canvas",  level + 1, fullRelPath);
+            } else {
+                me.load(me._fullPath.realpath, namespace, level + 1, fullRelPath);
+            }
         }
     },
 
     #
-    # Returns true if expectedDirName is the last part of the fullPath,
+    # Returns true if expectedDirName is the last part of the me._fullPath,
     # or if expectedDirName is contained in the current path.
     #
     # @param  string  expectedDirName  The expected directory name, which means the namespace should change.
-    # @param  ghost  fullPath  Current full path as os.path object.
     # @return bool
     #
-    _isDirInPath: func(expectedDirName, fullPath) {
-        return string.imatch(fullPath.file, expectedDirName)
-            or string.imatch(fullPath.realpath, me._addon.basePath ~ "/*/" ~ expectedDirName ~ "/*");
+    _isDirInPath: func(expectedDirName) {
+        return string.imatch(me._fullPath.file, expectedDirName)
+            or string.imatch(me._fullPath.realpath, me._addon.basePath ~ "/*/" ~ expectedDirName ~ "/*");
     },
 };

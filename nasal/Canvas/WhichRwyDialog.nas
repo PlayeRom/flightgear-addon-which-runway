@@ -68,6 +68,8 @@ var WhichRwyDialog = {
 
         me._keyActions();
 
+        g_VersionChecker.registerCallback(Callback.new(me.newVersionAvailable, me));
+
         return me;
     },
 
@@ -187,5 +189,17 @@ var WhichRwyDialog = {
         }
 
         tab.vertScrollBarBy(dy);
+    },
+
+    #
+    # Callback called when a new version of add-on is detected.
+    #
+    # @param  string  newVersion
+    # @return void
+    #
+    newVersionAvailable: func(newVersion) {
+        var title = sprintf("Which Runway %s (new version %s is available)", g_Addon.version.str(), newVersion);
+
+        me._window.set("title", title);
     },
 };

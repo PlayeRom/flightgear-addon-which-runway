@@ -35,4 +35,28 @@ var Utils = {
 
         return !size(errors);
     },
+
+    #
+    # Encode URL the given string.
+    #
+    # @param  string  str
+    # @return string
+    #
+    urlEncode: func(str) {
+        var result = "";
+        var allowed = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
+        var size = globals.size(str);
+
+        for (var i = 0; i < size; i += 1) {
+            var char = str[i];
+
+            if (globals.find(chr(char), allowed) == -1) {
+                result ~= "%" ~ sprintf("%02X", char);
+            } else {
+                result ~= chr(char);
+            }
+        }
+
+        return result;
+    },
 };

@@ -35,6 +35,11 @@ var g_Addon = nil;
 var g_Settings = nil;
 
 #
+# Global object of VersionChecker.
+#
+var g_VersionChecker = nil;
+
+#
 # Global object of dialog.
 #
 var g_WhichRwyDialog = nil;
@@ -65,6 +70,7 @@ var Bootstrap = {
         Bootstrap._initDevMode();
 
         g_Settings = Settings.new();
+        g_VersionChecker = GitHubVersionChecker.new();
 
         # Disable the menu as it loads with delay.
         gui.menuEnable("which-runway-addon-main", false);
@@ -82,6 +88,10 @@ var Bootstrap = {
             g_SettingsDialog = SettingsDialog.new();
             g_AboutDialog = AboutDialog.new();
 
+            # Check the version last, because dialogs must first register their
+            # callbacks to VersionChecker in their constructors.
+            g_VersionChecker.checkLastVersion();
+
             gui.menuEnable("which-runway-addon-main", true);
             gui.menuEnable("which-runway-addon-settings", true);
             gui.menuEnable("which-runway-addon-about", true);
@@ -95,6 +105,10 @@ var Bootstrap = {
     #
     uninit: func() {
         Profiler.clear();
+
+        if (g_VersionChecker != nil) {
+            g_VersionChecker.del();
+        }
 
         if (g_WhichRwyDialog != nil) {
             g_WhichRwyDialog.del();

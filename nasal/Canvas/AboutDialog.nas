@@ -39,13 +39,9 @@ var AboutDialog = {
         me._parentDialog.setChild(me, AboutDialog); # Let the parent know who their child is.
         me._parentDialog.setPositionOnCenter();
 
-        me._vbox.addSpacing(AboutDialog.PADDING);
-        me._drawContent();
+        me._createLayout();
 
-        var buttonBoxClose = me._drawBottomBar("Close", func { me.hide(); });
-        me._vbox.addSpacing(AboutDialog.PADDING);
-        me._vbox.addItem(buttonBoxClose);
-        me._vbox.addSpacing(AboutDialog.PADDING);
+        g_VersionChecker.registerCallback(Callback.new(me.newVersionAvailable, me));
 
         return me;
     },
@@ -61,11 +57,13 @@ var AboutDialog = {
     },
 
     #
-    # Draw content.
+    # Create layout.
     #
     # @return void
     #
-    _drawContent: func() {
+    _createLayout: func() {
+        me._vbox.addSpacing(AboutDialog.PADDING);
+
         me._vbox.addItem(me._getLabel(g_Addon.name));
         me._vbox.addItem(me._getLabel(sprintf("version %s", g_Addon.version.str())));
         me._vbox.addItem(me._getLabel("October 4, 2025"));
@@ -80,14 +78,40 @@ var AboutDialog = {
         me._vbox.addStretch(1);
 
         me._vbox.addItem(me._getButton("FlightGear Wiki", func {
-            Utils.openBrowser({ "url": g_Addon.homePage });
+            Utils.openBrowser({ url: g_Addon.homePage });
         }));
 
         me._vbox.addItem(me._getButton("GitHub Website", func {
-            Utils.openBrowser({ "url": g_Addon.codeRepositoryUrl });
+            Utils.openBrowser({ url: g_Addon.codeRepositoryUrl });
         }));
 
         me._vbox.addStretch(1);
+
+        me._createLayoutNewVersionInfo();
+
+        me._vbox.addStretch(1);
+
+        var buttonBoxClose = me._drawBottomBar("Close", func { me.hide(); });
+        me._vbox.addSpacing(AboutDialog.PADDING);
+        me._vbox.addItem(buttonBoxClose);
+        me._vbox.addSpacing(AboutDialog.PADDING);
+    },
+
+    #
+    # Create hidden layout for new version info.
+    #
+    # @return void
+    #
+    _createLayoutNewVersionInfo: func {
+        me._newVersionAvailLabel = me._getLabel("New version is available").setVisible(false);
+        me._newVersionAvailLabel.setColor([0.9, 0.0, 0.0]);
+
+        me._newVersionAvailBtn = me._getButton("Download new version", func {
+            Utils.openBrowser({ url: g_Addon.downloadUrl });
+        }).setVisible(false);
+
+        me._vbox.addItem(me._newVersionAvailLabel);
+        me._vbox.addItem(me._newVersionAvailBtn);
     },
 
     #
@@ -134,5 +158,20 @@ var AboutDialog = {
         buttonBox.addStretch(1);
 
         return buttonBox;
+    },
+
+    #
+    # Callback called when a new version of add-on is detected.
+    #
+    # @param  string  newVersion
+    # @return void
+    #
+    newVersionAvailable: func(newVersion) {
+        me._newVersionAvailLabel
+            .setText(sprintf("New version %s is available", newVersion))
+            .setVisible(true);
+
+        me._newVersionAvailBtn
+            .setVisible(true);
     },
 };
