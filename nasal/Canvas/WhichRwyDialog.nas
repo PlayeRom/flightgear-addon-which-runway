@@ -151,7 +151,7 @@ var WhichRwyDialog = {
         # TODO: TabWidget does not have a method to get the currently selected tab,
         # so I get it via the private member _currentTabId. Fix this when the method is added.
         var currentTabId = me._tabs._currentTabId;
-        if (currentTabId != nil and globals.contains(me._tabContents, currentTabId)) {
+        if (currentTabId != nil and contains(me._tabContents, currentTabId)) {
             me._tabContents[currentTabId].updateDynamicData();
         }
     },

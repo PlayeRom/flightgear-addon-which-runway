@@ -86,7 +86,7 @@ var BottomBar = {
     # @return void
     #
     updateNearestAirportButtons: func() {
-        var airports = globals.findAirportsWithinRange(50); # range in NM
+        var airports = findAirportsWithinRange(50); # range in NM
         var airportSize = size(airports);
 
         forindex (var index; me._loadIcaoBtns.vector) {

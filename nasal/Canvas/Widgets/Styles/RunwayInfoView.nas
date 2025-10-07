@@ -394,7 +394,7 @@ DefaultStyle.widgets["runway-info-view"] = {
         # 0 - ICAO,
         # 1 - runway ID,
         # 2 - category: "LOC", "ILS-cat-II", etc.
-        var nameParts = globals.split(" ", rwy.ils.name);
+        var nameParts = split(" ", rwy.ils.name);
         var category = "";
         if (size(nameParts) >= 3) {
             category = nameParts[2];

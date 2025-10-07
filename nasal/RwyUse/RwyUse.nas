@@ -159,7 +159,7 @@ var RwyUse = {
             return RwyUse.ERR_NO_SCHEDULE; # the indicated traffic does not operate at the specified time
         }
 
-        if (!globals.contains(me._data[icao].schedules, schedule)) {
+        if (!contains(me._data[icao].schedules, schedule)) {
             return nil; # error, no such schedule in data structure
         }
 
@@ -241,7 +241,7 @@ var RwyUse = {
     # @return bool  ICAO is loaded.
     #
     _isIcaoLoaded: func(icao) {
-        if (!globals.contains(me._data, icao)) {
+        if (!contains(me._data, icao)) {
             var data = me._loadRwyUseXml.load(icao);
             if (data == nil) {
                 return false;
@@ -259,7 +259,7 @@ var RwyUse = {
     # @return string|nil  Aircraft type found, or nil if none found.
     #
     _checkAircraftType: func(icao, acType) {
-        if (globals.contains(me._data[icao].aircraft, acType)) {
+        if (contains(me._data[icao].aircraft, acType)) {
             return acType;
         }
 

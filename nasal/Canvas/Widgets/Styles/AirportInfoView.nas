@@ -259,7 +259,7 @@ DefaultStyle.widgets["airport-info-view"] = {
     #
     _updateBearing: func(model, acGeoPos, airportGeoPos) {
         var bearingTrue = acGeoPos.course_to(airportGeoPos);
-        var bearingMag = geo.normdeg(bearingTrue - globals.magvar(acGeoPos.lat(), acGeoPos.lon()));
+        var bearingMag = geo.normdeg(bearingTrue - magvar(acGeoPos.lat(), acGeoPos.lon()));
 
         me._bearing[me._VAL].setText(me._getBearingString(bearingMag));
         me._bearing[me._VAL2].setText(me._getBearingString(bearingTrue));

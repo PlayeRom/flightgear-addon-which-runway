@@ -302,7 +302,7 @@ var DrawTabContent = {
             return;
         }
 
-        var newIcao = globals.string.uc(icao);
+        var newIcao = string.uc(icao);
         if (newIcao != me._icao) {
             # ICAO changed, set current UTC time
             me._drawRwyUseControls.setUtcTimeToCurrent();
@@ -312,7 +312,7 @@ var DrawTabContent = {
 
         me._bottomBar.setIcao(me._icao);
 
-        var airport = globals.airportinfo(me._icao);
+        var airport = airportinfo(me._icao);
         if (airport == nil) {
             me._reDrawContentWithMessage("ICAO code \"" ~ me._icao ~ "\" not found!", true);
             return;
@@ -354,7 +354,7 @@ var DrawTabContent = {
     # @param  airport|nil  Airport or nil if not found.
     #
     _getNearestAirportWithMetar: func(airport) {
-        var airports = globals.findAirportsWithinRange(airport, g_Settings.getMaxMetarRangeNm());
+        var airports = findAirportsWithinRange(airport, g_Settings.getMaxMetarRangeNm());
         foreach (var nearest; airports) {
             if (nearest.has_metar) {
                 return nearest;
@@ -450,13 +450,13 @@ var DrawTabContent = {
             Profiler.start("DrawTabContent._reDrawContent " ~ me._tabId);
         }
 
-        var airport = globals.airportinfo(me._icao);
+        var airport = airportinfo(me._icao);
         if (airport == nil) {
             me._reDrawContentWithMessage(me._getNoIcaoMessage(), true);
             return;
         }
 
-        var aptMagVar = globals.magvar(airport);
+        var aptMagVar = magvar(airport);
 
         me._messageView.setVisible(false);
 

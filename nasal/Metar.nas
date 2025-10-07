@@ -331,7 +331,7 @@ var Metar = {
             return false;
         }
 
-        var pos = globals.find(" VRB", metar);
+        var pos = find(" VRB", metar);
         if (pos == -1) {
             return false;
         }
@@ -402,7 +402,7 @@ var Metar = {
             return nil;
         }
 
-        var station = globals.airportinfo(icao);
+        var station = airportinfo(icao);
         if (station == nil) {
             return nil;
         }

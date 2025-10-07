@@ -46,7 +46,7 @@ var JsonVersionChecker = {
 
         Log.print("JsonVersionChecker, URL = ", me._url);
 
-        globals.http.load(me._url)
+        http.load(me._url)
             .done(func(r) {
                 # Be careful, because die() here will close the entire simulator (⊙_◎)
 

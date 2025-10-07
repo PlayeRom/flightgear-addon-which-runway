@@ -97,7 +97,7 @@ var LoadRwyUseXml = {
                 continue;
             }
 
-            if (globals.contains(data.schedules, scheduleName)) {
+            if (contains(data.schedules, scheduleName)) {
                 Log.alert(icao, ".rwyuse.xml has duplicate schedule name \"", scheduleName, "\"");
                 continue;
             }
@@ -200,8 +200,8 @@ var LoadRwyUseXml = {
                 continue;
             }
 
-            var startTime = globals.split(":", time.getValue("___start"));
-            var endTime   = globals.split(":", time.getValue("___end"));
+            var startTime = split(":", time.getValue("___start"));
+            var endTime   = split(":", time.getValue("___end"));
 
             var item = {
                 start: {
@@ -222,7 +222,7 @@ var LoadRwyUseXml = {
                 ));
             }
 
-            globals.append(data.time, item);
+            append(data.time, item);
         }
 
         return data;
@@ -248,12 +248,12 @@ var LoadRwyUseXml = {
 
                 var ids = me._readRunwayIds(runways.getValue());
 
-                globals.append(operation == "takeoff" ? takeoffs : landings, ids);
+                append(operation == "takeoff" ? takeoffs : landings, ids);
 
-                var size = globals.size(ids);
+                var count = size(ids);
 
-                if (minSize == nil or minSize > size) minSize = size;
-                if (maxSize == nil or maxSize < size) maxSize = size;
+                if (minSize == nil or minSize > count) minSize = count;
+                if (maxSize == nil or maxSize < count) maxSize = count;
             }
         }
 
@@ -265,11 +265,11 @@ var LoadRwyUseXml = {
             );
 
             forindex (var index; takeoffs) {
-                globals.setsize(takeoffs[index], minSize);
+                setsize(takeoffs[index], minSize);
             }
 
             forindex (var index; landings) {
-                globals.setsize(landings[index], minSize);
+                setsize(landings[index], minSize);
             }
         }
 
@@ -284,7 +284,7 @@ var LoadRwyUseXml = {
     # @return vector  Vector of single runway IDs, e.g. ["06", "18R", "18R", "36R", "27", "18R", "18R", "06"].
     #
     _readRunwayIds: func(runwaysString) {
-        var array = globals.split(",", runwaysString);
+        var array = split(",", runwaysString);
         forindex (var index; array) {
             array[index] = string.trim(array[index]);
         }

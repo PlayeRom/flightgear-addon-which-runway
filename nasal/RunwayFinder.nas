@@ -141,11 +141,11 @@ var RunwayFinder = {
         var takeoffs = preferredRunways.takeoff;
         var landings = preferredRunways.landing;
 
-        var takeoffRowSize = globals.size(takeoffs);
-        var landingRowSize = globals.size(landings);
+        var takeoffRowSize = size(takeoffs);
+        var landingRowSize = size(landings);
 
         var rowsSize = math.max(takeoffRowSize, landingRowSize);
-        var colSize = globals.size(takeoffs[0]); # All vectors in takeoffs and landings have the same number of columns
+        var colSize = size(takeoffs[0]); # All vectors in takeoffs and landings have the same number of columns
 
         var isPreferredColSet = false;
         for (var c = 0; c < colSize; c += 1) {
@@ -187,7 +187,7 @@ var RunwayFinder = {
                         isFoundPreferred = true;
                     }
 
-                    globals.append(
+                    append(
                         columnRunway.isWindCriteriaMet ? runwaysDataActive : runwaysDataInactive,
                         columnRunway
                     );
@@ -226,7 +226,7 @@ var RunwayFinder = {
         }
 
         if (isAppend) {
-            globals.append(columnRunwayDataRef, runwayData);
+            append(columnRunwayDataRef, runwayData);
         }
 
         return runwayData.isWindCriteriaMet;
@@ -239,7 +239,7 @@ var RunwayFinder = {
     # @return hash
     #
     _checkWindCriteria: func(airport, rwyId, wind) {
-        if (!globals.contains(airport.runways, rwyId)) {
+        if (!contains(airport.runways, rwyId)) {
             # The airport does not have such a runway
             return nil;
         }
@@ -290,7 +290,7 @@ var RunwayFinder = {
 
             var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, runway.heading);
 
-            globals.append(runwaysData, me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway));
+            append(runwaysData, me._getRunwayData("Runway", normDiffDeg, hw, hwGust, xw, xwGust, runway));
         }
 
         foreach (var name; keys(airport.helipads)) {
@@ -298,7 +298,7 @@ var RunwayFinder = {
 
             var (normDiffDeg, hw, hwGust, xw, xwGust) = me._calculateWinds(windDir, windSpeed, windGust, helipad.heading);
 
-            globals.append(runwaysData, me._getRunwayData("Helipad", normDiffDeg, hw, hwGust, xw, xwGust, helipad));
+            append(runwaysData, me._getRunwayData("Helipad", normDiffDeg, hw, hwGust, xw, xwGust, helipad));
         }
 
         return windDir == nil
@@ -386,7 +386,7 @@ var RunwayFinder = {
     # @return vector  Sorted array of runways data.
     #
     _sortRunwaysByHeadwind: func(runwaysData) {
-        return globals.sort(runwaysData, func(a, b) {
+        return sort(runwaysData, func(a, b) {
               if (a.normDiffDeg > b.normDiffDeg) return  1;
            elsif (a.normDiffDeg < b.normDiffDeg) return -1;
 

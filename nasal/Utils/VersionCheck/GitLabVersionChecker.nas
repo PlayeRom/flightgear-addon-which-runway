@@ -51,12 +51,12 @@ var GitLabVersionChecker = {
     #
     _downloadCallback: func(downloadedResource) {
         var json = me.parseJson(downloadedResource);
-        if (json == nil or !globals.ishash(json)) {
+        if (json == nil or !ishash(json)) {
             return;
         }
 
         # GitHub returns a single object with the latest release, where we find the `tag_name` field.
-        if (!globals.contains(json, "tag_name")) {
+        if (!contains(json, "tag_name")) {
             Log.print("GitLabVersionChecker failed, the JSON doesn't contain `tag_name` key.");
             return;
         }

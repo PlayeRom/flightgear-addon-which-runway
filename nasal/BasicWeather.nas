@@ -311,7 +311,7 @@ var BasicWeather = {
 
         var layers = me._getBoundaryLayers();
 
-        var layersSize = globals.size(layers);
+        var layersSize = size(layers);
         if (layersSize == 0) {
             return;
         }
@@ -366,7 +366,7 @@ var BasicWeather = {
                 continue;
             }
 
-            globals.append(layers, {
+            append(layers, {
                 elevation: layer.getChild("elevation-ft").getValue(),
                 windDir  : layer.getChild("wind-from-heading-deg").getValue(),
                 windKt   : layer.getChild("wind-speed-kt").getValue(),
@@ -384,7 +384,7 @@ var BasicWeather = {
     # @return vector  Sorted layers by elevation.
     #
     _sortLayers: func(layers) {
-        return globals.sort(layers, func(a, b) {
+        return sort(layers, func(a, b) {
               if (a.elevation > b.elevation) return  1;
            elsif (a.elevation < b.elevation) return -1;
 

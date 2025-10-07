@@ -208,7 +208,7 @@ DefaultStyle.widgets["metar-info-view"] = {
             return [line1, nil];
         }
 
-        var metarParts = globals.split(" ", metar);
+        var metarParts = split(" ", metar);
         var count = size(metarParts);
         if (count <= 12) {
             # Draw by one line

@@ -124,7 +124,7 @@ var VersionChecker = {
             repoUrl = substr(repoUrl, 8, size(repoUrl) - 8);
         }
 
-        var parts = globals.split("/", repoUrl);
+        var parts = split("/", repoUrl);
         if (size(parts) < 3) {
             return ["", ""];
         }
