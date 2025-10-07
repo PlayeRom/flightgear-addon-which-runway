@@ -72,7 +72,7 @@ var JsonVersionChecker = {
     #
     parseJson: func(json) {
         var compilationErrors = [];
-        var jsonFunc = call(func compile(json), [], nil, nil, compilationErrors);
+        var jsonFunc = call(func compile(json), [], compilationErrors);
 
         if (size(compilationErrors)) {
             foreach (var error; compilationErrors) {
@@ -82,7 +82,7 @@ var JsonVersionChecker = {
         }
 
         var runtimeErrors = [];
-        var jsonHash = call(jsonFunc, [], nil, nil, runtimeErrors);
+        var jsonHash = call(jsonFunc, [], runtimeErrors);
 
         if (size(runtimeErrors)) {
             foreach (var error; runtimeErrors) {

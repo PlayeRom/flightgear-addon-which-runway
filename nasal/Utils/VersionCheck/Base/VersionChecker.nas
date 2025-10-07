@@ -187,7 +187,7 @@ var VersionChecker = {
         var strVersion = me._removeVPrefix(strVersion);
 
         var errors = [];
-        var version = call(func addons.AddonVersion.new(strVersion), [], nil, nil, errors);
+        var version = call(func addons.AddonVersion.new(strVersion), [], errors);
 
         if (size(errors)) {
             foreach (var error; errors) {
