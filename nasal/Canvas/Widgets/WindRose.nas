@@ -36,7 +36,20 @@ gui.widgets.WindRose = {
         me._runway = nil;
         me._runways = [];
         me._maxRwyLength = 5000.0;
+        me._hwThreshold = 45;
+        me._xwThreshold = 90;
 
+        return me;
+    },
+
+    #
+    # @param  double  hwThreshold  Headwind threshold.
+    # @param  double  xwThreshold  Crosswind threshold.
+    # @return ghost
+    #
+    setHwXwThresholds: func(hwThreshold = 45, xwThreshold = 90) {
+        me._hwThreshold = hwThreshold;
+        me._xwThreshold = xwThreshold;
         return me;
     },
 

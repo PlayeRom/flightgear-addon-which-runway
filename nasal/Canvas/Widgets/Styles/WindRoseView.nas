@@ -266,12 +266,12 @@ DefaultStyle.widgets["wind-rose-view"] = {
         # Threshold markings
         if (rwy.reciprocal != nil and !endClipped) {
             # For reciprocal
-            me._drawRunwayId(rwyCenterX, rwyCenterY, rwy.reciprocal.id, rwy.normDiffDeg, angleRad, lenPix, false, isMainRwy);
+            me._drawRunwayId(model, rwyCenterX, rwyCenterY, rwy.reciprocal.id, rwy.normDiffDeg, angleRad, lenPix, false, isMainRwy);
         }
 
         if (!startClipped) {
             angleRad = (rwy.heading + 90) * globals.D2R;
-            me._drawRunwayId(rwyCenterX, rwyCenterY, rwy.rwyId, rwy.normDiffDeg, angleRad, lenPix, isMainRwy, isMainRwy);
+            me._drawRunwayId(model, rwyCenterX, rwyCenterY, rwy.rwyId, rwy.normDiffDeg, angleRad, lenPix, isMainRwy, isMainRwy);
         }
     },
 
@@ -358,6 +358,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     #
     # Draw runway id near runway end.
     #
+    # @param  ghost  model  WindRose model.
     # @param  double  x, y  Center of wind rose in pixels.
     # @param  string  rwyId  Runway id to draw.
     # @param  double  angleRad  Angle of runway in radians.
@@ -366,10 +367,10 @@ DefaultStyle.widgets["wind-rose-view"] = {
     # @param  bool  isMainRwy
     # @return void
     #
-    _drawRunwayId: func(x, y, rwyId, normDiffDeg, angleRad, lenPix, isMainThreshold, isMainRwy) {
+    _drawRunwayId: func(model, x, y, rwyId, normDiffDeg, angleRad, lenPix, isMainThreshold, isMainRwy) {
         var color = style.getColor("text_color");
         if (isMainThreshold) {
-            color = me._geWindColorByDir(normDiffDeg);
+            color = me._geWindColorByDir(model, normDiffDeg);
         } elsif (!isMainRwy) {
             color = [0.7, 0.7, 0.7];
         }
@@ -389,13 +390,14 @@ DefaultStyle.widgets["wind-rose-view"] = {
     },
 
     #
+    # @param  ghost  model  WindRose model.
     # @param  int|nil  normDiffDeg
     # @return vector  RGB color.
     #
-    _geWindColorByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return style.getColor("text_color");
-        elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return me._colors.GREEN;
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return me._colors.AMBER;
+    _geWindColorByDir: func(model, normDiffDeg) {
+           if (normDiffDeg == nil)                return style.getColor("text_color");
+        elsif (normDiffDeg <= model._hwThreshold) return me._colors.GREEN;
+        elsif (normDiffDeg <= model._xwThreshold) return me._colors.AMBER;
 
         return style.getColor("text_color");
     },

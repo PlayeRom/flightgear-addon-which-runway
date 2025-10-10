@@ -184,7 +184,7 @@ DefaultStyle.widgets["runway-info-view"] = {
     _drawRunwayInfo: func(model) {
         var rwy = model._runway;
 
-        me._setRunwayLabel(rwy);
+        me._setRunwayLabel(model, rwy);
 
         # Headwind or Tailwind:
         me._hdTw[me._LABEL].setText(me._getMainWindLabel(rwy.headwind));
@@ -248,10 +248,11 @@ DefaultStyle.widgets["runway-info-view"] = {
     },
 
     #
+    # @param  ghost  model  RunwayInfo model.
     # @param  hash  runway  Runway data object.
     # @return void
     #
-    _setRunwayLabel: func(runway) {
+    _setRunwayLabel: func(model, runway) {
         me._runwayTexts.label.setText(runway.type ~ ":");
 
         var x = me._draw.shiftX(me._runwayTexts.label);
@@ -259,42 +260,45 @@ DefaultStyle.widgets["runway-info-view"] = {
         me._runwayTexts.id.setText(runway.rwyId).setTranslation(x, yT);
 
         x += me._draw.shiftX(me._runwayTexts.id, 10);
-        me._runwayTexts.wind.setText(me._geWindLabelByDir(runway.normDiffDeg))
+        me._runwayTexts.wind.setText(me._geWindLabelByDir(model, runway.normDiffDeg))
             .setTranslation(x, yT)
-            .setColor(me._geWindColorByDir(runway.normDiffDeg))
-            .setFont(me._geWindFontByDir(runway.normDiffDeg));
+            .setColor(me._geWindColorByDir(model, runway.normDiffDeg))
+            .setFont(me._geWindFontByDir(model, runway.normDiffDeg));
     },
 
     #
+    # @param  ghost  model  RunwayInfo model.
     # @param  int|nil  normDiffDeg
     # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
     #
-    _geWindLabelByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return "n/a";
-        elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return "Headwind";
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return "Crosswind";
-        else                                                         return "Tailwind";
+    _geWindLabelByDir: func(model, normDiffDeg) {
+           if (normDiffDeg == nil)                return "n/a";
+        elsif (normDiffDeg <= model._hwThreshold) return "Headwind";
+        elsif (normDiffDeg <= model._xwThreshold) return "Crosswind";
+        else                                      return "Tailwind";
     },
 
     #
+    # @param  ghost  model  RunwayInfo model.
     # @param  int|nil  normDiffDeg
     # @return vector  RGB color.
     #
-    _geWindColorByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return style.getColor("text_color");
-        elsif (normDiffDeg <= whichRunway.Metar.HEADWIND_THRESHOLD)  return me._colors.GREEN;
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return me._colors.AMBER;
-        else                                                         return style.getColor("text_color");
+    _geWindColorByDir: func(model, normDiffDeg) {
+           if (normDiffDeg == nil)                return style.getColor("text_color");
+        elsif (normDiffDeg <= model._hwThreshold) return me._colors.GREEN;
+        elsif (normDiffDeg <= model._xwThreshold) return me._colors.AMBER;
+        else                                      return style.getColor("text_color");
     },
 
     #
+    # @param  ghost  model  RunwayInfo model.
     # @param  int|nil  normDiffDeg
     # @return string  Font path.
     #
-    _geWindFontByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                                   return me._fontSansRegular;
-        elsif (normDiffDeg <= whichRunway.Metar.CROSSWIND_THRESHOLD) return me._fontSansBold;
-        else                                                         return me._fontSansRegular;
+    _geWindFontByDir: func(model, normDiffDeg) {
+           if (normDiffDeg == nil)                return me._fontSansRegular;
+        elsif (normDiffDeg <= model._xwThreshold) return me._fontSansBold;
+        else                                      return me._fontSansRegular;
     },
 
     #

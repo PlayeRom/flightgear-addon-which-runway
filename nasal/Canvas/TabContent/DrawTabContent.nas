@@ -164,10 +164,12 @@ var DrawTabContent = {
 
             var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
                 .setMarginForValue(DrawTabContent.RWY_VALUE_MARGIN_X)
-                .setVisible(false);
+                .setVisible(false)
+                .setHwXwThresholds(Metar.HEADWIND_THRESHOLD, Metar.CROSSWIND_THRESHOLD);
 
             var windRoseView = canvas.gui.widgets.WindRose.new(parent: me._scrollContent, cfg: { colors: Colors })
-                .setVisible(false);
+                .setVisible(false)
+                .setHwXwThresholds(Metar.HEADWIND_THRESHOLD, Metar.CROSSWIND_THRESHOLD);
 
             var runwayVCenter = canvas.VBoxLayout.new(); # wrapper for set runway info vertically centered
             runwayVCenter.addStretch(1);

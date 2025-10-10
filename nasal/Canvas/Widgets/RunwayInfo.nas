@@ -33,7 +33,20 @@ gui.widgets.RunwayInfo = {
         me._valueMarginX = 110;
         me._runway = nil;
         me._aptMagVar = nil;
+        me._hwThreshold = 45;
+        me._xwThreshold = 90;
 
+        return me;
+    },
+
+    #
+    # @param  double  hwThreshold  Headwind threshold.
+    # @param  double  xwThreshold  Crosswind threshold.
+    # @return ghost
+    #
+    setHwXwThresholds: func(hwThreshold = 45, xwThreshold = 90) {
+        me._hwThreshold = hwThreshold;
+        me._xwThreshold = xwThreshold;
         return me;
     },
 

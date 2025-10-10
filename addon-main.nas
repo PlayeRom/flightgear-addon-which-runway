@@ -20,9 +20,14 @@ io.include("Loader.nas");
 var main = func(addon) {
     logprint(LOG_ALERT, addon.name, " Add-on initialized from path ", addon.basePath);
 
-    Loader.new(addon).load(addon.basePath, "whichRunway");
+    var namespace = addons.getNamespaceName(addon);
 
-    whichRunway.Bootstrap.init(addon);
+    # Create an alias to the add-on namespace for easier reference in addon-menubar-items.xml:
+    globals.whichRunwayAddon = globals[namespace];
+
+    Loader.new(addon).load(addon.basePath, namespace);
+
+    Bootstrap.init(addon);
 };
 
 #
@@ -42,6 +47,6 @@ var main = func(addon) {
 # @return void
 #
 var unload = func(addon) {
-    whichRunway.Log.print("unload");
-    whichRunway.Bootstrap.uninit();
+    Log.print("unload");
+    Bootstrap.uninit();
 };
