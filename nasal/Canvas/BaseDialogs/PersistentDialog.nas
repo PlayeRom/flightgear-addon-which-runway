@@ -49,7 +49,7 @@ var PersistentDialog = {
         };
 
         me._childMe = nil;
-        me._childCls = nil;
+        me._childCls = caller(1)[0]["me"];
 
         me._usePositionOnCenter = false;
 
@@ -65,7 +65,7 @@ var PersistentDialog = {
     # @override Dialog
     #
     del: func() {
-        me.parents[1].del();
+        call(Dialog.del, [], me);
     },
 
     #
@@ -75,7 +75,7 @@ var PersistentDialog = {
     # @override Dialog
     #
     show: func() {
-        me.parents[1].show();
+        call(Dialog.show, [], me);
     },
 
     #
@@ -85,7 +85,7 @@ var PersistentDialog = {
     # @override Dialog
     #
     hide: func() {
-        me.parents[1].hide();
+        call(Dialog.hide, [], me);
     },
 
     #
@@ -136,23 +136,21 @@ var PersistentDialog = {
     # Call this method in the child constructor if your child class needs
     # to call its stuff in methods like hide() or del().
     #
-    # @param  hash  childMe  Child instance of object.
-    # @param  hash  childCls  Child class hash.
+    # @param  hash  childMe  Child instance of object ("me").
     # @return void
     #
-    setChild: func(childMe, childCls) {
+    setChild: func(childMe) {
         me._childMe = childMe;
-        me._childCls = childCls;
     },
 
     #
     # Call child given method if exists.
     #
     # @param  string  funcName  Method name to call.
-    # @return bool  Return true if function has been called, otherwise return false.
+    # @return mixed
     #
     _callMethodByChild: func(funcName) {
-        if (me._childMe != nil and me._childCls != nil and typeof(me._childCls[funcName]) == "func") {
+        if (me._childMe != nil and contains(me._childCls, funcName) and typeof(me._childCls[funcName]) == "func") {
             return call(me._childCls[funcName], [], me._childMe);
         }
 

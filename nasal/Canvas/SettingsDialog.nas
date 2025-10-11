@@ -36,7 +36,7 @@ var SettingsDialog = {
         };
 
         me._parentDialog = me.parents[1];
-        me._parentDialog.setChild(me, SettingsDialog); # Let the parent know who their child is.
+        me._parentDialog.setChild(me); # Let the parent know who their child is.
         me._parentDialog.setPositionOnCenter();
 
         me._maxMetarRangeNm = g_Settings.getMaxMetarRangeNm();
@@ -63,7 +63,7 @@ var SettingsDialog = {
     # @override PersistentDialog
     #
     del: func() {
-        me._parentDialog.del();
+        call(PersistentDialog.del, [], me);
     },
 
     #
@@ -77,7 +77,7 @@ var SettingsDialog = {
         me._rangeComboBox.setSelectedByValue(me._maxMetarRangeNm);
         me._checkboxRwyUse.setChecked(me._rwyUseEnable);
 
-        me._parentDialog.show();
+        call(PersistentDialog.show, [], me);
     },
 
     #

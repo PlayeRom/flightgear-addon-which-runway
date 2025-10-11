@@ -43,7 +43,7 @@ var XmlVersionChecker = {
     del: func() {
         me._listeners.del();
 
-        me.parents[1].del();
+        call(VersionChecker.del, [], me);
     },
 
     #

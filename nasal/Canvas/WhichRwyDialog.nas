@@ -40,7 +40,7 @@ var WhichRwyDialog = {
         };
 
         me._parentDialog = me.parents[1];
-        me._parentDialog.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
+        me._parentDialog.setChild(me); # Let the parent know who their child is.
         me._parentDialog.setPositionOnCenter();
 
         me._runwayUse = RwyUse.new();
@@ -103,7 +103,7 @@ var WhichRwyDialog = {
         me._runwayUse.del();
         me._aircraftTypeFinder.del();
 
-        me._parentDialog.del();
+        call(PersistentDialog.del, [], me);
     },
 
     #
@@ -116,7 +116,7 @@ var WhichRwyDialog = {
         me._updateDynamicData();
         me._timer.start();
 
-        me._parentDialog.show();
+        call(PersistentDialog.show, [], me);
     },
 
     #
@@ -128,7 +128,7 @@ var WhichRwyDialog = {
     hide: func() {
         me._timer.stop();
 
-        me._parentDialog.hide();
+        call(PersistentDialog.hide, [], me);
     },
 
     #
