@@ -49,7 +49,7 @@ var PersistentDialog = {
         };
 
         me._childMe = nil;
-        me._childCls = caller(1)[0]["me"];
+        me._childCls = nil;
 
         me._usePositionOnCenter = false;
 
@@ -137,20 +137,22 @@ var PersistentDialog = {
     # to call its stuff in methods like hide() or del().
     #
     # @param  hash  childMe  Child instance of object ("me").
+    # @param  hash  childCls  Child class hash.
     # @return void
     #
-    setChild: func(childMe) {
+    setChild: func(childMe, childCls) {
         me._childMe = childMe;
+        me._childCls = childCls;
     },
 
     #
     # Call child given method if exists.
     #
     # @param  string  funcName  Method name to call.
-    # @return mixed
+    # @return bool  Return true if function has been called, otherwise return false.
     #
     _callMethodByChild: func(funcName) {
-        if (me._childMe != nil and contains(me._childCls, funcName) and typeof(me._childCls[funcName]) == "func") {
+        if (me._childMe != nil and me._childCls != nil and typeof(me._childCls[funcName]) == "func") {
             return call(me._childCls[funcName], [], me._childMe);
         }
 

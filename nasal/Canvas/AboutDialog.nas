@@ -36,7 +36,7 @@ var AboutDialog = {
         };
 
         me._parentDialog = me.parents[1];
-        me._parentDialog.setChild(me); # Let the parent know who their child is.
+        me._parentDialog.setChild(me, AboutDialog); # Let the parent know who their child is.
         me._parentDialog.setPositionOnCenter();
 
         me._createLayout();
