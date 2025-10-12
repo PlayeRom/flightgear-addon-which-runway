@@ -26,16 +26,17 @@ gui.widgets.WindLabel = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.WindLabel, cfg);
-        me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "wind-label-view", me._cfg));
 
-        me._isWindData = false;
-        me._windDir = nil;
-        me._windKt = 0;
-        me._windGustKt = 0;
+        var obj = gui.Widget.new(gui.widgets.WindLabel, cfg);
+        obj._focus_policy = obj.NoFocus;
+        obj._setView(style.createWidget(parent, "wind-label-view", cfg));
 
-        return me;
+        obj._isWindData = false;
+        obj._windDir = nil;
+        obj._windKt = 0;
+        obj._windGustKt = 0;
+
+        return obj;
     },
 
     #

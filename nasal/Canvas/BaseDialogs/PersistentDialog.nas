@@ -27,17 +27,17 @@ var PersistentDialog = {
     # @return hash
     #
     new: func(width, height, title, resize = false, onResize = nil) {
-        var me = {
+        var obj = {
             parents: [
                 PersistentDialog,
                 Dialog.new(width, height, title, resize, onResize),
             ],
         };
 
-        me._window.hide();
+        obj._window.hide();
 
-        var self = me;
-        me._window.del = func() {
+        var self = obj;
+        obj._window.del = func() {
             # This method will be call after click on (X) button in canvas top
             # bar and here we want hide the window only.
             # FG version 2024.x supports the destroy_on_close flag, which could
@@ -48,14 +48,16 @@ var PersistentDialog = {
             self._callMethodByChild("hide");
         };
 
-        me._childMe = nil;
-        me._childCls = nil;
+        obj._childMe = nil;
+        obj._childCls = nil;
 
-        me._usePositionOnCenter = false;
+        obj._usePositionOnCenter = false;
 
-        me._handleKeys();
+        obj._handleKeys();
 
-        return me;
+        obj._posCenterTimer = nil;
+
+        return obj;
     },
 
     #
@@ -96,7 +98,11 @@ var PersistentDialog = {
     # @override Dialog
     #
     setPositionOnCenter: func(width = nil, height = nil) {
-        me.parents[1].setPositionOnCenter(width, height);
+        if (me._posCenterTimer) {
+            me._posCenterTimer.stop();
+        }
+
+        call(Dialog.setPositionOnCenter, [width, height], me.parents[1]);
 
         if (!me._usePositionOnCenter) {
             me._usePositionOnCenter = true;
@@ -110,25 +116,35 @@ var PersistentDialog = {
     # @return void
     #
     _addScreenSizeListeners: func() {
+        me._posCenterTimer = Timer.make(0.1, me, me.setPositionOnCenter);
+
         me._listeners.add(
             node: me._getPathToCanvas() ~ "/size[0]",
-            code: func() {
-                if (me._usePositionOnCenter) {
-                    me.setPositionOnCenter();
-                }
-            },
+            code: func me._handleSizeChange(),
             type: Listeners.ON_CHANGE_ONLY,
         );
 
         me._listeners.add(
             node: me._getPathToCanvas() ~ "/size[1]",
-            code: func() {
-                if (me._usePositionOnCenter) {
-                    me.setPositionOnCenter();
-                }
-            },
+            code: func me._handleSizeChange(),
             type: Listeners.ON_CHANGE_ONLY,
         );
+    },
+
+    #
+    # Method triggered when changing the FlightGear window resolution.
+    # The timer prevents setPositionOnCenter from being called multiple times
+    # when the width and height change simultaneously, or when the window is
+    # stretched with the mouse.
+    #
+    # @return void
+    #
+    _handleSizeChange: func() {
+        if (me._usePositionOnCenter) {
+            me._posCenterTimer.isRunning
+                ? me._posCenterTimer.restart(0.1)
+                : me._posCenterTimer.start();
+        }
     },
 
     #

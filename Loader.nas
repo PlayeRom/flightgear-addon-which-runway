@@ -20,13 +20,13 @@ var Loader = {
     # @return hash
     #
     new: func(addon) {
-        var me = {
+        var obj = {
             parents: [Loader],
             _addon: addon,
         };
 
         # List of files that should not be loaded.
-        me._excluded = std.Hash.new({
+        obj._excluded = std.Hash.new({
             "/addon-main.nas":,
             "/Loader.nas":,
             "/nasal/Utils/VersionCheck/Base/XmlVersionChecker.nas":,
@@ -35,9 +35,9 @@ var Loader = {
             # TODO: add more file names here if needed...
         });
 
-        me._fullPath = os.path.new();
+        obj._fullPath = os.path.new();
 
-        return me;
+        return obj;
     },
 
     #

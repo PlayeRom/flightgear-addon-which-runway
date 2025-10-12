@@ -20,35 +20,35 @@ var BasicWeather = {
     # @return hash
     #
     new: func() {
-        var me = { parents: [BasicWeather] };
+        var obj = { parents: [BasicWeather] };
 
-        me._localWeatherEnabledNode = props.globals.getNode("/nasal/local_weather/enabled");
+        obj._localWeatherEnabledNode = props.globals.getNode("/nasal/local_weather/enabled");
 
         # False means enabled "Manual Configuration" for Basic Weather:
-        me._metarUpdatesEnvNode = props.globals.getNode("/environment/params/metar-updates-environment");
+        obj._metarUpdatesEnvNode = props.globals.getNode("/environment/params/metar-updates-environment");
 
-        me._boundaryCfgNode = props.globals.getNode("/environment/config/boundary");
-        me._qnhCfgNode      = props.globals.getNode("/environment/config/boundary/entry[0]/pressure-sea-level-inhg");
+        obj._boundaryCfgNode = props.globals.getNode("/environment/config/boundary");
+        obj._qnhCfgNode      = props.globals.getNode("/environment/config/boundary/entry[0]/pressure-sea-level-inhg");
 
-        me._windDir = nil;
-        me._windKt  = 0;
+        obj._windDir = nil;
+        obj._windKt  = 0;
 
         # Timers to reduce calls to several listeners to the same action.
-        me._wxChangeTimer = Timer.make(1, me, me._wxChangeTimerCallback);
-        me._manCfgListenersTimer = Timer.make(1, me, me._manCfgListenersTimerCallback);
+        obj._wxChangeTimer = Timer.make(1, obj, obj._wxChangeTimerCallback);
+        obj._manCfgListenersTimer = Timer.make(1, obj, obj._manCfgListenersTimerCallback);
 
-        me._engineWxChangeCallback = std.Vector.new();
-        me._wxChangeCallback = std.Vector.new();
+        obj._engineWxChangeCallback = std.Vector.new();
+        obj._wxChangeCallback = std.Vector.new();
 
-        me._manCfgListeners = Listeners.new();
-        me._listeners = Listeners.new();
-        me._setListeners();
+        obj._manCfgListeners = Listeners.new();
+        obj._listeners = Listeners.new();
+        obj._setListeners();
 
-        if (me.isBasicWxManCfgEnabled()) {
-            me._calculateWindAt0Agl();
+        if (obj.isBasicWxManCfgEnabled()) {
+            obj._calculateWindAt0Agl();
         }
 
-        return me;
+        return obj;
     },
 
     #

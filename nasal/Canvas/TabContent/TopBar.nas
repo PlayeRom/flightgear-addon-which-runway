@@ -22,7 +22,7 @@ var TopBar = {
     # @return hash
     #
     new: func(tabsContent, clickAptCallback, clickRwyCallback) {
-        var me = {
+        var obj = {
             parents: [
                 TopBar,
             ],
@@ -31,26 +31,26 @@ var TopBar = {
             _clickRwyCallback: clickRwyCallback,
         };
 
-        me._airportBtn = canvas.gui.widgets.Button.new(me._tabsContent)
+        obj._airportBtn = canvas.gui.widgets.Button.new(obj._tabsContent)
             .setText("----")
             .setFixedSize(58, 28)
             .setVisible(false)
             .listen("clicked", func() {
-                me._clickAptCallback.invoke();
+                obj._clickAptCallback.invoke();
             });
 
-        me._runwayBtns = std.Vector.new();
+        obj._runwayBtns = std.Vector.new();
 
         for (var i = 0; i < DrawTabContent.MAX_RUNWAY_SLOTS; i += 1) {
-            var btn = canvas.gui.widgets.Button.new(me._tabsContent)
+            var btn = canvas.gui.widgets.Button.new(obj._tabsContent)
                 .setText("---")
                 .setFixedSize(38, 28)
                 .setVisible(false);
 
-            me._runwayBtns.append(btn);
+            obj._runwayBtns.append(btn);
         }
 
-        return me;
+        return obj;
     },
 
     #

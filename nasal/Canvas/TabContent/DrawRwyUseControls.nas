@@ -28,7 +28,7 @@ var DrawRwyUseControls = {
     # @return hash
     #
     new: func(tabId, scrollContent, redrawCallback, aircraftType) {
-        var me = {
+        var obj = {
             parents: [
                 DrawRwyUseControls,
                 DrawTabBase.new(tabId),
@@ -38,46 +38,46 @@ var DrawRwyUseControls = {
             _aircraftType: aircraftType,
         };
 
-        me._isRwyUse = true;
+        obj._isRwyUse = true;
 
-        me._aircraftOperation = me._getDefaultAircraftOperationByTabId();
+        obj._aircraftOperation = obj._getDefaultAircraftOperationByTabId();
 
-        me._checkboxRwyUse = nil;
-        me._comboBoxAircraftType = nil;
-        me._labelAircraftType = nil;
-        me._radioTakeoff = nil;
-        me._radioLanding = nil;
-        me._labelCurrentUtcTime = nil;
-        me._labelCurrentUtcTimeValue = nil;
-        me._labelUtcTimeCtrl = nil;
-        me._labelUtcHour = nil;
-        me._labelUtcMinute = nil;
-        me._btnUtcHourMinus = nil;
-        me._btnUtcHourPlus = nil;
-        me._btnUtcMinuteMinus = nil;
-        me._btnUtcMinutePlus = nil;
+        obj._checkboxRwyUse = nil;
+        obj._comboBoxAircraftType = nil;
+        obj._labelAircraftType = nil;
+        obj._radioTakeoff = nil;
+        obj._radioLanding = nil;
+        obj._labelCurrentUtcTime = nil;
+        obj._labelCurrentUtcTimeValue = nil;
+        obj._labelUtcTimeCtrl = nil;
+        obj._labelUtcHour = nil;
+        obj._labelUtcMinute = nil;
+        obj._btnUtcHourMinus = nil;
+        obj._btnUtcHourPlus = nil;
+        obj._btnUtcMinuteMinus = nil;
+        obj._btnUtcMinutePlus = nil;
 
-        me._currentUtcTime = "00:00";
-        me._utcHourNode   = props.globals.getNode("/sim/time/utc/hour");
-        me._utcMinuteNode = props.globals.getNode("/sim/time/utc/minute");
+        obj._currentUtcTime = "00:00";
+        obj._utcHourNode   = props.globals.getNode("/sim/time/utc/hour");
+        obj._utcMinuteNode = props.globals.getNode("/sim/time/utc/minute");
 
-        me._utcHourValue   = 0;
-        me._utcMinuteValue = 0;
-        me._setUtcTimeToCurrentValue();
+        obj._utcHourValue   = 0;
+        obj._utcMinuteValue = 0;
+        obj._setUtcTimeToCurrentValue();
 
-        me._rwyUseInfoWidget = canvas.gui.widgets.RwyUseInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
+        obj._rwyUseInfoWidget = canvas.gui.widgets.RwyUseInfo.new(parent: obj._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
 
-        me._listeners = Listeners.new();
+        obj._listeners = Listeners.new();
 
-        me._listeners.add(
+        obj._listeners.add(
             node: "/sim/time/utc/minute",
-            code: func() { me._updateCurrentUtcTime(); },
+            code: func() { obj._updateCurrentUtcTime(); },
             init: false,
             type: Listeners.ON_CHANGE_ONLY,
         );
 
-        return me;
+        return obj;
     },
 
     #

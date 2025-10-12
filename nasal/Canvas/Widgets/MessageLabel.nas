@@ -26,14 +26,15 @@ gui.widgets.MessageLabel = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.MessageLabel, cfg);
-        me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "message-label-view", me._cfg));
 
-        me._text = nil;
-        me._isError = false;
+        var obj = gui.Widget.new(gui.widgets.MessageLabel, cfg);
+        obj._focus_policy = obj.NoFocus;
+        obj._setView(style.createWidget(parent, "message-label-view", cfg));
 
-        return me;
+        obj._text = nil;
+        obj._isError = false;
+
+        return obj;
     },
 
     #

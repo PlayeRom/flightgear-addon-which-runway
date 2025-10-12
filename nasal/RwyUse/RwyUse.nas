@@ -33,7 +33,7 @@ var RwyUse = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [
                 RwyUse,
             ],
@@ -42,7 +42,7 @@ var RwyUse = {
         #
         # Data structure:
         #
-        # me._data = {
+        # obj._data = {
         #     EHAM: {
         #         aircraft: {
         #             com: {
@@ -128,11 +128,11 @@ var RwyUse = {
         # };
         #
         #
-        me._data = {};
+        obj._data = {};
 
-        me._loadRwyUseXml = LoadRwyUseXml.new();
+        obj._loadRwyUseXml = LoadRwyUseXml.new();
 
-        return me;
+        return obj;
     },
 
     #

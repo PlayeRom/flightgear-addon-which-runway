@@ -24,7 +24,7 @@ var AboutDialog = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [
                 AboutDialog,
                 PersistentDialog.new(
@@ -35,15 +35,14 @@ var AboutDialog = {
             ],
         };
 
-        me._parentDialog = me.parents[1];
-        me._parentDialog.setChild(me, AboutDialog); # Let the parent know who their child is.
-        me._parentDialog.setPositionOnCenter();
+        call(PersistentDialog.setChild, [obj, AboutDialog], obj.parents[1]); # Let the parent know who their child is.
+        call(PersistentDialog.setPositionOnCenter, [], obj.parents[1]);
 
-        me._createLayout();
+        obj._createLayout();
 
-        g_VersionChecker.registerCallback(Callback.new(me.newVersionAvailable, me));
+        g_VersionChecker.registerCallback(Callback.new(obj.newVersionAvailable, obj));
 
-        return me;
+        return obj;
     },
 
     #

@@ -30,15 +30,15 @@ var RunwayFinder = {
     # @return hash
     #
     new: func(metar, runwayUse) {
-        var me = {
+        var obj = {
             parents: [RunwayFinder],
             _metar: metar,
             _runwayUse: runwayUse,
         };
 
-        me._rwyUseStatus = RunwayFinder.CODE_IGNORE;
+        obj._rwyUseStatus = RunwayFinder.CODE_IGNORE;
 
-        return me;
+        return obj;
     },
 
     #

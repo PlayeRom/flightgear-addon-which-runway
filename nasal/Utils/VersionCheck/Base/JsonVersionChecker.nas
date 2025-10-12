@@ -22,14 +22,12 @@ var JsonVersionChecker = {
     # @return hash
     #
     new: func() {
-        var me = {
+        return {
             parents: [
                 JsonVersionChecker,
                 VersionChecker.new(),
             ],
         };
-
-        return me;
     },
 
     #

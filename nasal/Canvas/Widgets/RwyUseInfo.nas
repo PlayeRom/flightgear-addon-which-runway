@@ -26,19 +26,20 @@ gui.widgets.RwyUseInfo = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.RwyUseInfo, cfg);
-        me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "rwy-use-info-view", me._cfg));
 
-        me._valueMarginX = 145;
-        me._utcTime = "00:00";
-        me._maxTail = nil;
-        me._maxCross = nil;
-        me._traffic = nil;
-        me._schedule = nil;
-        me._dailyOperatingHours = nil;
+        var obj = gui.Widget.new(gui.widgets.RwyUseInfo, cfg);
+        obj._focus_policy = obj.NoFocus;
+        obj._setView(style.createWidget(parent, "rwy-use-info-view", cfg));
 
-        return me;
+        obj._valueMarginX = 145;
+        obj._utcTime = "00:00";
+        obj._maxTail = nil;
+        obj._maxCross = nil;
+        obj._traffic = nil;
+        obj._schedule = nil;
+        obj._dailyOperatingHours = nil;
+
+        return obj;
     },
 
     #

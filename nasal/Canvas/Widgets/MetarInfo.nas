@@ -26,29 +26,30 @@ gui.widgets.MetarInfo = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.MetarInfo, cfg);
-        me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "metar-info-view", me._cfg));
 
-        me._isRealWeatherEnabled = false;
-        me._isBasicWxEnabled = false;
+        var obj = gui.Widget.new(gui.widgets.MetarInfo, cfg);
+        obj._focus_policy = obj.NoFocus;
+        obj._setView(style.createWidget(parent, "metar-info-view", cfg));
+
+        obj._isRealWeatherEnabled = false;
+        obj._isBasicWxEnabled = false;
 
         # If true then METAR is taken from nearest airport.
-        me._isMetarFromNearestAirport = false;
+        obj._isMetarFromNearestAirport = false;
 
         # If METAR is taken from nearest airport this value has a distance to this airport.
-        me._distanceToStation = nil;
+        obj._distanceToStation = nil;
 
         # ICAO code of the airport from which the METAR originates.
-        me._metarIcao = nil;
+        obj._metarIcao = nil;
 
         # METAR message string.
-        me._metar = nil;
+        obj._metar = nil;
 
         # The max range within which we are looking for METARs from other airports.
-        me._metarRangeNm = 30;
+        obj._metarRangeNm = 30;
 
-        return me;
+        return obj;
     },
 
     #

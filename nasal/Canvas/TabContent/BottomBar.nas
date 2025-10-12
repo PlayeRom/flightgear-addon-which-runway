@@ -22,7 +22,7 @@ var BottomBar = {
     # @return hash
     #
     new: func(tabsContent, tabId, downloadMetarCallback) {
-        var me = {
+        var obj = {
             parents: [
                 BottomBar,
                 DrawTabBase.new(tabId),
@@ -31,21 +31,21 @@ var BottomBar = {
             _downloadMetarCallback: downloadMetarCallback,
         };
 
-        me._icaoEdit = nil;
-        me._icao = "";
-        me._loadIcaoBtns = std.Vector.new();
-        me._isHoldUpdateNearest = false;
+        obj._icaoEdit = nil;
+        obj._icao = "";
+        obj._loadIcaoBtns = std.Vector.new();
+        obj._isHoldUpdateNearest = false;
 
-        if (me._isTabNearest() or me._isTabAlternate()) {
+        if (obj._isTabNearest() or obj._isTabAlternate()) {
             for (var i = 0; i < 5; i += 1) {
-                var btn = canvas.gui.widgets.Button.new(me._tabsContent)
+                var btn = canvas.gui.widgets.Button.new(obj._tabsContent)
                     .setText("----");
 
-                me._loadIcaoBtns.append(btn);
+                obj._loadIcaoBtns.append(btn);
             }
         }
 
-        return me;
+        return obj;
     },
 
     #

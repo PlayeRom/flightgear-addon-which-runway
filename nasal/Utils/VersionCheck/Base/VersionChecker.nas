@@ -19,23 +19,23 @@ var VersionChecker = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [
                 VersionChecker,
             ],
         };
 
         # Variables that must be set by the child's class by `setUrl` and `setDownloadCallback` methods:
-        me._url = nil;
-        me._downloadCallback = nil;
+        obj._url = nil;
+        obj._downloadCallback = nil;
 
         # Variable that the child class must set in the `checkLastVersion` method when it retrieves the resource:
-        me._downloadResource = nil;
+        obj._downloadResource = nil;
 
-        me._callbacks = std.Vector.new();
-        me._newVersion = nil;
+        obj._callbacks = std.Vector.new();
+        obj._newVersion = nil;
 
-        return me;
+        return obj;
     },
 
     #

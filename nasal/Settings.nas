@@ -20,19 +20,19 @@ var Settings = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [Settings],
         };
 
-        me._addonNodePath = g_Addon.node.getPath();
+        obj._addonNodePath = g_Addon.node.getPath();
 
-        me._maxMetarRangeNm    = props.globals.getNode(me._addonNodePath ~ "/settings/max-metar-range-nm");
-        me._keyArrowMoveSize   = props.globals.getNode(me._addonNodePath ~ "/settings/keys/arrow-move-size");
-        me._keyPageMoveSize    = props.globals.getNode(me._addonNodePath ~ "/settings/keys/page-move-size");
-        me._rwyUseEnabled      = props.globals.getNode(me._addonNodePath ~ "/settings/rwyuse/enabled");
-        me._rwyUseAircraftType = props.globals.getNode(me._addonNodePath ~ "/settings/rwyuse/aircraft-type");
+        obj._maxMetarRangeNm    = props.globals.getNode(obj._addonNodePath ~ "/settings/max-metar-range-nm");
+        obj._keyArrowMoveSize   = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/arrow-move-size");
+        obj._keyPageMoveSize    = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/page-move-size");
+        obj._rwyUseEnabled      = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/enabled");
+        obj._rwyUseAircraftType = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/aircraft-type");
 
-        return me;
+        return obj;
     },
 
     #

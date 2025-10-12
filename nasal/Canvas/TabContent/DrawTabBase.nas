@@ -20,14 +20,14 @@ var DrawTabBase = {
     # @return hash
     #
     new: func(tabId) {
-        var me = {
+        var obj = {
             parents: [DrawTabBase],
             _tabId: tabId,
         };
 
-        me._addonNodePath = g_Addon.node.getPath();
+        obj._addonNodePath = g_Addon.node.getPath();
 
-        return me;
+        return obj;
     },
 
     #

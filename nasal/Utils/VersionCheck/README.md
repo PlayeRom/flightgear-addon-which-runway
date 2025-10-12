@@ -112,11 +112,11 @@ If you need your own implementation for downloading a file, simply add a new cla
 
     ```nasal
     new: func() {
-        var me = {...};
+        var obj = {...};
 
-        g_VersionChecker.registerCallback(Callback.new(me.newVersionAvailable, me));
+        g_VersionChecker.registerCallback(Callback.new(obj.newVersionAvailable, obj));
 
-        return me;
+        return obj;
     },
     ```
 

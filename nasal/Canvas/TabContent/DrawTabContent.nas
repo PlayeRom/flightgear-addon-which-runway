@@ -33,7 +33,7 @@ var DrawTabContent = {
     # @return hash
     #
     new: func(tabsContent, tabContent, tabId, runwayUse, basicWeather, aircraftType) {
-        var me = {
+        var obj = {
             parents: [
                 DrawTabContent,
                 DrawTabBase.new(tabId),
@@ -45,31 +45,31 @@ var DrawTabContent = {
             _aircraftType: aircraftType,
         };
 
-        me._icao = "";
-        me._icaoEdit = nil;
+        obj._icao = "";
+        obj._icaoEdit = nil;
 
-        me._metar = Metar.new(
-            me._tabId,
-            me._basicWeather,
-            Callback.new(me._metarUpdatedCallback, me),
-            Callback.new(me._realWxUpdatedCallback, me),
+        obj._metar = Metar.new(
+            obj._tabId,
+            obj._basicWeather,
+            Callback.new(obj._metarUpdatedCallback, obj),
+            Callback.new(obj._realWxUpdatedCallback, obj),
         );
 
-        me._basicWeather.registerEngineWxChangeCallback(Callback.new(me._weatherEngineChangedCallback, me));
-        me._basicWeather.registerWxChangeCallback(Callback.new(me._metarUpdatedCallback, me));
+        obj._basicWeather.registerEngineWxChangeCallback(Callback.new(obj._weatherEngineChangedCallback, obj));
+        obj._basicWeather.registerWxChangeCallback(Callback.new(obj._metarUpdatedCallback, obj));
 
-        me._runwayFinder = RunwayFinder.new(me._metar, me._runwayUse);
+        obj._runwayFinder = RunwayFinder.new(obj._metar, obj._runwayUse);
 
-        me._topBar = TopBar.new(
-            me._tabsContent,
-            Callback.new(me._scrollToAirport, me),
-            Callback.new(me._scrollToRunway, me),
+        obj._topBar = TopBar.new(
+            obj._tabsContent,
+            Callback.new(obj._scrollToAirport, obj),
+            Callback.new(obj._scrollToRunway, obj),
         );
 
-        me._bottomBar = BottomBar.new(
-            me._tabsContent,
-            me._tabId,
-            Callback.new(me._downloadMetar, me),
+        obj._bottomBar = BottomBar.new(
+            obj._tabsContent,
+            obj._tabId,
+            Callback.new(obj._downloadMetar, obj),
         );
 
         var scrollMargins = {
@@ -79,95 +79,95 @@ var DrawTabContent = {
             bottom: 0,
         };
 
-        me._scrollArea = ScrollAreaHelper.create(me._tabsContent, scrollMargins);
-        me._scrollContent = ScrollAreaHelper.getContent(
-            context  : me._scrollArea,
+        obj._scrollArea = ScrollAreaHelper.create(obj._tabsContent, scrollMargins);
+        obj._scrollContent = ScrollAreaHelper.getContent(
+            context  : obj._scrollArea,
             font     : canvas.font_mapper("sans"),
             fontSize : 16,
             alignment: "left-baseline",
         );
 
-        me._scrollLayout = canvas.VBoxLayout.new();
-        me._scrollArea.setLayout(me._scrollLayout);
+        obj._scrollLayout = canvas.VBoxLayout.new();
+        obj._scrollArea.setLayout(obj._scrollLayout);
 
-        me._tabContent.addSpacing(10);
-        me._tabContent.addItem(me._topBar.drawTopBar());
-        me._tabContent.addSpacing(10);
-        me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
-        me._tabContent.addSpacing(10);
-        me._tabContent.addItem(me._getBottomBarByTabId());
-        me._tabContent.addSpacing(10);
+        obj._tabContent.addSpacing(10);
+        obj._tabContent.addItem(obj._topBar.drawTopBar());
+        obj._tabContent.addSpacing(10);
+        obj._tabContent.addItem(obj._scrollArea, 1); # 2nd param = stretch
+        obj._tabContent.addSpacing(10);
+        obj._tabContent.addItem(obj._getBottomBarByTabId());
+        obj._tabContent.addSpacing(10);
 
-        me._messageView = canvas.gui.widgets.MessageLabel.new(parent: me._scrollContent, cfg: { colors: Colors })
+        obj._messageView = canvas.gui.widgets.MessageLabel.new(parent: obj._scrollContent, cfg: { colors: Colors })
             .setVisible(true);
 
-        me._airportInfoView = canvas.gui.widgets.AirportInfo.new(me._scrollContent)
+        obj._airportInfoView = canvas.gui.widgets.AirportInfo.new(obj._scrollContent)
             .setMarginForValue(DrawTabContent.APT_VALUE_MARGIN_X)
             .setVisible(false);
 
-        me._metarInfoView = canvas.gui.widgets.MetarInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
+        obj._metarInfoView = canvas.gui.widgets.MetarInfo.new(parent: obj._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
 
-        me._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(me._scrollContent)
+        obj._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(obj._scrollContent)
             .setMarginForValue(DrawTabContent.APT_VALUE_MARGIN_X)
             .setLabel("QNH:")
             .setVisible(false);
 
-        me._pressureLabelQfe = canvas.gui.widgets.PressureLabel.new(me._scrollContent)
+        obj._pressureLabelQfe = canvas.gui.widgets.PressureLabel.new(obj._scrollContent)
             .setMarginForValue(DrawTabContent.APT_VALUE_MARGIN_X)
             .setLabel("QFE:")
             .setVisible(false);
 
-        me._windLabel = canvas.gui.widgets.WindLabel.new(parent: me._scrollContent, cfg: { colors: Colors })
+        obj._windLabel = canvas.gui.widgets.WindLabel.new(parent: obj._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
 
-        me._drawRwyUseControls = DrawRwyUseControls.new(
-            me._tabId,
-            me._scrollContent,
-            Callback.new(me._reDrawContent, me),
-            me._aircraftType,
+        obj._drawRwyUseControls = DrawRwyUseControls.new(
+            obj._tabId,
+            obj._scrollContent,
+            Callback.new(obj._reDrawContent, obj),
+            obj._aircraftType,
         );
 
-        me._rwyUseLayout = me._drawRwyUseControls.createRwyUseLayout();
+        obj._rwyUseLayout = obj._drawRwyUseControls.createRwyUseLayout();
 
-        me._rwyUseNoDataWarning = canvas.gui.widgets.Label.new(me._scrollContent)
+        obj._rwyUseNoDataWarning = canvas.gui.widgets.Label.new(obj._scrollContent)
             .setText("The preferred runway cannot be selected, so the best headwind is used.")
             .setVisible(false);
-        me._rwyUseNoDataWarning.setColor(Colors.AMBER);
+        obj._rwyUseNoDataWarning.setColor(Colors.AMBER);
 
-        me._runwaysLayout = canvas.VBoxLayout.new();
+        obj._runwaysLayout = canvas.VBoxLayout.new();
 
-        me._scrollLayout.addSpacing(10);
-        me._scrollLayout.addItem(me._messageView, 1); # 2nd param = stretch
-        me._scrollLayout.addSpacing(10);
-        me._scrollLayout.addItem(me._airportInfoView);
-        me._scrollLayout.addSpacing(10);
-        me._scrollLayout.addItem(me._metarInfoView);
-        me._scrollLayout.addSpacing(10);
-        me._scrollLayout.addItem(me._pressureLabelQnh);
-        me._scrollLayout.addItem(me._pressureLabelQfe);
-        me._scrollLayout.addSpacing(20);
-        me._scrollLayout.addItem(me._windLabel);
-        me._scrollLayout.addSpacing(20);
-        me._scrollLayout.addItem(me._rwyUseLayout);
-        me._scrollLayout.addItem(me._rwyUseNoDataWarning);
-        me._scrollLayout.addSpacing(0);
-        me._scrollLayout.addItem(me._runwaysLayout);
+        obj._scrollLayout.addSpacing(10);
+        obj._scrollLayout.addItem(obj._messageView, 1); # 2nd param = stretch
+        obj._scrollLayout.addSpacing(10);
+        obj._scrollLayout.addItem(obj._airportInfoView);
+        obj._scrollLayout.addSpacing(10);
+        obj._scrollLayout.addItem(obj._metarInfoView);
+        obj._scrollLayout.addSpacing(10);
+        obj._scrollLayout.addItem(obj._pressureLabelQnh);
+        obj._scrollLayout.addItem(obj._pressureLabelQfe);
+        obj._scrollLayout.addSpacing(20);
+        obj._scrollLayout.addItem(obj._windLabel);
+        obj._scrollLayout.addSpacing(20);
+        obj._scrollLayout.addItem(obj._rwyUseLayout);
+        obj._scrollLayout.addItem(obj._rwyUseNoDataWarning);
+        obj._scrollLayout.addSpacing(0);
+        obj._scrollLayout.addItem(obj._runwaysLayout);
 
         # Add some stretch in case the scroll area is larger than the content
-        me._scrollLayout.addStretch(1);
+        obj._scrollLayout.addStretch(1);
 
         # Build x slots for runways
-        me._runwayWidgets = std.Vector.new();
+        obj._runwayWidgets = std.Vector.new();
         for (var i = 0; i < DrawTabContent.MAX_RUNWAY_SLOTS; i += 1) {
             var runwayHLayout = canvas.HBoxLayout.new();
 
-            var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(parent: me._scrollContent, cfg: { colors: Colors })
+            var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(parent: obj._scrollContent, cfg: { colors: Colors })
                 .setMarginForValue(DrawTabContent.RWY_VALUE_MARGIN_X)
                 .setVisible(false)
                 .setHwXwThresholds(Metar.HEADWIND_THRESHOLD, Metar.CROSSWIND_THRESHOLD);
 
-            var windRoseView = canvas.gui.widgets.WindRose.new(parent: me._scrollContent, cfg: { colors: Colors })
+            var windRoseView = canvas.gui.widgets.WindRose.new(parent: obj._scrollContent, cfg: { colors: Colors })
                 .setVisible(false)
                 .setHwXwThresholds(Metar.HEADWIND_THRESHOLD, Metar.CROSSWIND_THRESHOLD);
 
@@ -179,22 +179,22 @@ var DrawTabContent = {
             runwayHLayout.addItem(runwayVCenter, 1);
             runwayHLayout.addItem(windRoseView, 2);
 
-            me._runwaysLayout.addItem(runwayHLayout);
+            obj._runwaysLayout.addItem(runwayHLayout);
 
-            me._runwayWidgets.append({
+            obj._runwayWidgets.append({
                 runwayInfoView: runwayInfoView,
                 windRoseView: windRoseView,
             });
         }
 
-        me._listeners = Listeners.new();
-        me._setListeners();
+        obj._listeners = Listeners.new();
+        obj._setListeners();
 
-        if (me._isTabAlternate()) {
-            me._reDrawContentWithMessage("Enter the ICAO code of an airport below.");
+        if (obj._isTabAlternate()) {
+            obj._reDrawContentWithMessage("Enter the ICAO code of an airport below.");
         }
 
-        return me;
+        return obj;
     },
 
     #

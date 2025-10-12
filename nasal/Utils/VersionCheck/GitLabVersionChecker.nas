@@ -21,17 +21,17 @@ var GitLabVersionChecker = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [
                 GitLabVersionChecker,
                 JsonVersionChecker.new(),
             ],
         };
 
-        me.setUrl(me._getUrl());
-        me.setDownloadCallback(Callback.new(me._downloadCallback, me));
+        obj.setUrl(obj._getUrl());
+        obj.setDownloadCallback(Callback.new(obj._downloadCallback, obj));
 
-        return me;
+        return obj;
     },
 
     #

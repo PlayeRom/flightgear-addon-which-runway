@@ -24,7 +24,7 @@ var SettingsDialog = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [
                 SettingsDialog,
                 PersistentDialog.new(
@@ -35,25 +35,24 @@ var SettingsDialog = {
             ],
         };
 
-        me._parentDialog = me.parents[1];
-        me._parentDialog.setChild(me, SettingsDialog); # Let the parent know who their child is.
-        me._parentDialog.setPositionOnCenter();
+        call(PersistentDialog.setChild, [obj, SettingsDialog], obj.parents[1]); # Let the parent know who their child is.
+        call(PersistentDialog.setPositionOnCenter, [], obj.parents[1]);
 
-        me._maxMetarRangeNm = g_Settings.getMaxMetarRangeNm();
-        me._rwyUseEnable = g_Settings.getRwyUseEnabled();
+        obj._maxMetarRangeNm = g_Settings.getMaxMetarRangeNm();
+        obj._rwyUseEnable = g_Settings.getRwyUseEnabled();
 
-        me._rangeComboBox = nil;
-        me._checkboxRwyUse = nil;
+        obj._rangeComboBox = nil;
+        obj._checkboxRwyUse = nil;
 
-        me._vbox.addSpacing(SettingsDialog.PADDING);
-        me._drawContent();
+        obj._vbox.addSpacing(SettingsDialog.PADDING);
+        obj._drawContent();
 
-        var buttonBoxClose = me._drawBottomBar();
-        me._vbox.addSpacing(SettingsDialog.PADDING);
-        me._vbox.addItem(buttonBoxClose);
-        me._vbox.addSpacing(SettingsDialog.PADDING);
+        var buttonBoxClose = obj._drawBottomBar();
+        obj._vbox.addSpacing(SettingsDialog.PADDING);
+        obj._vbox.addItem(buttonBoxClose);
+        obj._vbox.addSpacing(SettingsDialog.PADDING);
 
-        return me;
+        return obj;
     },
 
     #

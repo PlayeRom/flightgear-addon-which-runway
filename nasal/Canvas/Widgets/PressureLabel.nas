@@ -26,17 +26,18 @@ gui.widgets.PressureLabel = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.PressureLabel, cfg);
-        me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "pressure-label-view", me._cfg));
 
-        me._valueMarginX = 110;
-        me._label = "QNH:";
-        me._inHg = nil;
-        me._hPa = nil;
-        me._mmHg = nil;
+        var obj = gui.Widget.new(gui.widgets.PressureLabel, cfg);
+        obj._focus_policy = obj.NoFocus;
+        obj._setView(style.createWidget(parent, "pressure-label-view", cfg));
 
-        return me;
+        obj._valueMarginX = 110;
+        obj._label = "QNH:";
+        obj._inHg = nil;
+        obj._hPa = nil;
+        obj._mmHg = nil;
+
+        return obj;
     },
 
     #

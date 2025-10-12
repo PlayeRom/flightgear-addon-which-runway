@@ -27,7 +27,7 @@ var WhichRwyDialog = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [
                 WhichRwyDialog,
                 PersistentDialog.new(
@@ -39,38 +39,37 @@ var WhichRwyDialog = {
             ],
         };
 
-        me._parentDialog = me.parents[1];
-        me._parentDialog.setChild(me, WhichRwyDialog); # Let the parent know who their child is.
-        me._parentDialog.setPositionOnCenter();
+        call(PersistentDialog.setChild, [obj, WhichRwyDialog], obj.parents[1]); # Let the parent know who their child is.
+        call(PersistentDialog.setPositionOnCenter, [], obj.parents[1]);
 
-        me._runwayUse = RwyUse.new();
-        me._basicWeather = BasicWeather.new();
+        obj._runwayUse = RwyUse.new();
+        obj._basicWeather = BasicWeather.new();
 
-        me._aircraftTypeFinder = AircraftTypeFinder.new();
-        me._aircraftType = me._aircraftTypeFinder.getType();
-        g_Settings.setRwyUseAircraftType(me._aircraftType);
+        obj._aircraftTypeFinder = AircraftTypeFinder.new();
+        obj._aircraftType = obj._aircraftTypeFinder.getType();
+        g_Settings.setRwyUseAircraftType(obj._aircraftType);
 
-        me._timer = Timer.make(3, me, me._updateDynamicData);
-        me._timer.simulatedTime = true;
+        obj._timer = Timer.make(3, obj, obj._updateDynamicData);
+        obj._timer.simulatedTime = true;
 
-        me._tabs = canvas.gui.widgets.TabWidget.new(parent: me._group, cfg: { "tabs-closeable": false });
-        me._tabsContent = me._tabs.getContent();
-        me._vbox.addItem(me._tabs);
+        obj._tabs = canvas.gui.widgets.TabWidget.new(parent: obj._group, cfg: { "tabs-closeable": false });
+        obj._tabsContent = obj._tabs.getContent();
+        obj._vbox.addItem(obj._tabs);
 
-        me._tabContents = {};
+        obj._tabContents = {};
 
-        me._tabContents[WhichRwyDialog.TAB_NEAREST]   = me._createTab(WhichRwyDialog.TAB_NEAREST, "Nearest");
-        me._tabContents[WhichRwyDialog.TAB_DEPARTURE] = me._createTab(WhichRwyDialog.TAB_DEPARTURE, "Departure");
-        me._tabContents[WhichRwyDialog.TAB_ARRIVAL]   = me._createTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival");
-        me._tabContents[WhichRwyDialog.TAB_ALTERNATE] = me._createTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate");
+        obj._tabContents[WhichRwyDialog.TAB_NEAREST]   = obj._createTab(WhichRwyDialog.TAB_NEAREST, "Nearest");
+        obj._tabContents[WhichRwyDialog.TAB_DEPARTURE] = obj._createTab(WhichRwyDialog.TAB_DEPARTURE, "Departure");
+        obj._tabContents[WhichRwyDialog.TAB_ARRIVAL]   = obj._createTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival");
+        obj._tabContents[WhichRwyDialog.TAB_ALTERNATE] = obj._createTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate");
 
-        me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
+        obj._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
 
-        me._keyActions();
+        obj._keyActions();
 
-        g_VersionChecker.registerCallback(Callback.new(me.newVersionAvailable, me));
+        g_VersionChecker.registerCallback(Callback.new(obj.newVersionAvailable, obj));
 
-        return me;
+        return obj;
     },
 
     #

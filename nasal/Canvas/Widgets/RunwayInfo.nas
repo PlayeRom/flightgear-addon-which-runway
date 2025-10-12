@@ -26,17 +26,18 @@ gui.widgets.RunwayInfo = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.RunwayInfo, cfg);
-        me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "runway-info-view", me._cfg));
 
-        me._valueMarginX = 110;
-        me._runway = nil;
-        me._aptMagVar = nil;
-        me._hwThreshold = 45;
-        me._xwThreshold = 90;
+        var obj = gui.Widget.new(gui.widgets.RunwayInfo, cfg);
+        obj._focus_policy = obj.NoFocus;
+        obj._setView(style.createWidget(parent, "runway-info-view", cfg));
 
-        return me;
+        obj._valueMarginX = 110;
+        obj._runway = nil;
+        obj._aptMagVar = nil;
+        obj._hwThreshold = 45;
+        obj._xwThreshold = 90;
+
+        return obj;
     },
 
     #

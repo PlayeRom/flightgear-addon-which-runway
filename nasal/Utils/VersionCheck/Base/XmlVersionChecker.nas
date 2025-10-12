@@ -22,16 +22,16 @@ var XmlVersionChecker = {
     # @return hash
     #
     new: func() {
-        var me = {
+        var obj = {
             parents: [
                 XmlVersionChecker,
                 VersionChecker.new(),
             ],
         };
 
-        me._listeners = Listeners.new();
+        obj._listeners = Listeners.new();
 
-        return me;
+        return obj;
     },
 
     #

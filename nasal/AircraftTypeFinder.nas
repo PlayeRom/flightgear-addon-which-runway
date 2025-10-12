@@ -19,22 +19,22 @@ var AircraftTypeFinder = {
     # @return hash
     #
     new: func() {
-        var me = { parents: [AircraftTypeFinder] };
+        var obj = { parents: [AircraftTypeFinder] };
 
-        me._tagsNode = props.globals.getNode("/sim/tags");
+        obj._tagsNode = props.globals.getNode("/sim/tags");
 
-        me._tags = std.Vector.new();
+        obj._tags = std.Vector.new();
 
-        if (me._tagsNode != nil) {
-            foreach (var tagNode; me._tagsNode.getChildren("tag")) {
+        if (obj._tagsNode != nil) {
+            foreach (var tagNode; obj._tagsNode.getChildren("tag")) {
                 var tag = tagNode == nil ? nil : tagNode.getValue();
                 if (tag != nil) {
-                    me._tags.append(tag);
+                    obj._tags.append(tag);
                 }
             }
         }
 
-        return me;
+        return obj;
     },
 
     #

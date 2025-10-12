@@ -26,15 +26,16 @@ gui.widgets.AirportInfo = {
     new: func(parent, style = nil, cfg = nil) {
         style = style or canvas.style;
         cfg = Config.new(cfg);
-        var me = gui.Widget.new(gui.widgets.AirportInfo, cfg);
-        me._focus_policy = me.NoFocus;
-        me._setView(style.createWidget(parent, "airport-info-view", me._cfg));
 
-        me._valueMarginX = 110;
-        me._airport = nil;
-        me._aptMagVar = nil;
+        var obj = gui.Widget.new(gui.widgets.AirportInfo, cfg);
+        obj._focus_policy = obj.NoFocus;
+        obj._setView(style.createWidget(parent, "airport-info-view", cfg));
 
-        return me;
+        obj._valueMarginX = 110;
+        obj._airport = nil;
+        obj._aptMagVar = nil;
+
+        return obj;
     },
 
     #
