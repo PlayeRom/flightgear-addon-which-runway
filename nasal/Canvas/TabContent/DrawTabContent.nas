@@ -739,16 +739,6 @@ var DrawTabContent = {
     # @return double
     #
     getScrollPageHeight: func() {
-        # TODO: use ScrollArea methods as they become available.
-        var contentHeight = me._scrollArea._content_size[1];
-        var maxScroll     = me._scrollArea._max_scroll[1];
-        var scrollerTrack = me._scrollArea._scroller_delta[1];
-
-        if (maxScroll == 0 or scrollerTrack == 0) {
-            return 0;
-        }
-
-        var visibleHeight = contentHeight - maxScroll;
-        return (visibleHeight / maxScroll) * scrollerTrack;
+        return ScrollAreaHelper.getScrollPageHeight(me._scrollArea);
     },
 };
