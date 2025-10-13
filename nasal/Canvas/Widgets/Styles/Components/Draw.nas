@@ -75,6 +75,19 @@ var Draw = {
     },
 
     #
+    # Create and return canvas SVG element.
+    #
+    # @param  string  file  SVG file path relative to FGData directory.
+    # @return ghost  Canvas SVG element.
+    #
+    createSvg: func(file) {
+        var svgImg = me._getContent().createChild("group");
+        canvas.parsesvg(svgImg, file);
+
+        return svgImg;
+    },
+
+    #
     # @param  ghost  textElement
     # @param  int|nil  extraShift  If nil then Draw.SHIFT_X is set.
     # @return double

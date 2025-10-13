@@ -20,6 +20,9 @@
                     <!-- Maximum search range of the nearest airport with METAR. -->
                     <max-metar-range-nm type="double" userarchive="y">30</max-metar-range-nm>
 
+                    <hw-threshold type="int" userarchive="y">45</hw-threshold>
+                    <xw-threshold type="int" userarchive="y">90</xw-threshold>
+
                     <!-- Scroll by keyboard -->
                     <keys>
                         <arrow-move-size type="int">20</arrow-move-size>

@@ -165,11 +165,11 @@ var DrawTabContent = {
             var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(parent: obj._scrollContent, cfg: { colors: Colors })
                 .setMarginForValue(DrawTabContent.RWY_VALUE_MARGIN_X)
                 .setVisible(false)
-                .setHwXwThresholds(Metar.HEADWIND_THRESHOLD, Metar.CROSSWIND_THRESHOLD);
+                .setHwXwThresholds(g_Settings.getHwThreshold(), g_Settings.getXwThreshold());
 
             var windRoseView = canvas.gui.widgets.WindRose.new(parent: obj._scrollContent, cfg: { colors: Colors })
                 .setVisible(false)
-                .setHwXwThresholds(Metar.HEADWIND_THRESHOLD, Metar.CROSSWIND_THRESHOLD);
+                .setHwXwThresholds(g_Settings.getHwThreshold(), g_Settings.getXwThreshold());
 
             var runwayVCenter = canvas.VBoxLayout.new(); # wrapper for set runway info vertically centered
             runwayVCenter.addStretch(1);
@@ -608,12 +608,14 @@ var DrawTabContent = {
             var rwy = runways[index];
 
             widgets.runwayInfoView
+                .setHwXwThresholds(g_Settings.getHwThreshold(), g_Settings.getXwThreshold())
                 .setRunwayData(rwy)
                 .setAirportMagVar(aptMagVar)
                 .setVisible(true)
                 .updateView();
 
             widgets.windRoseView
+                .setHwXwThresholds(g_Settings.getHwThreshold(), g_Settings.getXwThreshold())
                 .setRadius(175)
                 .setWind(
                     me._metar.getWindDir(airport),

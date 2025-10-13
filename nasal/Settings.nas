@@ -27,6 +27,8 @@ var Settings = {
         obj._addonNodePath = g_Addon.node.getPath();
 
         obj._maxMetarRangeNm    = props.globals.getNode(obj._addonNodePath ~ "/settings/max-metar-range-nm");
+        obj._hwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/hw-threshold");
+        obj._xwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/xw-threshold");
         obj._keyArrowMoveSize   = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/arrow-move-size");
         obj._keyPageMoveSize    = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/page-move-size");
         obj._rwyUseEnabled      = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/enabled");
@@ -60,6 +62,44 @@ var Settings = {
     #
     setMaxMetarRangeNm: func(value) {
         me._maxMetarRangeNm.setIntValue(value);
+    },
+
+    #
+    # Get headwind threshold angle.
+    #
+    # @return int  Headwind threshold angle.
+    #
+    getHwThreshold: func() {
+        return me._hwThreshold.getValue() or Metar.HEADWIND_THRESHOLD;
+    },
+
+    #
+    # Set headwind threshold angle.
+    #
+    # @param  int  value  Headwind threshold angle.
+    # @return void
+    #
+    setHwThreshold: func(value) {
+        me._hwThreshold.setIntValue(value);
+    },
+
+    #
+    # Get crosswind threshold angle.
+    #
+    # @return int  Crosswind threshold angle.
+    #
+    getXwThreshold: func() {
+        return me._xwThreshold.getValue() or Metar.CROSSWIND_THRESHOLD;
+    },
+
+    #
+    # Set crosswind threshold angle.
+    #
+    # @param  int  value  Crosswind threshold angle.
+    # @return void
+    #
+    setXwThreshold: func(value) {
+        me._xwThreshold.setIntValue(value);
     },
 
     #
