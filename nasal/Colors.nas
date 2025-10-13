@@ -13,8 +13,8 @@
 # Colors static declarations.
 #
 var Colors = {
-    RED  : [0.8, 0.3, 0.3],
-    GREEN: [0.0, 0.5, 0.0],
-    BLUE : [0.0, 0.5, 1.0],
-    AMBER: [0.9, 0.5, 0.0],
+    RED  : [0.8,  0.3,  0.3],
+    GREEN: [0.0,  0.5,  0.0],
+    BLUE : [0.0,  0.5,  1.0],
+    AMBER: [0.81, 0.45, 0.0],
 };
