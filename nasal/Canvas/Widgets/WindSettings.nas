@@ -48,29 +48,27 @@ gui.widgets.WindSettings = {
     },
 
     #
-    # @param  double  hwAngle  Headwind threshold angle.
+    # @param  int  hwAngle  Headwind threshold angle.
     # @return ghost
     #
     setHwAngle: func(hwAngle = 45) {
         me._hwAngle = hwAngle;
-        me._view.updateView(me);
         return me;
     },
 
     #
-    # @param  double  hwAngle  Crosswind threshold angle.
+    # @param  int  hwAngle  Crosswind threshold angle.
     # @return ghost
     #
     setXwAngle: func(xwAngle = 90) {
         me._xwAngle = xwAngle;
-        me._view.updateView(me);
         return me;
     },
 
     #
     # Redraw view.
     #
-    # @return void
+    # @return ghost
     #
     updateView: func() {
         me._view.updateView(me);

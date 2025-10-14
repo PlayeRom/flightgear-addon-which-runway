@@ -88,7 +88,8 @@ var SettingsDialog = {
 
         me._windSettingsWidget
             .setHwAngle(me._hwThreshold)
-            .setXwAngle(me._xwThreshold);
+            .setXwAngle(me._xwThreshold)
+            .updateView();
 
         call(PersistentDialog.show, [], me);
     },
@@ -200,7 +201,8 @@ var SettingsDialog = {
             me._xwLabel.setText(me._printAngle(me._xwThreshold));
             me._windSettingsWidget
                 .setHwAngle(me._hwThreshold)
-                .setXwAngle(me._xwThreshold);
+                .setXwAngle(me._xwThreshold)
+                .updateView();
         });
 
         var hBox = canvas.HBoxLayout.new();
@@ -259,7 +261,7 @@ var SettingsDialog = {
         }
 
         me._hwLabel.setText(me._printAngle(me._hwThreshold));
-        me._windSettingsWidget.setHwAngle(me._hwThreshold);
+        me._windSettingsWidget.setHwAngle(me._hwThreshold).updateView();
     },
 
     #
@@ -278,7 +280,7 @@ var SettingsDialog = {
         }
 
         me._xwLabel.setText(me._printAngle(me._xwThreshold));
-        me._windSettingsWidget.setXwAngle(me._xwThreshold);
+        me._windSettingsWidget.setXwAngle(me._xwThreshold).updateView();
     },
 
     #
