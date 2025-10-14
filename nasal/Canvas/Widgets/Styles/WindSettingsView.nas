@@ -197,22 +197,22 @@ DefaultStyle.widgets["wind-settings-view"] = {
 
         me._hwLabel.setTranslation(
             centerX + textRadius * math.cos((0 - 90) * globals.D2R),
-            centerX + textRadius * math.sin((0 - 90) * globals.D2R),
+            centerY + textRadius * math.sin((0 - 90) * globals.D2R),
         );
 
         me._xwLeftLabel.setTranslation(
             centerX + textRadius * math.cos(xwThresholdLeft - ((xwThresholdLeft - hwThresholdLeft) * 0.5)),
-            centerX + textRadius * math.sin(xwThresholdLeft - ((xwThresholdLeft - hwThresholdLeft) * 0.5)),
+            centerY + textRadius * math.sin(xwThresholdLeft - ((xwThresholdLeft - hwThresholdLeft) * 0.5)),
         );
 
         me._xwRightLabel.setTranslation(
             centerX + textRadius * math.cos(xwThresholdRight - ((xwThresholdRight - hwThresholdRight) * 0.5)),
-            centerX + textRadius * math.sin(xwThresholdRight - ((xwThresholdRight - hwThresholdRight) * 0.5)),
+            centerY + textRadius * math.sin(xwThresholdRight - ((xwThresholdRight - hwThresholdRight) * 0.5)),
         );
 
         me._twLabel.setTranslation(
             centerX + textRadius * math.cos((180 - 90) * globals.D2R),
-            centerX + textRadius * math.sin((180 - 90) * globals.D2R),
+            centerY + textRadius * math.sin((180 - 90) * globals.D2R),
         );
     },
 };
