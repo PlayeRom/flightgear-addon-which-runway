@@ -269,8 +269,8 @@ var SettingsDialog = {
     _setXwAngle: func(offset) {
         me._xwThreshold += offset;
 
-        if (me._xwThreshold <= me._hwThreshold - 1) {
-            me._xwThreshold = me._hwThreshold - 1;
+        if (me._xwThreshold <= me._hwThreshold + 1) {
+            me._xwThreshold = me._hwThreshold + 1;
         }
 
         if (me._xwThreshold >= 179) {
