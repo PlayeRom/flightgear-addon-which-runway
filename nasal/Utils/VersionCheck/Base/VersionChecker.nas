@@ -1,11 +1,11 @@
 #
-# Which Runway - Add-on for FlightGear
+# CanvasSkeleton Add-on for FlightGear
 #
 # Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
 #
 # Copyright (C) 2025 Roman Ludwicki
 #
-# Which Runway is an Open Source project and it is licensed
+# This is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
@@ -13,6 +13,20 @@
 # Base class to check latest version from repository.
 #
 var VersionChecker = {
+    #
+    # Static method to get version checker object according to config.
+    #
+    # @return hash
+    #
+    make: func() {
+           if (Config.useVersionCheck.byMetaData) return MetaDataVersionChecker.new();
+        elsif (Config.useVersionCheck.byGitTag)   return GitTagVersionChecker.new();
+
+        # If version checking is disabled, the base class is returned to avoid
+        # having to check whether `g_VersionChecker` is set.
+        return VersionChecker.new();
+    },
+
     #
     # Constructor.
     #
@@ -86,7 +100,7 @@ var VersionChecker = {
     # @return void
     #
     checkLastVersion: func {
-        Log.print("VersionChecker.checkLastVersion - override this method by child");
+        Log.print("VersionChecker.checkLastVersion - version checking is disabled.");
     },
 
     #
@@ -108,12 +122,12 @@ var VersionChecker = {
     },
 
     #
-    # Get user and repository name from repository URL.
+    # Get repo domain, user and repository name from repository URL.
     # For it to work correctly, the URL must end with /user-name/repo-name, e.g.:
     # https://gitlab.com/user-name/repo-name
     #
-    # @param  string  repositoryUrl  If not provided then addons.Addon.codeRepositoryUrl will be used.
-    # @return vector  User and repository names or empty strings when failed.
+    # @param  string|nil  repositoryUrl  If not provided then addons.Addon.codeRepositoryUrl will be used.
+    # @return vector  Repo domain, user and repository names or empty strings when failed.
     #
     getUserAndRepoNames: func(repositoryUrl = nil) {
         # remove "/" on the end if exists
@@ -126,13 +140,41 @@ var VersionChecker = {
 
         var parts = split("/", repoUrl);
         if (size(parts) < 3) {
-            return ["", ""];
+            return ["", "", ""];
         }
 
-        var user = parts[1]; # 0 is a domain, so 1 is a user name
-        var repo = string.join("/", parts[2:]); # Repo can have subdirectories
+        var domain = parts[0];
+        var user = "";
+        var repo = "";
 
-        return [user, repo];
+        if (domain == "sourceforge.net") {
+            if (me._isFgAddonRepo(repositoryUrl)) {
+                # Example: https://sourceforge.net/p/flightgear/fgaddon/HEAD/tree/trunk/Addons/CanvasSkeleton
+                domain = "fgaddon"; # Special marker
+                repo = parts[-1];   # Last element is a dir name.
+            } else {
+                # Own hosted project, example:
+                # https://sourceforge.net/p/canvas-skeleton/code/ci/HEAD/tree
+
+                repo = string.join("/", parts[2:]); # Start with 1 because we are omitting the "p" element.
+            }
+        } else {
+            # Examples: https://gitlab.com/user-name/project/repo-name
+            #           https://github.com/user-name/repo-name
+            user = parts[1];
+            repo = string.join("/", parts[2:]); # Repo can have subdirectories
+        }
+
+        return [domain, user, repo];
+    },
+
+    #
+    # Return true if given repo URL it's FGAddon repo on SourceForge.
+    #
+    # @return bool
+    #
+    _isFgAddonRepo: func(repoUrl) {
+        return string.imatch(repoUrl, "*/p/flightgear/fgaddon/*");
     },
 
     #

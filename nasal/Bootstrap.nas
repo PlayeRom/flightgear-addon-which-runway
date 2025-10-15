@@ -1,11 +1,11 @@
 #
-# Which Runway - Add-on for FlightGear
+# CanvasSkeleton Add-on for FlightGear
 #
 # Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
 #
 # Copyright (C) 2025 Roman Ludwicki
 #
-# Which Runway is an Open Source project and it is licensed
+# This is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
@@ -30,14 +30,14 @@ var g_isDevMode = false;
 var g_Addon = nil;
 
 #
-# Global object of Settings.
-#
-var g_Settings = nil;
-
-#
 # Global object of VersionChecker.
 #
 var g_VersionChecker = nil;
+
+#
+# Global object of Settings.
+#
+var g_Settings = nil;
 
 #
 # Global object of dialog.
@@ -69,8 +69,9 @@ var Bootstrap = {
 
         me._initDevMode();
 
+        g_VersionChecker = VersionChecker.make();
+
         g_Settings = Settings.new();
-        g_VersionChecker = GitHubVersionChecker.new();
 
         # Disable the menu as it loads with delay.
         gui.menuEnable("which-runway-addon-main", false);
@@ -88,8 +89,8 @@ var Bootstrap = {
             g_SettingsDialog = SettingsDialog.new();
             g_AboutDialog = AboutDialog.new();
 
-            # Check the version last, because dialogs must first register their
-            # callbacks to VersionChecker in their constructors.
+            # Check the version at the end, because dialogs must first register
+            # their callbacks to VersionChecker in their constructors.
             g_VersionChecker.checkLastVersion();
 
             gui.menuEnable("which-runway-addon-main", true);
@@ -106,19 +107,19 @@ var Bootstrap = {
     uninit: func() {
         Profiler.clear();
 
-        if (g_VersionChecker != nil) {
+        if (g_VersionChecker) {
             g_VersionChecker.del();
         }
 
-        if (g_WhichRwyDialog != nil) {
+        if (g_WhichRwyDialog) {
             g_WhichRwyDialog.del();
         }
 
-        if (g_SettingsDialog != nil) {
+        if (g_SettingsDialog) {
             g_SettingsDialog.del();
         }
 
-        if (g_AboutDialog != nil) {
+        if (g_AboutDialog) {
             g_AboutDialog.del();
         }
     },
@@ -129,6 +130,10 @@ var Bootstrap = {
     # @return void
     #
     _initDevMode: func() {
+        if (!Config.dev.useEnvFile) {
+            return;
+        }
+
         var env = DevEnv.new();
 
         var logLevel = env.getValue("MY_LOG_LEVEL");
