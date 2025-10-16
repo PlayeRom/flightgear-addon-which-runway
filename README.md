@@ -125,13 +125,13 @@ For more information about `rwyuse.xml` file see [article on the FG wiki](https:
 
 ### Comments
 
-Some airports have incorrectly created `rwyuse.xml` files. For example, the number of runways in a column is not the same, or they have multiple schedule entries for the same aircraft type, each with the same time range. Such cases can produce illogical results or won't be fully supported. The example of how this should be done correctly, and what I used as a basis, is the `EHAM.rwyuse.xml` file, where the aircraft type has a single schedule from 00:00 to 24:00, and the preferred runway lists have the same number of columns.
+Some airports have incorrectly created `rwyuse.xml` files. For example, the number of runways in a column is not the same, or they have multiple schedule entries for the same aircraft type, each with the same time range. Such cases can produce illogical results or won't be fully supported. The example of how this should be done correctly, and what I used as a basis, is the `EHAM.rwyuse.xml` file, where the aircraft type has a single schedule from 00:00Z to 24:00Z, and the preferred runway lists have the same number of columns.
 
 ### Preferred runways at the airport and compatibility issues
 
 Currently, FlightGear uses the preferred runways at the airport (if available) only for computer-controlled traffic. Therefore, if you start a session on a runway, your aircraft will be placed on the runway based on the highest headwind, without taking into account the preferred runways at the airport. The good news is that this is recognized and marked with a FIXME comment in the FlightGear code :)
 
-Other add-ons, such as "Red Griffin ATC" (version 2.3.0 at the moment), work similarly. If you haven't created flight plan yet, and you ask "Red Griffin ATC" for departure information, you'll receive a takeoff runway based on the highest headwind, and this will usually not be consistent with what “Which Runway” indicates when using preferred runways.
+Other add-ons, such as "Red Griffin ATC" (version 2.3.0 at the moment), work similarly. If you haven't created flight plan yet, and you ask "Red Griffin ATC" for departure information, you'll receive a takeoff runway based on the highest headwind only, and this will usually not be consistent with what “Which Runway” indicates when using preferred runways.
 
 ## Pictures
 
@@ -171,6 +171,13 @@ From the "Which Runway" -> "Settings..." menu, you can open the global settings 
 
 1. `Max range for nearest METAR in NM` – here you can specify, in nautical miles, how far away the nearest METAR will be searched if the airport does not have its own METAR. The default value is 30 NM.
 2. `Preferred runways at the airport` – here you can enable/disable the use of preferred runways by the airport (`ICAO.rwyuse.xml` files). This is enabled by default. If you disable this option, the preferred runways at the airport will not be included at all (even if they exist), and the add-on will always display runways sorted by best headwind.
+3. `Set thresholds for HW, XW and TW` – the figure shows how the headwind, crosswind, and tailwind zones are set. By default, the add-on will consider a wind to be a headwind if it blows from a direction within 45° of the aircraft's nose. It will then consider a crosswind if it blows from a direction between 45° and 90° (from both the right and left). Any wind direction beyond 90° will be considered a tailwind.
+
+    Below are the controls for changing these angles. The "<" and ">" buttons change the angle by 1°, and the "<<" and ">>" buttons change the angle by 5°. The "Default" button resets the settings to 45° for HW and 90° for XW.
+
+    **These settings do not affect the selection of runways**, but only affect the information about whether the wind is considered headwind, crosswind, or tailwind.
+
+![alt Default Settings](docs/img/settings.png "Default Settings")
 
 ## Development
 
