@@ -1,5 +1,5 @@
 #
-# Which runway - Add-on for FlightGear
+# Which runway Add-on for FlightGear
 #
 # Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
 #
@@ -31,6 +31,8 @@ var BottomBar = {
             _downloadMetarCallback: downloadMetarCallback,
         };
 
+        obj._widget = WidgetHelper.new(obj._tabsContent);
+
         obj._icaoEdit = nil;
         obj._icao = "";
         obj._loadIcaoBtns = std.Vector.new();
@@ -38,8 +40,7 @@ var BottomBar = {
 
         if (obj._isTabNearest() or obj._isTabAlternate()) {
             for (var i = 0; i < 5; i += 1) {
-                var btn = canvas.gui.widgets.Button.new(obj._tabsContent)
-                    .setText("----");
+                var btn = obj._widget.getButton("----");
 
                 obj._loadIcaoBtns.append(btn);
             }
@@ -124,35 +125,28 @@ var BottomBar = {
             buttonBox.addItem(btn);
         }
 
-        var label = canvas.gui.widgets.Label.new(me._tabsContent)
-            .setText("ICAO:");
+        var label = me._widget.getLabel("ICAO:");
 
-        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent)
-            .setText(me._icao)
-            .setFixedSize(80, 26)
-            .listen("editingFinished", func(e) {
-                me._downloadMetarCallback.invoke(e.detail.text);
-            });
+        me._icaoEdit = me._widget.getLineEdit(me._icao, 80, func(e) {
+            me._downloadMetarCallback.invoke(e.detail.text);
+        });
 
-        var btnLoad = me._getButton("Load", func() {
+        var btnLoad = me._widget.getButton("Load", func() {
             me._downloadMetarCallback.invoke(me._icaoEdit.text());
         });
 
-        var holdUpdateCheckbox = canvas.gui.widgets.CheckBox.new(parent: me._tabsContent, cfg: { wordWrap: false })
-            .setText("Hold update")
-            .setChecked(false)
-            .listen("toggled", func(e) {
-                me._isHoldUpdateNearest = e.detail.checked;
+        var holdUpdateCheckbox = me._widget.getCheckBox("Hold update", false, func(e) {
+            me._isHoldUpdateNearest = e.detail.checked;
 
-                if (!me._isHoldUpdateNearest) {
-                    # If the option is unchecked, immediately update the airport
-                    # with the nearest one if it has changed from the current one.
-                    var newIcao = getprop("/sim/airport/closest-airport-id");
-                    if (newIcao != me._icao) {
-                        me._downloadMetarCallback.invoke(newIcao);
-                    }
+            if (!me._isHoldUpdateNearest) {
+                # If the option is unchecked, immediately update the airport
+                # with the nearest one if it has changed from the current one.
+                var newIcao = getprop("/sim/airport/closest-airport-id");
+                if (newIcao != me._icao) {
+                    me._downloadMetarCallback.invoke(newIcao);
                 }
-            });
+            }
+        });
 
         buttonBox.addStretch(1);
         buttonBox.addItem(label);
@@ -171,7 +165,7 @@ var BottomBar = {
     drawBottomBarForScheduledTab: func() {
         var buttonBox = canvas.HBoxLayout.new();
 
-        var btnLoad = me._getButton("Update METAR", func() {
+        var btnLoad = me._widget.getButton("Update METAR", func() {
             me._downloadMetarCallback.invoke(me._icao);
         });
 
@@ -193,17 +187,13 @@ var BottomBar = {
             buttonBox.addItem(btn);
         }
 
-        var label = canvas.gui.widgets.Label.new(me._tabsContent)
-            .setText("ICAO:");
+        var label = me._widget.getLabel("ICAO:");
 
-        me._icaoEdit = canvas.gui.widgets.LineEdit.new(me._tabsContent)
-            .setText(me._icao)
-            .setFixedSize(80, 26)
-            .listen("editingFinished", func(e) {
-                me._downloadMetarCallback.invoke(e.detail.text);
-            });
+        me._icaoEdit = me._widget.getLineEdit(me._icao, 80, func(e) {
+            me._downloadMetarCallback.invoke(e.detail.text);
+        });
 
-        var btnLoad = me._getButton("Load", func() {
+        var btnLoad = me._widget.getButton("Load", func() {
             me._downloadMetarCallback.invoke(me._icaoEdit.text());
         });
 
@@ -214,16 +204,5 @@ var BottomBar = {
         buttonBox.addStretch(1);
 
         return buttonBox;
-    },
-
-    #
-    # @param  string  text  Label of button.
-    # @param  func  callback  Function which will be executed after click the button.
-    # @return ghost  Button widget.
-    #
-    _getButton: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me._tabsContent)
-            .setText(text)
-            .listen("clicked", callback);
     },
 };

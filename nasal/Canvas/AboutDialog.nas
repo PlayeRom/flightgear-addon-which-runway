@@ -1,5 +1,5 @@
 #
-# Which Runway - Add-on for FlightGear
+# Which Runway Add-on for FlightGear
 #
 # Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
 #
@@ -38,6 +38,8 @@ var AboutDialog = {
         call(PersistentDialog.setChild, [obj, AboutDialog], obj.parents[1]); # Let the parent know who their child is.
         call(PersistentDialog.setPositionOnCenter, [], obj.parents[1]);
 
+        obj._widget = WidgetHelper.new(obj._group);
+
         obj._createLayout();
 
         g_VersionChecker.registerCallback(Callback.new(obj.newVersionAvailable, obj));
@@ -61,7 +63,7 @@ var AboutDialog = {
     # @return void
     #
     _createLayout: func() {
-        me._vbox.addSpacing(AboutDialog.PADDING);
+        me._vbox.addSpacing(me.PADDING);
 
         me._vbox.addItem(me._getLabel(g_Addon.name));
         me._vbox.addItem(me._getLabel(sprintf("version %s", g_Addon.version.str())));
@@ -90,10 +92,9 @@ var AboutDialog = {
 
         me._vbox.addStretch(1);
 
-        var buttonBoxClose = me._drawBottomBar("Close", func { me.hide(); });
-        me._vbox.addSpacing(AboutDialog.PADDING);
-        me._vbox.addItem(buttonBoxClose);
-        me._vbox.addSpacing(AboutDialog.PADDING);
+        me._vbox.addSpacing(me.PADDING);
+        me._vbox.addItem(me._drawBottomBar());
+        me._vbox.addSpacing(me.PADDING);
     },
 
     #
@@ -101,7 +102,7 @@ var AboutDialog = {
     #
     # @return void
     #
-    _createLayoutNewVersionInfo: func {
+    _createLayoutNewVersionInfo: func() {
         me._newVersionAvailLabel = me._getLabel("New version is available").setVisible(false);
         me._newVersionAvailLabel.setColor([0.9, 0.0, 0.0]);
 
@@ -119,12 +120,7 @@ var AboutDialog = {
     # @return ghost  Label widget.
     #
     _getLabel: func(text, wordWrap = false) {
-        var label = canvas.gui.widgets.Label.new(parent: me._group, cfg: {wordWrap: wordWrap})
-            .setText(text);
-
-        label.setTextAlign("center");
-
-        return label;
+        return me._widget.getLabel(text, wordWrap, "center");
     },
 
     #
@@ -133,24 +129,16 @@ var AboutDialog = {
     # @return ghost  Button widget.
     #
     _getButton: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me._group)
-            .setText(text)
-            .setFixedSize(200, 26)
-            .listen("clicked", callback);
+        return me._widget.getButton(text, callback, 200);
     },
 
     #
-    # @param  string  label  Label of button.
-    # @param  func  callback  function which will be executed after click the button.
     # @return ghost  Canvas layout with buttons.
     #
-    _drawBottomBar: func(label, callback) {
+    _drawBottomBar: func() {
         var buttonBox = canvas.HBoxLayout.new();
 
-        var btnClose = canvas.gui.widgets.Button.new(me._group)
-            .setText(label)
-            .setFixedSize(75, 26)
-            .listen("clicked", callback);
+        var btnClose = me._widget.getButton("Close", func me.hide(), 75);
 
         buttonBox.addStretch(1);
         buttonBox.addItem(btnClose);

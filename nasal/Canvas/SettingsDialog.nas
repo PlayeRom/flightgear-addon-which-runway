@@ -1,5 +1,5 @@
 #
-# Which Runway - Add-on for FlightGear
+# Which Runway Add-on for FlightGear
 #
 # Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
 #
@@ -29,7 +29,7 @@ var SettingsDialog = {
                 SettingsDialog,
                 PersistentDialog.new(
                     width: 400,
-                    height: 530,
+                    height: 500,
                     title: "Settings Which Runway",
                 ),
             ],
@@ -37,6 +37,8 @@ var SettingsDialog = {
 
         call(PersistentDialog.setChild, [obj, SettingsDialog], obj.parents[1]); # Let the parent know who their child is.
         call(PersistentDialog.setPositionOnCenter, [], obj.parents[1]);
+
+        obj._widget = WidgetHelper.new(obj._group);
 
         obj._maxMetarRangeNm = g_Settings.getMaxMetarRangeNm();
         obj._rwyUseEnable = g_Settings.getRwyUseEnabled();
@@ -48,15 +50,15 @@ var SettingsDialog = {
         obj._windSettingsWidget = canvas.gui.widgets.WindSettings.new(parent: obj._group, cfg: { colors: Colors })
             .setRadius(120);
 
-        obj._hwLabel = obj._getLabel(obj._printAngle(obj._hwThreshold));
-        obj._xwLabel = obj._getLabel(obj._printAngle(obj._xwThreshold));
+        obj._hwLabel = obj._widget.getLabel(obj._printAngle(obj._hwThreshold));
+        obj._xwLabel = obj._widget.getLabel(obj._printAngle(obj._xwThreshold));
 
-        obj._vbox.addSpacing(SettingsDialog.PADDING);
+        obj._vbox.addSpacing(me.PADDING);
         obj._drawContent();
 
-        obj._vbox.addSpacing(SettingsDialog.PADDING);
+        obj._vbox.addSpacing(me.PADDING);
         obj._vbox.addItem(obj._drawBottomBar());
-        obj._vbox.addSpacing(SettingsDialog.PADDING);
+        obj._vbox.addSpacing(me.PADDING);
 
         return obj;
     },
@@ -101,11 +103,11 @@ var SettingsDialog = {
     #
     _drawContent: func() {
         me._vbox.addItem(me._drawNearestMetarRange());
-        me._vbox.addItem(canvas.gui.widgets.HorizontalRule.new(me._group));
+        me._vbox.addItem(me._widget.getHorizontalRule());
         me._vbox.addItem(me._drawEnableRwyUse());
-        me._vbox.addItem(canvas.gui.widgets.HorizontalRule.new(me._group));
+        me._vbox.addItem(me._widget.getHorizontalRule());
         me._vbox.addItem(me._drawWindSettings());
-        me._vbox.addItem(canvas.gui.widgets.HorizontalRule.new(me._group));
+        me._vbox.addItem(me._widget.getHorizontalRule());
         me._vbox.addStretch(1);
     },
 
@@ -113,7 +115,7 @@ var SettingsDialog = {
     # @return ghost  Canvas box layout.
     #
     _drawNearestMetarRange: func() {
-        var label = me._getLabel("Max range for nearest METAR in NM:");
+        var label = me._widget.getLabel("Max range for nearest METAR in NM:");
 
         var items = [
             { label: "20",  value:  20 },
@@ -132,10 +134,10 @@ var SettingsDialog = {
 
         var hBox = canvas.HBoxLayout.new();
 
-        hBox.addSpacing(SettingsDialog.PADDING);
+        hBox.addSpacing(me.PADDING);
         hBox.addItem(label);
         hBox.addItem(me._rangeComboBox);
-        hBox.addSpacing(SettingsDialog.PADDING);
+        hBox.addSpacing(me.PADDING);
         hBox.addStretch(1);
 
         return hBox;
@@ -145,18 +147,15 @@ var SettingsDialog = {
     # @return ghost  Canvas box layout.
     #
     _drawEnableRwyUse: func() {
-        me._checkboxRwyUse = canvas.gui.widgets.CheckBox.new(me._group)
-            .setText("Preferred runways at the airport")
-            .setChecked(me._rwyUseEnable)
-            .listen("toggled", func(e) {
-                me._rwyUseEnable = e.detail.checked ? true : false; # conversion on true/false is needed ¯\_(ツ)_/¯
-            });
+        me._checkboxRwyUse = me._widget.getCheckBox("Preferred runways at the airport", me._rwyUseEnable, func(e) {
+            me._rwyUseEnable = e.detail.checked ? true : false; # conversion on true/false is needed ¯\_(ツ)_/¯
+        });
 
         var hBox = canvas.HBoxLayout.new();
 
-        hBox.addSpacing(SettingsDialog.PADDING);
+        hBox.addSpacing(me.PADDING);
         hBox.addItem(me._checkboxRwyUse);
-        hBox.addSpacing(SettingsDialog.PADDING);
+        hBox.addSpacing(me.PADDING);
         hBox.addStretch(1);
 
         return hBox;
@@ -167,13 +166,13 @@ var SettingsDialog = {
     #
     _drawWindSettings: func() {
         var vBox = canvas.VBoxLayout.new();
-        vBox.addSpacing(SettingsDialog.PADDING);
-        vBox.addItem(me._getLabel("Set thresholds for HW, XW and TW"));
+        vBox.addSpacing(me.PADDING);
+        vBox.addItem(me._widget.getLabel("Set thresholds for HW, XW and TW"));
         vBox.addItem(me._windSettingsWidget);
-        vBox.addSpacing(SettingsDialog.PADDING);
+        vBox.addSpacing(me.PADDING);
         vBox.addItem(me._drawHwControls());
         vBox.addItem(me._drawXwControls());
-        vBox.addSpacing(SettingsDialog.PADDING);
+        vBox.addSpacing(me.PADDING);
         vBox.addStretch(1);
 
         var hBox = canvas.HBoxLayout.new();
@@ -207,14 +206,14 @@ var SettingsDialog = {
 
         var hBox = canvas.HBoxLayout.new();
 
-        hBox.addSpacing(SettingsDialog.PADDING);
-        hBox.addItem(me._getLabel("HW: "));
+        hBox.addSpacing(me.PADDING);
+        hBox.addItem(me._widget.getLabel("HW: "));
         hBox.addItem(btnMinusBig);
         hBox.addItem(btnMinusSmall);
         hBox.addItem(me._hwLabel);
         hBox.addItem(btnPlusSmall);
         hBox.addItem(btnPlusBig);
-        hBox.addSpacing(SettingsDialog.PADDING);
+        hBox.addSpacing(me.PADDING);
         hBox.addItem(btnDefault);
         hBox.addStretch(1);
 
@@ -232,14 +231,14 @@ var SettingsDialog = {
 
         var hBox = canvas.HBoxLayout.new();
 
-        hBox.addSpacing(SettingsDialog.PADDING);
-        hBox.addItem(me._getLabel("XW: "));
+        hBox.addSpacing(me.PADDING);
+        hBox.addItem(me._widget.getLabel("XW: "));
         hBox.addItem(btnMinusBig);
         hBox.addItem(btnMinusSmall);
         hBox.addItem(me._xwLabel);
         hBox.addItem(btnPlusSmall);
         hBox.addItem(btnPlusBig);
-        hBox.addSpacing(SettingsDialog.PADDING);
+        hBox.addSpacing(me.PADDING);
         hBox.addStretch(1);
 
         return hBox;
@@ -284,39 +283,21 @@ var SettingsDialog = {
     },
 
     #
-    # @param  string  text  Label text.
-    # @param  bool  wordWrap  If true then text will be wrapped.
-    # @return ghost  Label widget.
-    #
-    _getLabel: func(text, wordWrap = false) {
-        var label = canvas.gui.widgets.Label.new(parent: me._group, cfg: { wordWrap: wordWrap })
-            .setText(text);
-
-        return label;
-    },
-
-    #
-    # @param  string  text  Label of button.
+    # @param  string  label  Label of button.
     # @param  func  callback  Function which will be executed after click the button.
     # @return ghost  Button widget.
     #
-    _getButton: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me._group)
-            .setText(text)
-            .setFixedSize(75, 26)
-            .listen("clicked", callback);
+    _getButton: func(label, callback) {
+        return me._widget.getButton(label, callback, 75);
     },
 
     #
-    # @param  string  text  Label of button.
+    # @param  string  label  Label of button.
     # @param  func  callback  Function which will be executed after click the button.
     # @return ghost  Button widget.
     #
-    _getButtonSmall: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me._group)
-            .setText(text)
-            .setFixedSize(26, 26)
-            .listen("clicked", callback);
+    _getButtonSmall: func(label, callback) {
+        return me._widget.getButton(label, callback, 26);
     },
 
     #

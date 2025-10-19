@@ -1,5 +1,5 @@
 #
-# Which runway - Add-on for FlightGear
+# Which Runway Add-on for FlightGear
 #
 # Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
 #
@@ -41,6 +41,8 @@ var DrawRwyUseControls = {
         obj._isRwyUse = true;
 
         obj._aircraftOperation = obj._getDefaultAircraftOperationByTabId();
+
+        obj._widget = WidgetHelper.new(obj._scrollContent);
 
         obj._checkboxRwyUse = nil;
         obj._comboBoxAircraftType = nil;
@@ -199,37 +201,34 @@ var DrawRwyUseControls = {
         var aircraftTypeLayout = me._creteRwyUseComboBoxAircraft();
         var takeOffLandingLayout = me._creteRwyUseRadioBtnsTakeoffLanding();
 
-        me._checkboxRwyUse = canvas.gui.widgets.CheckBox.new(me._scrollContent)
-            .setText("Use the preferred runways at the airport")
-            .setChecked(me._isRwyUse)
-            .listen("toggled", func(e) {
-                # I don't why but convert to true/false is important for me._rwyUseInfoWidget.setVisible()
-                me._isRwyUse = e.detail.checked ? true : false;
+        me._checkboxRwyUse = me._widget.getCheckBox("Use the preferred runways at the airport", me._isRwyUse, func(e) {
+            # I don't why but convert to true/false is important for me._rwyUseInfoWidget.setVisible()
+            me._isRwyUse = e.detail.checked ? true : false;
 
-                me._labelAircraftType.setEnabled(me._isRwyUse);
-                me._comboBoxAircraftType.setEnabled(me._isRwyUse);
+            me._labelAircraftType.setEnabled(me._isRwyUse);
+            me._comboBoxAircraftType.setEnabled(me._isRwyUse);
 
-                if (me._isTabNearest() or me._isTabAlternate()) {
-                    me._radioTakeoff.setEnabled(me._isRwyUse);
-                    me._radioLanding.setEnabled(me._isRwyUse);
-                } else {
-                    me._radioTakeoff.setEnabled(false);
-                    me._radioLanding.setEnabled(false);
-                }
+            if (me._isTabNearest() or me._isTabAlternate()) {
+                me._radioTakeoff.setEnabled(me._isRwyUse);
+                me._radioLanding.setEnabled(me._isRwyUse);
+            } else {
+                me._radioTakeoff.setEnabled(false);
+                me._radioLanding.setEnabled(false);
+            }
 
-                me._labelCurrentUtcTime.setEnabled(me._isRwyUse);
-                me._labelCurrentUtcTimeValue.setEnabled(me._isRwyUse);
+            me._labelCurrentUtcTime.setEnabled(me._isRwyUse);
+            me._labelCurrentUtcTimeValue.setEnabled(me._isRwyUse);
 
-                me._labelUtcTimeCtrl.setEnabled(me._isRwyUse);
-                me._labelUtcHour.setEnabled(me._isRwyUse);
-                me._labelUtcMinute.setEnabled(me._isRwyUse);
-                me._btnUtcHourMinus.setEnabled(me._isRwyUse);
-                me._btnUtcHourPlus.setEnabled(me._isRwyUse);
-                me._btnUtcMinuteMinus.setEnabled(me._isRwyUse);
-                me._btnUtcMinutePlus.setEnabled(me._isRwyUse);
+            me._labelUtcTimeCtrl.setEnabled(me._isRwyUse);
+            me._labelUtcHour.setEnabled(me._isRwyUse);
+            me._labelUtcMinute.setEnabled(me._isRwyUse);
+            me._btnUtcHourMinus.setEnabled(me._isRwyUse);
+            me._btnUtcHourPlus.setEnabled(me._isRwyUse);
+            me._btnUtcMinuteMinus.setEnabled(me._isRwyUse);
+            me._btnUtcMinutePlus.setEnabled(me._isRwyUse);
 
-                me._redrawCallback.invoke(false);
-            });
+            me._redrawCallback.invoke(false);
+        });
 
         var vBox = canvas.VBoxLayout.new();
         vBox.addItem(me._checkboxRwyUse);
@@ -248,7 +247,7 @@ var DrawRwyUseControls = {
     # #return ghost  Return canvas layout.
     #
     _creteRwyUseComboBoxAircraft: func() {
-        me._labelAircraftType = me._getLabel("Aircraft type:");
+        me._labelAircraftType = me._widget.getLabel("Aircraft type:");
 
         var items = [
             { label: "Commercial",       value: RwyUse.COMMERCIAL },
@@ -292,10 +291,10 @@ var DrawRwyUseControls = {
     # #return ghost  Return canvas layout.
     #
     _creteRwyUseRadioBtnsTakeoffLanding: func() {
-        me._radioTakeoff = me._getRadioButton("Takeoff")
+        me._radioTakeoff = me._widget.getRadioButton("Takeoff")
             .setChecked(me._aircraftOperation == RwyUse.TAKEOFF);
 
-        me._radioLanding = me._getRadioButton("Landing", { "parent-radio": me._radioTakeoff })
+        me._radioLanding = me._widget.getRadioButton("Landing", { "parent-radio": me._radioTakeoff })
             .setChecked(me._aircraftOperation == RwyUse.LANDING);
 
         if (me._isTabDeparture() or me._isTabArrival()) {
@@ -338,49 +337,23 @@ var DrawRwyUseControls = {
     },
 
     #
-    # Get RadioButton widget.
-    #
-    # @param  string  text  Label text.
-    # @param  hash|nil  cfg  Config hash or nil.
-    # @return ghost  RadioButton widget.
-    #
-    _getRadioButton: func(text, cfg = nil) {
-        return canvas.gui.widgets.RadioButton.new(parent: me._scrollContent, cfg: cfg)
-            .setText(text);
-    },
-
-    #
-    # Get Label widget.
-    #
-    # @param  string  text
-    # @return ghost  Label widget.
-    #
-    _getLabel: func(text) {
-        return canvas.gui.widgets.Label.new(me._scrollContent)
-            .setText(text);
-    },
-
-    #
     # Get Button widget.
     #
     # @param  string  text  Label of button.
     # @param  func  callback  Function which will be executed after click the button.
     # @return ghost  Button widget.
     #
-    _getButton: func(text, callback, height = 28) {
-        return canvas.gui.widgets.Button.new(me._scrollContent)
-            .setText(text)
-            .setFixedSize(height, 28)
-            .listen("clicked", callback);
+    _getButton: func(text, callback) {
+        return me._widget.getButton(text, callback, 26);
     },
 
     #
     # @return ghost  Canvas layout.
     #
     _createCurrentUtcTimeLayout: func() {
-        me._labelCurrentUtcTime = me._getLabel("Current UTC time:");
+        me._labelCurrentUtcTime = me._widget.getLabel("Current UTC time:");
 
-        me._labelCurrentUtcTimeValue = me._getLabel(me._currentUtcTime);
+        me._labelCurrentUtcTimeValue = me._widget.getLabel(me._currentUtcTime);
         me._updateCurrentUtcTime();
 
         var hBox = canvas.HBoxLayout.new();
@@ -395,10 +368,10 @@ var DrawRwyUseControls = {
     # @return ghost  Canvas layout.
     #
     _createUtcTimeControlLayout: func() {
-        me._labelUtcTimeCtrl = me._getLabel("Schedule UTC time:");
+        me._labelUtcTimeCtrl = me._widget.getLabel("Schedule UTC time:");
 
-        me._labelUtcHour = me._getLabel(me._getPrintTimeFormat(me._utcHourValue));
-        me._labelUtcMinute = me._getLabel(me._getPrintTimeFormat(me._utcMinuteValue));
+        me._labelUtcHour = me._widget.getLabel(me._getPrintTimeFormat(me._utcHourValue));
+        me._labelUtcMinute = me._widget.getLabel(me._getPrintTimeFormat(me._utcMinuteValue));
 
         me._btnUtcHourMinus = me._getButton("-", func() {
             me._minuHour();
