@@ -7,9 +7,9 @@ The files in this directory are responsible for checking whether a newer version
 
 ### Method 1. MetaDataVersionChecker
 
-The simplest method involves downloading the `/addon-metadata.xml` file from your repository, which contains the add-on's version. Therefore, if you push a new commit to the server and increment the add-on's version, users can receive notification of the new version. The disadvantage of this solution is that releases are not used, so the version will always be loaded from a main branch (HEAD). Therefore, if you increment the version of an add-on that isn't quite ready, users will receive notifications.
+The simplest method involves downloading the `/addon-metadata.xml` file from your repository, which contains the add-on's version. Therefore, if you push a new commit to the server and increment the add-on's version, users can receive notification of the new version. The version will always be loaded from a main branch (HEAD). Therefore, if you increment the version of an add-on that isn't quite ready, users will receive notifications.
 
-The advantage is that this solution is more repository-agnostic. Currently, GitHub, GitLab, and FGAddons on SourceForge are supported, but supporting any other repository is very easy by modifying the `MetaDataVersionChecker._getUrl` method.
+The advantage is that this solution is more repository-agnostic. Currently, GitHub, GitLab, SourceForge and FGAddons are supported, but add supporting any other repository is very easy by modifying the `MetaDataVersionChecker._getUrl` method.
 
 Requirements:
 
@@ -20,7 +20,9 @@ Requirements:
 
 You can use this version checking method if you host your add-on on GitHab or GitLab and you are using git tags to create releases, where name of tag it's a version number, e.g. `1.2.5` or `v.1.2.5`.
 
-1. In the `/addon-metadata.xml` file, in the `<code-repository>` field, place the full URL to your repository, e.g., `https://gitlab.com/PlayeRom/flightgear-addon-canvas-skeleton`.
+The advantage of this approach is that you can upload an `/addon-metadata.xml` file with the upgraded version of the add-on to the main branch, but users won't be notified of the new version until you decide to do so by releasing it. Therefore, it's a method independent of what's in the code.
+
+1. In the `/addon-metadata.xml` file, in the `<code-repository>` field, place the full URL to your repository, e.g., `https://github.com/PlayeRom/flightgear-addon-canvas-skeleton`.
 2. In `/Config.nas` file set `useVersionCheck.byGitTag` on `true` and others flags in `useVersionCheck` set on `false`.
 3. Git tags must be in version notation as accepted by the `<version>` field in the `/addon-metadata.xml` file (see below). Optionally, you can prefix the version in the tag with `v.` or `v`, e.g. `v.1.2.5`. or `v1.2.5`.
 
@@ -37,7 +39,7 @@ MAJOR.MINOR.PATCH.devM
 
 where `MAJOR`, `MINOR`, `PATCH`, `N`, `M` are integers. `MAJOR`, `MINOR`, `PATCH` can be zeros, and `N`, `M` must be greater than 0.
 
-The character `a` denotes alpha versions, `b` - beta, `rc` - release candidate, and each version can have the suffix `.devM`.
+The character `a` denotes "alpha" versions, `b` – "beta", `rc` – "release candidate", and each version can have the suffix `.devM`.
 
 Examples from the smallest version to the largest:
 
@@ -87,9 +89,9 @@ The `JsonVersionChecker` class can download any file from the internet and pass 
 
 The `XmlVersionChecker` class implements XML file downloading as a `<PropertyList>`, a solution that only works with FlightGear. For this purpose, the `xmlhttprequest` fgcommand is used, and then it passes the `props.Node` object to its child's callback function, allowing navigation through the parsed XML.
 
-The `MetaDataVersionChecker` class inherits from `XmlVersionChecker` because it downloads the `/addon-metadata.xml` file from the add-on repository. This class's task is to determine the URL pointing to the file to download and to handle a callback function called by `XmlVersionChecker`, which will receive a `props.Node` object with the parsed XML. The callback function retrieves the new version of the add-on as a string and passes it to the `me.checkVersion()` method.
+The `MetaDataVersionChecker` class inherits from `XmlVersionChecker` because it downloads the `/addon-metadata.xml` file from the add-on repository. This class's task is to determine the URL pointing to the file to download and to handle a callback function called by `XmlVersionChecker`, which will receive a `props.Node` object with the parsed XML. The callback function's task is to extract the new version of the add-on as a string and pass it to the `me.checkVersion()` method of the parent class.
 
-The `GitTagVersionChecker` class inherit from `JsonVersionChecker` because it communicate with the appropriate service via API. The purpose of this class is to establish a URL pointing to the file to download and to handle a callback function called by `JsonVersionChecker`, which receives a string as content in JSON format. The callback function retrieves the new version of the add-on as a string and passes it to the `me.checkVersion()` method.
+The `GitTagVersionChecker` class inherit from `JsonVersionChecker` because it communicate with the appropriate service via API. The purpose of this class is to establish a URL pointing to the file to download and to handle a callback function called by `JsonVersionChecker`, which receives a string as content in JSON format. The callback function's task is to extract the new version of the add-on as a string and pass it to the `me.checkVersion()` method of the parent class.
 
 If you need your own implementation for downloading a file, simply add a new class such as `MetaDataVersionChecker` or `GitTagVersionChecker`, where you specify the URL to the resource and implement a callback function that receives the downloaded resource and finally calls `me.checkVersion()`.
 

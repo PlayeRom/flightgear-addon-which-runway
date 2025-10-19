@@ -26,7 +26,7 @@ var Config = {
     ],
 
     #
-    # Options related to checking for a newer version of the add-on. Only one `enabled` flag should be set to `true`,
+    # Options related to checking for a newer version of the add-on. Only one option flag should be set to `true`,
     # or none at all. For information on how version checking works, see the file `/nasal/Utils/VersionCheck/README.md`.
     # These settings also ensure that files from the `/nasal/Utils/VersionCheck/` directory that are not needed will
     # not be loaded when the simulator is started.
@@ -40,10 +40,12 @@ var Config = {
     # If you hosted your project on own SourceForge, then URL should be like:
     # https://sourceforge.net/p/canvas-skeleton/code/ci/HEAD/tree
     #
+    # See also: `/nasal/Utils/VersionCheck/README.md` file.
+    #
     useVersionCheck: {
         #
         # Set to `true` if you want to check for a newer version by downloading the `/addon-metadata.xml` file from the
-        # repository. Only GitHub, GitLab and FGAddons are supported.
+        # repository. Only GitHub, GitLab, SourceForge and FGAddons are supported.
         #
         byMetaData: false,
 

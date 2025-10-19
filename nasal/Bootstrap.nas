@@ -150,7 +150,10 @@ var Bootstrap = {
                 ? reloadMenu.addMenu()
                 : reloadMenu.removeMenu();
 
-            DevReloadMultiKey.addMultiKeyCmd(env.getValue("RELOAD_MULTIKEY_CMD"));
+            DevMultiKeyCmd.new()
+                .addReloadAddon(env.getValue("RELOAD_MULTIKEY_CMD"))
+                .addRunTests(env.getValue("TEST_MULTIKEY_CMD"))
+                .finish();
         }
     },
 };

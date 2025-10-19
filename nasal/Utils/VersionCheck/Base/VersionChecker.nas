@@ -155,8 +155,10 @@ var VersionChecker = {
             } else {
                 # Own hosted project, example:
                 # https://sourceforge.net/p/canvas-skeleton/code/ci/HEAD/tree
+                #         ^               ^ ^
+                #         0               1 2
 
-                repo = string.join("/", parts[2:]); # Start with 1 because we are omitting the "p" element.
+                repo = string.join("/", parts[2:]); # Start with 2 because we are omitting the domain and "p" element.
             }
         } else {
             # Examples: https://gitlab.com/user-name/project/repo-name
