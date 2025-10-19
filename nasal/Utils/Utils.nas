@@ -25,12 +25,13 @@ var Utils = {
 
     #
     # @param  func  function
-    # @param  vector  params  Vector of function params.
-    # @param  hash  obj  Function context.
+    # @param  vector|nil  params  Vector of function params.
+    # @param  hash|nil  obj  Function context.
     # @return bool  Return true if given function was called without errors (die).
     #
-    tryCatch: func(function, params, obj = nil) {
+    tryCatch: func(function, params = nil, obj = nil) {
         var errors = [];
+        params = params or [];
         call(function, params, obj, errors);
 
         return !size(errors);

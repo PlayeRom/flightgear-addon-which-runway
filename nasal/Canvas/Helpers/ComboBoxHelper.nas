@@ -58,6 +58,6 @@ var ComboBoxHelper = {
     # @return bool
     #
     _isCreateItemAvailable: func(comboBoxWidget) {
-        return Utils.tryCatch(func typeof(comboBoxWidget.createItem), []);
+        return Utils.tryCatch(func typeof(comboBoxWidget.createItem));
     }
 };
