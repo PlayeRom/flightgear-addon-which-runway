@@ -20,7 +20,7 @@ var ComboBoxHelper = {
     # @param  vector  items  Vector of hashes, each hash with `label` and `value` field.
     # @param  int|int  width
     # @param  int|int  height
-    # @return ghost  ComboBix widget.
+    # @return ghost  ComboBox widget.
     #
     create: func(context, items, width = nil, height = nil) {
         var comboBox = canvas.gui.widgets.ComboBox.new(context);
@@ -37,7 +37,7 @@ var ComboBoxHelper = {
     #
     # @param  ghost  comboBoxWidget
     # @param  vector  items  Vector of hashes, each hash with `label` and `value` field.
-    # @return ghost  ComboBix widget.
+    # @return ghost  ComboBox widget.
     #
     addItems: func(comboBoxWidget, items) {
         var funcName = me._isCreateItemAvailable(comboBoxWidget)
