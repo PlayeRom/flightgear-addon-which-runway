@@ -294,7 +294,7 @@ var DrawRwyUseControls = {
         me._radioTakeoff = me._widget.getRadioButton("Takeoff")
             .setChecked(me._aircraftOperation == RwyUse.TAKEOFF);
 
-        me._radioLanding = me._widget.getRadioButton("Landing", { "parent-radio": me._radioTakeoff })
+        me._radioLanding = me._widget.getRadioButton("Landing", me._radioTakeoff)
             .setChecked(me._aircraftOperation == RwyUse.LANDING);
 
         if (me._isTabDeparture() or me._isTabArrival()) {

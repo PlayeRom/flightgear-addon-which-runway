@@ -16,10 +16,10 @@ var WidgetHelper = {
     #
     # Constructor.
     #
-    # @param  ghost  context  Canvas parent.
+    # @param  ghost|nil  context  Canvas parent.
     # @return void
     #
-    new: func(context) {
+    new: func(context = nil) {
         return {
             parents: [
                 WidgetHelper,
@@ -29,16 +29,27 @@ var WidgetHelper = {
     },
 
     #
+    # @param  ghost  context  Canvas parent.
+    # @return void
+    #
+    setContext: func(context) {
+        me._context = context;
+    },
+
+    #
     # Create Label widget.
     #
-    # @param  string  text
+    # @param  string|nil  text
     # @param  bool  wordWrap
     # @param  string|nil  align
     # @return ghost  Label widget.
     #
     getLabel: func(text, wordWrap = false, align = nil) {
-        var label = canvas.gui.widgets.Label.new(parent: me._context, cfg: { wordWrap: wordWrap })
-            .setText(text);
+        var label = canvas.gui.widgets.Label.new(parent: me._context, cfg: { wordWrap: wordWrap });
+
+        if (text != nil) {
+            label.setText(text);
+        }
 
         if (align != nil) {
             label.setTextAlign(align);
@@ -51,20 +62,20 @@ var WidgetHelper = {
     # Create Button widget.
     #
     # @param  string  text  Label of button.
-    # @param  func|nil  callback  Function which will be executed after click the button.
-    # @param  int|nil  width  Width of the button. If nil then size will not be set.
+    # @param  params  Optional parameters in any order:
+    #       func  Function which will be executed after click the button.
+    #       int  Width of the button.
     # @return ghost  Button widget.
     #
-    getButton: func(text, callback = nil, width = nil) {
+    getButton: func(text, params...) {
         var btn = canvas.gui.widgets.Button.new(me._context)
             .setText(text);
 
-        if (callback) {
-            btn.listen("clicked", callback);
-        }
+        foreach (var param; params) {
+            var type = typeof(param);
 
-        if (width) {
-            btn.setFixedSize(width, 26);
+               if (type == 'func')   btn.listen("clicked", param);
+            elsif (type == 'scalar') btn.setFixedSize(param, 26);
         }
 
         return btn;
@@ -75,24 +86,34 @@ var WidgetHelper = {
     #
     # @param  string  text
     # @param  bool  isChecked
-    # @param  func  callback
+    # @param  func|nil  callback
     # @return ghost  CheckBox widget.
     #
-    getCheckBox: func(text, isChecked, callback) {
-        return canvas.gui.widgets.CheckBox.new(me._context)
+    getCheckBox: func(text, isChecked, callback = nil) {
+        var checkBox = canvas.gui.widgets.CheckBox.new(me._context)
             .setText(text)
-            .setChecked(isChecked)
-            .listen("toggled", callback);
+            .setChecked(isChecked);
+
+        if (callback != nil) {
+            checkBox.listen("toggled", callback);
+        }
+
+        return checkBox;
     },
 
     #
-    # Get RadioButton widget.
+    # Create RadioButton widget.
     #
     # @param  string  text  Label text.
-    # @param  hash|nil  cfg  Config hash or nil.
+    # @param  ghost|nil  parent
     # @return ghost  RadioButton widget.
     #
-    getRadioButton: func(text, cfg = nil) {
+    getRadioButton: func(text, parent = nil) {
+        var cfg = {};
+        if (parent != nil) {
+            cfg["parent-radio"] = parent;
+        }
+
         return canvas.gui.widgets.RadioButton.new(parent: me._context, cfg: cfg)
             .setText(text);
     },
@@ -101,20 +122,20 @@ var WidgetHelper = {
     # Create LineEdit widget.
     #
     # @param  string  text
-    # @param  int|nil  width
-    # @param  func|nil  callback
+    # @param  params  Optional parameters in any order:
+    #       func  Function which will be executed on `editingFinished`.
+    #       int  Width of the field.
     # @return ghost  LineEdit widget.
     #
-    getLineEdit: func(text = "", width = nil, callback = nil) {
+    getLineEdit: func(text = "", params...) {
         var input = canvas.gui.widgets.LineEdit.new(me._context)
             .setText(text);
 
-        if (callback) {
-            input.listen("editingFinished", callback);
-        }
+        foreach (var param; params) {
+            var type = typeof(param);
 
-        if (width) {
-            input.setFixedSize(width, 26);
+               if (type == 'func')   input.listen("editingFinished", param);
+            elsif (type == 'scalar') input.setFixedSize(param, 26);
         }
 
         return input;

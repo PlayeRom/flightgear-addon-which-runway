@@ -12,7 +12,7 @@
 # Unit tests for Units.nas
 
 var setUp = func {
-    var namespace = globals['__addon[org.flightgear.addons.CanvasSkeleton]__'];
+    var namespace = globals['__addon[org.flightgear.addons.which-runway]__'];
 };
 
 var tearDown = func {
