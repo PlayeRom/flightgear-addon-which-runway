@@ -36,10 +36,19 @@ var MenuStateHandler = {
     # Enable/disable menu items by name.
     #
     # @param  bool  state
+    # @param  hash|nil  excluded  List of menu name (as key of hash) to excluded from change state.
     # @return void
     #
-    toggleItems: func(state) {
+    toggleItems: func(state, excluded = nil) {
+        if (excluded == nil) {
+            excluded = {};
+        }
+
         foreach (var name; me._menuNames.getKeys()) {
+            if (contains(excluded, name)) {
+                continue;
+            }
+
             gui.menuEnable(name, state);
         }
     },
