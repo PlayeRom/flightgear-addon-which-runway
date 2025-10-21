@@ -27,8 +27,8 @@ var Settings = {
         obj._addonNodePath = g_Addon.node.getPath();
 
         obj._maxMetarRangeNm    = props.globals.getNode(obj._addonNodePath ~ "/settings/max-metar-range-nm");
-        obj._hwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/hw-threshold");
-        obj._xwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/xw-threshold");
+        obj._hwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/wind/threshold/hw");
+        obj._xwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/wind/threshold/xw");
         obj._keyArrowMoveSize   = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/arrow-move-size");
         obj._keyPageMoveSize    = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/page-move-size");
         obj._rwyUseEnabled      = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/enabled");

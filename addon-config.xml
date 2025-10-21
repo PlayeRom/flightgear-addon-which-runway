@@ -20,8 +20,12 @@
                     <!-- Maximum search range of the nearest airport with METAR. -->
                     <max-metar-range-nm type="double" userarchive="y">30</max-metar-range-nm>
 
-                    <hw-threshold type="int" userarchive="y">45</hw-threshold>
-                    <xw-threshold type="int" userarchive="y">90</xw-threshold>
+                    <wind>
+                        <threshold>
+                            <hw type="int" userarchive="y">45</hw>
+                            <xw type="int" userarchive="y">90</xw>
+                        </threshold>
+                    </wind>
 
                     <!-- Scroll by keyboard -->
                     <keys>

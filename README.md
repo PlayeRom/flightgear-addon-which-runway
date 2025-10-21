@@ -177,6 +177,8 @@ From the "Which Runway" -> "Settings..." menu, you can open the global settings 
 
     **These settings do not affect the selection of runways**, but only affect the information about whether the wind is considered headwind, crosswind, or tailwind.
 
+Settings are saved to the FlightGear `$FG_HOME/autosave_{version}.xml` file. This saving only occurs when you properly close FlightGear via the "File" -> "Exit" menu.
+
 ![alt Default Settings](docs/img/settings.png "Default Settings")
 
 ## Development
