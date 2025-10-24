@@ -39,7 +39,7 @@ If there is no other airport with a METAR within 30 NM, information about the ai
 
 The METAR will be updated automatically every 15 minutes by FlightGear's mechanisms or by using the "Load"/"Update METAR" buttons.
 
-### Weather scenarios with an offline METAR.
+### Weather scenarios with an offline METAR
 
 If you choose the offline weather scenario, the same METAR will be used for all airports. The add-on will display a warning that the METAR is from offline scenario.
 
