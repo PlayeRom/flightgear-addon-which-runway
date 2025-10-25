@@ -23,13 +23,13 @@ var AircraftTypeFinder = {
 
         obj._tagsNode = props.globals.getNode("/sim/tags");
 
-        obj._tags = std.Vector.new();
+        obj._tags = std.Hash.new();
 
         if (obj._tagsNode != nil) {
             foreach (var tagNode; obj._tagsNode.getChildren("tag")) {
                 var tag = tagNode == nil ? nil : tagNode.getValue();
                 if (tag != nil) {
-                    obj._tags.append(tag);
+                    obj._tags.set(tag, nil);
                 }
             }
         }
@@ -109,7 +109,7 @@ var AircraftTypeFinder = {
     },
 
     #
-    # Type assignment based on aircraft name.
+    # Get aircraft type based on aircraft name.
     #
     # @return string|nil
     #
