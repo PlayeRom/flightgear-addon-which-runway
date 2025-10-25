@@ -42,7 +42,7 @@ var AboutDialog = {
 
         obj._createLayout();
 
-        g_VersionChecker.registerCallback(Callback.new(obj.newVersionAvailable, obj));
+        g_VersionChecker.registerCallback(Callback.new(obj._newVersionAvailable, obj));
 
         return obj;
     },
@@ -153,7 +153,7 @@ var AboutDialog = {
     # @param  string  newVersion
     # @return void
     #
-    newVersionAvailable: func(newVersion) {
+    _newVersionAvailable: func(newVersion) {
         me._newVersionAvailLabel
             .setText(sprintf("New version %s is available", newVersion))
             .setVisible(true);

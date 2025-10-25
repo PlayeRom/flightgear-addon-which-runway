@@ -109,13 +109,13 @@ If you need your own implementation for downloading a file, simply add a new cla
     new: func() {
         var obj = {...};
 
-        g_VersionChecker.registerCallback(Callback.new(obj.newVersionAvailable, obj));
+        g_VersionChecker.registerCallback(Callback.new(obj._newVersionAvailable, obj));
 
         return obj;
     },
     ```
 
-    and write the `newVersionAvailable` method and in its body what you want to do with the information about the new version:
+    and write the `_newVersionAvailable` method and in its body what you want to do with the information about the new version:
 
     ```nasal
     #
@@ -124,7 +124,7 @@ If you need your own implementation for downloading a file, simply add a new cla
     # @param  string  newVersion
     # @return void
     #
-    newVersionAvailable: func(newVersion) {
+    _newVersionAvailable: func(newVersion) {
         # TODO: your implementation here...
     },
     ```
