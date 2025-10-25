@@ -370,8 +370,11 @@ var DrawRwyUseControls = {
     _createUtcTimeControlLayout: func() {
         me._labelUtcTimeCtrl = me._widget.getLabel("Schedule UTC time:");
 
-        me._labelUtcHour = me._widget.getLabel(me._getPrintTimeFormat(me._utcHourValue));
+        me._labelUtcHour   = me._widget.getLabel(me._getPrintTimeFormat(me._utcHourValue));
         me._labelUtcMinute = me._widget.getLabel(me._getPrintTimeFormat(me._utcMinuteValue));
+
+        me._labelUtcHour.setFixedSize(18, 26);
+        me._labelUtcMinute.setFixedSize(18, 26);
 
         me._btnUtcHourMinus = me._getButton("-", func() {
             me._minuHour();
