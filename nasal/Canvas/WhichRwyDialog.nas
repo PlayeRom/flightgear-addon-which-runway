@@ -33,7 +33,7 @@ var WhichRwyDialog = {
                 PersistentDialog.new(
                     width : 800,
                     height: 700,
-                    title : sprintf("Which Runway %s", g_Addon.version.str()),
+                    title : me._getStandardTitle(),
                     resize: true,
                 ),
             ],
@@ -67,7 +67,7 @@ var WhichRwyDialog = {
 
         obj._keyActions();
 
-        g_VersionChecker.registerCallback(Callback.new(obj.newVersionAvailable, obj));
+        g_VersionChecker.registerCallback(Callback.new(obj._newVersionAvailable, obj));
 
         return obj;
     },
@@ -194,13 +194,22 @@ var WhichRwyDialog = {
     },
 
     #
+    # Get window title.
+    #
+    # @return string
+    #
+    _getStandardTitle: func() {
+        return g_Addon.name ~ " " ~ g_Addon.version.str();
+    },
+
+    #
     # Callback called when a new version of add-on is detected.
     #
     # @param  string  newVersion
     # @return void
     #
-    newVersionAvailable: func(newVersion) {
-        var title = sprintf("Which Runway %s (new version %s is available)", g_Addon.version.str(), newVersion);
+    _newVersionAvailable: func(newVersion) {
+        var title = sprintf("%s (new version %s is available)", me._getStandardTitle(), newVersion);
 
         me._window.set("title", title);
     },
