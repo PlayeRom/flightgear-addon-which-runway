@@ -9,9 +9,10 @@
 # under the GNU Public License v3 (GPLv3)
 #
 
-# Unit tests for Units.nas
+# Unit tests for `/nasal/Utils/Utils.nas`
 
 var setUp = func {
+    # Get add-on namespace:
     var namespace = globals['__addon[org.flightgear.addons.which-runway]__'];
 };
 
