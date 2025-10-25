@@ -74,7 +74,7 @@ var DrawRwyUseControls = {
 
         obj._listeners.add(
             node: "/sim/time/utc/minute",
-            code: func() { obj._updateCurrentUtcTime(); },
+            code: func obj._updateCurrentUtcTime(),
             init: false,
             type: Listeners.ON_CHANGE_ONLY,
         );
@@ -384,9 +384,9 @@ var DrawRwyUseControls = {
         });
 
         me._btnUtcMinuteMinus = me._getButton("-", func() {
-            me._utcMinuteValue -= DrawRwyUseControls.MIN_INTERVAL;
+            me._utcMinuteValue -= me.MIN_INTERVAL;
             if (me._utcMinuteValue < 0) {
-                me._utcMinuteValue = 60 - DrawRwyUseControls.MIN_INTERVAL;
+                me._utcMinuteValue = 60 - me.MIN_INTERVAL;
 
                 me._minuHour();
             }
@@ -396,7 +396,7 @@ var DrawRwyUseControls = {
         });
 
         me._btnUtcMinutePlus = me._getButton("+", func() {
-            me._utcMinuteValue += DrawRwyUseControls.MIN_INTERVAL;
+            me._utcMinuteValue += me.MIN_INTERVAL;
             if (me._utcMinuteValue >= 60) {
                 me._utcMinuteValue = 0;
 
@@ -471,7 +471,7 @@ var DrawRwyUseControls = {
     _setUtcTimeToCurrentValue: func() {
         me._utcHourValue = me._utcHourNode.getValue();
 
-        var minute = math.ceil(me._utcMinuteNode.getValue() / DrawRwyUseControls.MIN_INTERVAL) * DrawRwyUseControls.MIN_INTERVAL;
+        var minute = math.ceil(me._utcMinuteNode.getValue() / me.MIN_INTERVAL) * me.MIN_INTERVAL;
         if (minute == 60) {
             minute = 0;
 

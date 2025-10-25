@@ -73,7 +73,7 @@ var DrawTabContent = {
         );
 
         var scrollMargins = {
-            left  : DrawTabContent.PADDING,
+            left  : me.PADDING,
             top   : 0,
             right : 0,
             bottom: 0,
@@ -102,19 +102,19 @@ var DrawTabContent = {
             .setVisible(true);
 
         obj._airportInfoView = canvas.gui.widgets.AirportInfo.new(obj._scrollContent)
-            .setMarginForValue(DrawTabContent.APT_VALUE_MARGIN_X)
+            .setMarginForValue(me.APT_VALUE_MARGIN_X)
             .setVisible(false);
 
         obj._metarInfoView = canvas.gui.widgets.MetarInfo.new(parent: obj._scrollContent, cfg: { colors: Colors })
             .setVisible(false);
 
         obj._pressureLabelQnh = canvas.gui.widgets.PressureLabel.new(obj._scrollContent)
-            .setMarginForValue(DrawTabContent.APT_VALUE_MARGIN_X)
+            .setMarginForValue(me.APT_VALUE_MARGIN_X)
             .setLabel("QNH:")
             .setVisible(false);
 
         obj._pressureLabelQfe = canvas.gui.widgets.PressureLabel.new(obj._scrollContent)
-            .setMarginForValue(DrawTabContent.APT_VALUE_MARGIN_X)
+            .setMarginForValue(me.APT_VALUE_MARGIN_X)
             .setLabel("QFE:")
             .setVisible(false);
 
@@ -159,11 +159,11 @@ var DrawTabContent = {
 
         # Build x slots for runways
         obj._runwayWidgets = std.Vector.new();
-        for (var i = 0; i < DrawTabContent.MAX_RUNWAY_SLOTS; i += 1) {
+        for (var i = 0; i < me.MAX_RUNWAY_SLOTS; i += 1) {
             var runwayHLayout = canvas.HBoxLayout.new();
 
             var runwayInfoView = canvas.gui.widgets.RunwayInfo.new(parent: obj._scrollContent, cfg: { colors: Colors })
-                .setMarginForValue(DrawTabContent.RWY_VALUE_MARGIN_X)
+                .setMarginForValue(me.RWY_VALUE_MARGIN_X)
                 .setVisible(false)
                 .setHwXwThresholds(g_Settings.getHwThreshold(), g_Settings.getXwThreshold());
 
