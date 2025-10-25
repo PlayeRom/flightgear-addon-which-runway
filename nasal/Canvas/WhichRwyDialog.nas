@@ -76,7 +76,7 @@ var WhichRwyDialog = {
     # Create single tab.
     #
     # @param  string  tabId  Unique tab ID.
-    # @param  string  label  Text displayed on the tba.
+    # @param  string  label  Text displayed on the tab.
     # @return hash  DrawTabContent object.
     #
     _createTab: func(tabId, label) {
@@ -179,9 +179,12 @@ var WhichRwyDialog = {
     _handleScrollKey: func(isArrow, isUp) {
         var tab = me._tabContents[me._tabs._currentTabId];
 
-        var dy = isArrow
-            ? g_Settings.getKeyArrowMoveSize()
-            : tab.getScrollPageHeight();
+        var dy = tab.getScrollPageHeight();
+
+        if (isArrow) {
+            # The arrows move the scroll by 1/20 of the visible screen.
+            dy /= 20;
+        }
 
         if (isUp) {
             dy = -dy;

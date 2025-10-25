@@ -29,7 +29,6 @@ var Settings = {
         obj._maxMetarRangeNm    = props.globals.getNode(obj._addonNodePath ~ "/settings/max-metar-range-nm");
         obj._hwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/wind/threshold/hw");
         obj._xwThreshold        = props.globals.getNode(obj._addonNodePath ~ "/settings/wind/threshold/xw");
-        obj._keyArrowMoveSize   = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/arrow-move-size");
         obj._keyPageMoveSize    = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/page-move-size");
         obj._rwyUseEnabled      = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/enabled");
         obj._rwyUseAircraftType = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/aircraft-type");
@@ -100,15 +99,6 @@ var Settings = {
     #
     setXwThreshold: func(value) {
         me._xwThreshold.setIntValue(value);
-    },
-
-    #
-    # Get key arrow up/down move size.
-    #
-    # @return int
-    #
-    getKeyArrowMoveSize: func() {
-        return me._keyArrowMoveSize.getValue() or 20;
     },
 
     #

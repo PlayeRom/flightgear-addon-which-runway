@@ -27,11 +27,6 @@
                         </threshold>
                     </wind>
 
-                    <!-- Scroll by keyboard -->
-                    <keys>
-                        <arrow-move-size type="int">20</arrow-move-size>
-                    </keys>
-
                     <!-- Options for using rwyuse.xml files. -->
                     <rwyuse>
                         <!-- Set to false to completely disable the use of rwyuse.xml files. -->

@@ -161,7 +161,7 @@ The main window of the add-on supports the following keys:
 - `2` – switch to the Departure tab.
 - `3` – switch to the Arrival tab.
 - `4` – switch to the Alternate tab.
-- `Up`/`Down` – scroll content with small increments (20 px).
+- `Up`/`Down` – scroll the content by 1/20 of visible screen.
 - `PageUp`/`PageDown` – scroll the content by one visible screen.
 - `Esc` – close the window.
 
