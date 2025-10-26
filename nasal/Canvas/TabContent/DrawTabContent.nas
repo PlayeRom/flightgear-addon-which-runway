@@ -30,9 +30,10 @@ var DrawTabContent = {
     # @param  hash  runwayUse  RwyUse object.
     # @param  hash  basicWeather  BasicWeather object.
     # @param  string  aircraftType  As "com", "gen", "mil, "ul".
+    # @param  hash  icaoUpdatedCallback  Callback object.
     # @return hash
     #
-    new: func(tabsContent, tabContent, tabId, runwayUse, basicWeather, aircraftType) {
+    new: func(tabsContent, tabContent, tabId, runwayUse, basicWeather, aircraftType, icaoUpdatedCallback) {
         var obj = {
             parents: [
                 DrawTabContent,
@@ -43,6 +44,7 @@ var DrawTabContent = {
             _runwayUse: runwayUse,
             _basicWeather: basicWeather,
             _aircraftType: aircraftType,
+            _icaoUpdatedCallback: icaoUpdatedCallback,
         };
 
         obj._icao = "";
@@ -311,6 +313,8 @@ var DrawTabContent = {
         }
 
         me._icao = newIcao;
+
+        me._icaoUpdatedCallback.invoke(me._tabId, me._icao);
 
         me._bottomBar.setIcao(me._icao);
 

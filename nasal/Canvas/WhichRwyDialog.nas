@@ -56,33 +56,20 @@ var WhichRwyDialog = {
         obj._tabsContent = obj._tabs.getContent();
         obj._vbox.addItem(obj._tabs);
 
-        obj._tabContents = {};
+        obj._tabContents = std.Hash.new();
 
-        obj._tabContents[WhichRwyDialog.TAB_NEAREST]   = obj._createTab(WhichRwyDialog.TAB_NEAREST, "Nearest");
-        obj._tabContents[WhichRwyDialog.TAB_DEPARTURE] = obj._createTab(WhichRwyDialog.TAB_DEPARTURE, "Departure");
-        obj._tabContents[WhichRwyDialog.TAB_ARRIVAL]   = obj._createTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival");
-        obj._tabContents[WhichRwyDialog.TAB_ALTERNATE] = obj._createTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate");
+        obj._createTab(me.TAB_NEAREST);
+        obj._createTab(me.TAB_DEPARTURE);
+        obj._createTab(me.TAB_ARRIVAL);
+        obj._createTab(me.TAB_ALTERNATE);
 
-        obj._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
+        obj._tabs.setCurrentTab(me.TAB_NEAREST);
 
         obj._keyActions();
 
         g_VersionChecker.registerCallback(Callback.new(obj._newVersionAvailable, obj));
 
         return obj;
-    },
-
-    #
-    # Create single tab.
-    #
-    # @param  string  tabId  Unique tab ID.
-    # @param  string  label  Text displayed on the tab.
-    # @return hash  DrawTabContent object.
-    #
-    _createTab: func(tabId, label) {
-        var layout = canvas.VBoxLayout.new();
-        me._tabs.addTab(tabId, label, layout);
-        return DrawTabContent.new(me._tabsContent, layout, tabId, me._runwayUse, me._basicWeather, me._aircraftType);
     },
 
     #
@@ -94,8 +81,8 @@ var WhichRwyDialog = {
     del: func() {
         me._timer.stop();
 
-        foreach (var tabId; keys(me._tabContents)) {
-            me._tabContents[tabId].del();
+        foreach (var tabId; me._tabContents.getKeys()) {
+            me._tabContents.get(tabId).del();
         }
 
         me._basicWeather.del();
@@ -131,14 +118,50 @@ var WhichRwyDialog = {
     },
 
     #
+    # Create single tab.
+    #
+    # @param  string  tabId  Unique tab ID.
+    # @return void
+    #
+    _createTab: func(tabId) {
+        var layout = canvas.VBoxLayout.new();
+        me._tabs.addTab(tabId, me._getLabelByTagId(tabId), layout);
+
+        var drawTabContent = DrawTabContent.new(
+            me._tabsContent,
+            layout,
+            tabId,
+            me._runwayUse,
+            me._basicWeather,
+            me._aircraftType,
+            Callback.new(me._icaoUpdatedCallback, me),
+        );
+
+        me._tabContents.set(tabId, drawTabContent);
+    },
+
+    #
     # Reload all tabs.
     #
     # @return void
     #
     reloadAllTabs: func() {
-        foreach (var tabId; keys(me._tabContents)) {
-            me._tabContents[tabId].reload();
+        foreach (var tabId; me._tabContents.getKeys()) {
+            me._tabContents.get(tabId).reload();
         }
+    },
+
+    #
+    # @param  string  tabId
+    # @return string
+    #
+    _getLabelByTagId: func(tabId) {
+           if (tabId == me.TAB_NEAREST)   return "Nearest";
+        elsif (tabId == me.TAB_DEPARTURE) return "Departure";
+        elsif (tabId == me.TAB_ARRIVAL)   return "Arrival";
+        elsif (tabId == me.TAB_ALTERNATE) return "Alternate";
+
+        return "";
     },
 
     #
@@ -147,12 +170,22 @@ var WhichRwyDialog = {
     # @return void
     #
     _updateDynamicData: func() {
-        # TODO: TabWidget does not have a method to get the currently selected tab,
-        # so I get it via the private member _currentTabId. Fix this when the method is added.
-        var currentTabId = me._tabs._currentTabId;
-        if (currentTabId != nil and contains(me._tabContents, currentTabId)) {
-            me._tabContents[currentTabId].updateDynamicData();
+        var currentTabId = TabWidgetHelper.getCurrentTabId(me._tabs);
+
+        if (currentTabId != nil and me._tabContents.contains(currentTabId)) {
+            me._tabContents.get(currentTabId).updateDynamicData();
         }
+    },
+
+    #
+    # @param  string  tabId
+    # @param  string  icao
+    # @return void
+    #
+    _icaoUpdatedCallback: func(tabId, icao) {
+        var label = me._getLabelByTagId(tabId) ~ " (" ~ icao ~ ")";
+
+        TabWidgetHelper.setLabelForTabId(me._tabs, tabId, label);
     },
 
     #
@@ -164,10 +197,10 @@ var WhichRwyDialog = {
         me._window.addEventListener("keydown", func(event) {
                if (event.key == "Up"     or event.key == "Down")     me._handleScrollKey(true,  event.key == "Up");
             elsif (event.key == "PageUp" or event.key == "PageDown") me._handleScrollKey(false, event.key == "PageUp");
-            elsif (event.key == "1") me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
-            elsif (event.key == "2") me._tabs.setCurrentTab(WhichRwyDialog.TAB_DEPARTURE);
-            elsif (event.key == "3") me._tabs.setCurrentTab(WhichRwyDialog.TAB_ARRIVAL);
-            elsif (event.key == "4") me._tabs.setCurrentTab(WhichRwyDialog.TAB_ALTERNATE);
+            elsif (event.key == "1") me._tabs.setCurrentTab(me.TAB_NEAREST);
+            elsif (event.key == "2") me._tabs.setCurrentTab(me.TAB_DEPARTURE);
+            elsif (event.key == "3") me._tabs.setCurrentTab(me.TAB_ARRIVAL);
+            elsif (event.key == "4") me._tabs.setCurrentTab(me.TAB_ALTERNATE);
         });
     },
 
@@ -177,7 +210,8 @@ var WhichRwyDialog = {
     # @return void
     #
     _handleScrollKey: func(isArrow, isUp) {
-        var tab = me._tabContents[me._tabs._currentTabId];
+        var currentTabId = TabWidgetHelper.getCurrentTabId(me._tabs);
+        var tab = me._tabContents.get(currentTabId);
 
         var dy = tab.getScrollPageHeight();
 
