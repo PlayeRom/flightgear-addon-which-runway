@@ -21,12 +21,13 @@ var DrawMetar = {
     # @return hash
     #
     new: func(draw, metar) {
-        var me = { parents: [DrawMetar] };
-
-        me._draw = draw;
-        me._metar = metar;
-
-        return me;
+        return {
+            parents: [
+                DrawMetar,
+            ],
+            _draw: draw,
+            _metar: metar,
+        };
     },
 
     #
@@ -54,7 +55,7 @@ var DrawMetar = {
             y += me._printWarningForeignMetar(x, y, airport);
         }
 
-        var color = me._metar.isMetarFromNearestAirport() ? Colors.AMBER : Colors.DEFAULT_TEXT;
+        var color = me._metar.isMetarFromNearestAirport() ? Colors.AMBER : canvas.style.getColor("text_color");
         var (line1, line2) = me._getMetarTextLines(airport);
 
         var text = me._draw.createText(line1)

@@ -16,8 +16,6 @@
     <addons>
         <by-id>
             <org.flightgear.addons.which-runway>
-                <addon-devel></addon-devel>
-
                 <!-- We need ../metar/data here for setlistener to work because we are observing these properties.-->
                 <tab-nearest>
                     <metar>

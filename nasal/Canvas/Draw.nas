@@ -26,11 +26,17 @@ var Draw = {
     # @return hash
     #
     new: func(canvasContent) {
-        var me = { parents: [Draw] };
+        var obj = {
+            parents: [
+                Draw,
+            ],
+            _content: canvasContent,
 
-        me._content = canvasContent;
+        };
 
-        return me;
+        obj._fontSansBold = canvas.font_mapper("sans", "bold");
+
+        return obj;
     },
 
     #
@@ -82,9 +88,9 @@ var Draw = {
     printLineAirportName: func(x, y, airport) {
         var text = me.createText(airport.id ~ " – " ~ airport.name)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
+            .setColor(canvas.style.getColor("text_color"))
             .setFontSize(24)
-            .setFont(Fonts.SANS_BOLD);
+            .setFont(me._fontSansBold);
 
         return {
             x: x,
@@ -105,19 +111,19 @@ var Draw = {
     printLineWithValue: func(x, y, label, value, unit = nil, color = nil) {
         var text = me.createText(label)
             .setTranslation(x, y)
-            .setColor(color == nil ? Colors.DEFAULT_TEXT : color);
+            .setColor(color == nil ? canvas.style.getColor("text_color") : color);
 
         x += Draw.VALUE_MARGIN_X;
         text = me.createText(value)
             .setTranslation(x, y)
-            .setColor(color == nil ? Colors.DEFAULT_TEXT : color)
-            .setFont(Fonts.SANS_BOLD);
+            .setColor(color == nil ? canvas.style.getColor("text_color") : color)
+            .setFont(me._fontSansBold);
 
         if (unit != nil) {
             x += text.getSize()[0] + 5;
             text = me.createText(unit)
                 .setTranslation(x, y)
-                .setColor(color == nil ? Colors.DEFAULT_TEXT : color);
+                .setColor(color == nil ? canvas.style.getColor("text_color") : color);
         }
 
         return {
@@ -143,13 +149,13 @@ var Draw = {
         x = res.x + res.text.getSize()[0] + 5;
         text = me.createText(value2)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD);
+            .setColor(canvas.style.getColor("text_color"))
+            .setFont(me._fontSansBold);
 
         x += text.getSize()[0] + 5;
         text = me.createText(unit2)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
+            .setColor(canvas.style.getColor("text_color"));
 
         return {
             x: x,
@@ -168,44 +174,44 @@ var Draw = {
     printLineAtmosphericPressure: func(x, y, label, pressValues) {
         var text = me.createText(label)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
+            .setColor(canvas.style.getColor("text_color"));
 
         # inHg
         x += Draw.VALUE_MARGIN_X;
         text = me.createText(sprintf("%.02f", pressValues.inHg))
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD);
+            .setColor(canvas.style.getColor("text_color"))
+            .setFont(me._fontSansBold);
 
         x += text.getSize()[0] + 5;
         text = me.createText("inHg /")
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
+            .setColor(canvas.style.getColor("text_color"));
 
         # hPa
         x += 82;
         text = me.createText(pressValues.hPa)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD)
+            .setColor(canvas.style.getColor("text_color"))
+            .setFont(me._fontSansBold)
             .setAlignment("right-baseline");
 
         x += 5;
         text = me.createText("hPa /")
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
+            .setColor(canvas.style.getColor("text_color"));
 
         # mmHg
         x += 42;
         text = me.createText(pressValues.mmHg)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
-            .setFont(Fonts.SANS_BOLD);
+            .setColor(canvas.style.getColor("text_color"))
+            .setFont(me._fontSansBold);
 
         x += text.getSize()[0] + 5;
         text = me.createText("mmHg")
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
+            .setColor(canvas.style.getColor("text_color"));
 
         return {
             x: x,
@@ -225,7 +231,7 @@ var Draw = {
             .setTranslation(x, y)
             .setColor(Colors.BLUE)
             .setFontSize(20)
-            .setFont(Fonts.SANS_BOLD);
+            .setFont(me._fontSansBold);
 
         return {
             x: x,
@@ -243,7 +249,7 @@ var Draw = {
     printMessage: func(message, isError = false, fontSize = 20) {
         return me.createText(message)
             .setTranslation(0, 0)
-            .setColor(isError ? Colors.RED : Colors.DEFAULT_TEXT)
+            .setColor(isError ? Colors.RED : canvas.style.getColor("text_color"))
             .setFontSize(fontSize);
     },
 };

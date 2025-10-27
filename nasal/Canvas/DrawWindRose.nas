@@ -10,28 +10,32 @@
 #
 
 #
-# Class do draw wind rose on canvas
+# Class do draw wind rose on canvas.
 #
 var DrawWindRose = {
     #
-    # Constructor
+    # Constructor.
     #
     # @param  hash  draw  Draw object.
     # @return hash
     #
     new: func(draw) {
-        var me = { parents: [DrawWindRose] };
+        var obj = {
+            parents: [
+                DrawWindRose,
+            ],
+            _draw: draw,
+        };
 
-        me._draw = draw;
 
-        me._windLineWidth = 2;
-        me._radius = 0;
+        obj._windLineWidth = 2;
+        obj._radius = 0;
 
-        return me;
+        return obj;
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -85,11 +89,11 @@ var DrawWindRose = {
                         centerY + sinRad * (me._radius + markPadding),
                     )
                     .setAlignment("center-center")
-                    .setColor(Colors.DEFAULT_TEXT)
+                    .setColor(canvas.style.getColor("text_color"))
                     .setFontSize(18);
             } elsif (math.mod(deg, 30) == 0) {
                 # Direction numbers every 30°
-                me._draw.createText(Utils.toString(deg))
+                me._draw.createText(deg)
                     .setTranslation(
                         centerX + cosRad * (me._radius + markPadding),
                         centerY + sinRad * (me._radius + markPadding),
@@ -335,7 +339,7 @@ var DrawWindRose = {
     # @return void
     #
     _drawRunwayId: func(x, y, rwyId, normDiffDeg, angleRad, lenPix, isMainThreshold, isMainRwy) {
-        var color = Colors.DEFAULT_TEXT;
+        var color = canvas.style.getColor("text_color");
         if (isMainThreshold) {
             color = me._geWindColorByDir(normDiffDeg);
         } elsif (!isMainRwy) {
@@ -352,7 +356,7 @@ var DrawWindRose = {
             );
 
         if (isMainThreshold) {
-            text.setFont(Fonts.SANS_BOLD);
+            text.setFont(canvas.font_mapper("sans", "bold"));
         }
     },
 
@@ -361,11 +365,11 @@ var DrawWindRose = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
+           if (normDiffDeg == nil)                       return canvas.style.getColor("text_color");
         elsif (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
         elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
 
-        return Colors.DEFAULT_TEXT;
+        return canvas.style.getColor("text_color");
     },
 
     #

@@ -10,74 +10,122 @@
 #
 
 #
-# WhichRwyDialog dialog class
+# WhichRwyDialog dialog class.
 #
 var WhichRwyDialog = {
     #
     # Constants
     #
-    WINDOW_WIDTH : 800,
-    WINDOW_HEIGHT: 700,
-
     TAB_NEAREST  : "tab-nearest",
     TAB_DEPARTURE: "tab-departure",
     TAB_ARRIVAL  : "tab-arrival",
     TAB_ALTERNATE: "tab-alternate",
 
     #
-    # Constructor
+    # Constructor.
     #
     # @return hash
     #
     new: func() {
-        var me = { parents: [
-            WhichRwyDialog,
-            Dialog.new(
-                width : WhichRwyDialog.WINDOW_WIDTH,
-                height: WhichRwyDialog.WINDOW_HEIGHT,
-                title : "Which Runway",
-                resize: true,
-            ),
-        ] };
+        var obj = {
+            parents: [
+                WhichRwyDialog,
+                PersistentDialog.new(
+                    width : 800,
+                    height: 700,
+                    title : me._getStandardTitle(),
+                    resize: true,
+                ),
+            ],
+        };
 
-        me.setPositionOnCenter();
+        call(PersistentDialog.setChild, [obj, WhichRwyDialog], obj.parents[1]); # Let the parent know who their child is.
+        call(PersistentDialog.setPositionOnCenter, [], obj.parents[1]);
 
-        me._tabs = canvas.gui.widgets.TabWidget.new(me.group, canvas.style, {"tabs-closeable": false});
-        me._tabsContent = me._tabs.getContent();
-        me.vbox.addItem(me._tabs);
+        obj._tabs = canvas.gui.widgets.TabWidget.new(obj._group, canvas.style, { "tabs-closeable": false });
+        obj._tabsContent = obj._tabs.getContent();
+        obj._vbox.addItem(obj._tabs);
 
-        me._tabNearest = canvas.VBoxLayout.new();
-        me._tabDeparture = canvas.VBoxLayout.new();
-        me._tabArrival = canvas.VBoxLayout.new();
-        me._tabAlternate = canvas.VBoxLayout.new();
+        obj._tabContents = std.Hash.new();
 
-        me._tabs.addTab(WhichRwyDialog.TAB_NEAREST, "Nearest", me._tabNearest);
-        me._tabs.addTab(WhichRwyDialog.TAB_DEPARTURE, "Departure", me._tabDeparture);
-        me._tabs.addTab(WhichRwyDialog.TAB_ARRIVAL, "Arrival", me._tabArrival);
-        me._tabs.addTab(WhichRwyDialog.TAB_ALTERNATE, "Alternate", me._tabAlternate);
+        obj._createTab(me.TAB_NEAREST);
+        obj._createTab(me.TAB_DEPARTURE);
+        obj._createTab(me.TAB_ARRIVAL);
+        obj._createTab(me.TAB_ALTERNATE);
 
+        obj._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
 
-        me._drawTabContentNearest   = DrawTabContent.new(me._tabsContent, me._tabNearest, WhichRwyDialog.TAB_NEAREST);
-        me._drawTabContentDeparture = DrawTabContent.new(me._tabsContent, me._tabDeparture, WhichRwyDialog.TAB_DEPARTURE);
-        me._drawTabContentArrival   = DrawTabContent.new(me._tabsContent, me._tabArrival, WhichRwyDialog.TAB_ARRIVAL);
-        me._drawTabContentAlternate = DrawTabContent.new(me._tabsContent, me._tabAlternate, WhichRwyDialog.TAB_ALTERNATE);
+        g_VersionChecker.registerCallback(Callback.new(obj._newVersionAvailable, obj));
 
-        me._tabs.setCurrentTab(WhichRwyDialog.TAB_NEAREST);
-
-        return me;
+        return obj;
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
+    # @override PersistentDialog
     #
     del: func() {
-        me._drawTabContentNearest.del();
-        me._drawTabContentDeparture.del();
-        me._drawTabContentArrival.del();
-        me._drawTabContentAlternate.del();
+        me._timer.stop();
 
-        call(Dialog.del, [], me);
+        foreach (var tabId; me._tabContents.getKeys()) {
+            me._tabContents.get(tabId).del();
+        }
+
+        me._basicWeather.del();
+        me._runwayUse.del();
+        me._aircraftTypeFinder.del();
+
+        call(PersistentDialog.del, [], me);
+    },
+
+    #
+    # Create single tab.
+    #
+    # @param  string  tabId  Unique tab ID.
+    # @return void
+    #
+    _createTab: func(tabId) {
+        var layout = canvas.VBoxLayout.new();
+        me._tabs.addTab(tabId, me._getLabelByTagId(tabId), layout);
+
+        var drawTabContent = DrawTabContent.new(me._tabsContent, layout, tabId);
+
+        me._tabContents.set(tabId, drawTabContent);
+    },
+
+    #
+    # @param  string  tabId
+    # @return string
+    #
+    _getLabelByTagId: func(tabId) {
+           if (tabId == me.TAB_NEAREST)   return "Nearest";
+        elsif (tabId == me.TAB_DEPARTURE) return "Departure";
+        elsif (tabId == me.TAB_ARRIVAL)   return "Arrival";
+        elsif (tabId == me.TAB_ALTERNATE) return "Alternate";
+
+        return "";
+    },
+
+    #
+    # Get window title.
+    #
+    # @return string
+    #
+    _getStandardTitle: func() {
+        return g_Addon.name ~ " " ~ g_Addon.version.str();
+    },
+
+    #
+    # Callback called when a new version of add-on is detected.
+    #
+    # @param  string  newVersion
+    # @return void
+    #
+    _newVersionAvailable: func(newVersion) {
+        var title = sprintf("%s (new version %s is available)", me._getStandardTitle(), newVersion);
+
+        me._window.set("title", title);
     },
 };

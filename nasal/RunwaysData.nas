@@ -10,25 +10,26 @@
 #
 
 #
-# RunwaysData class
+# RunwaysData class.
 #
 var RunwaysData = {
     #
-    # Constructor
+    # Constructor.
     #
     # @param  hash  metar  Metar object.
     # @return hash
     #
     new: func(metar) {
-        var me = { parents: [RunwaysData] };
-
-        me._metar = metar;
-
-        return me;
+        return {
+            parents: [
+                RunwaysData,
+            ],
+            _metar: metar,
+        };
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
@@ -82,7 +83,7 @@ var RunwaysData = {
         }
 
         var diff        = windDir - heading;
-        var normDiffDeg = Utils.normalizeCourse(diff, -180, 180); # normalize to [-180, 180]
+        var normDiffDeg = geo.normdeg180(diff); # normalize to [-180, 180]
         var normDiffRad = normDiffDeg * globals.D2R;
 
         var cosNormDiffRad = math.cos(normDiffRad);

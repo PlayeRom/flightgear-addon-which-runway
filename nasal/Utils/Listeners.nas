@@ -1,16 +1,16 @@
 #
-# Which runway - Add-on for FlightGear
+# CanvasSkeleton Add-on for FlightGear
 #
 # Written and developer by Roman Ludwicki (PlayeRom, SP-ROM)
 #
 # Copyright (C) 2025 Roman Ludwicki
 #
-# Which Runway is an Open Source project and it is licensed
+# This is an Open Source project and it is licensed
 # under the GNU Public License v3 (GPLv3)
 #
 
 #
-# Class to handle listeners
+# Class to handle listeners.
 #
 var Listeners = {
     #
@@ -21,25 +21,25 @@ var Listeners = {
     ON_CHILD_CHANGE: 2, # Triggered always, event if child properties has been changed.
 
     #
-    # Constructor
+    # Constructor.
     #
     # @return hash
     #
     new: func() {
-        var me = { parents: [Listeners] };
+        var obj = { parents: [Listeners] };
 
-        me._listeners = std.Vector.new();
+        obj._listeners = std.Vector.new();
 
-        return me;
+        return obj;
     },
 
     #
-    # Destructor
+    # Destructor.
     #
     # @return void
     #
     del: func() {
-        me._removeListeners();
+        me.clear();
     },
 
     #
@@ -54,11 +54,22 @@ var Listeners = {
     #                    1 means that the trigger will always be triggered when the property is written to.
     #                    2 will mean that the listener will be triggered even if child properties are modified.
     #                    This argument is optional and defaults to 1.
-    # @return void
+    # @return int  Listener handler.
     #
     add: func(node, code, init = false, type = 1) {
-        var handler = globals.setlistener(node, code, init, type);
+        var handler = setlistener(node, code, init, type);
         me._listeners.append(handler);
+
+        return handler;
+    },
+
+    #
+    # Returns the number of listeners added.
+    #
+    # @return int
+    #
+    size: func() {
+        return me._listeners.size();
     },
 
     #
@@ -66,9 +77,22 @@ var Listeners = {
     #
     # @return void
     #
-    _removeListeners: func() {
+    clear: func() {
         foreach (var listener; me._listeners.vector) {
-            globals.removelistener(listener);
+            # If this file is loaded into the `__addon[id]__` namespace, FG will
+            # call removelistener on our listeners automatically during unload.
+            # Therefore this removelistener will throw an error on the console,
+            # so we intercept it with the `call()` method.
+            call(removelistener, [listener], var errors = []);
+
+            foreach (var error; errors) {
+                if (error == "removelistener() with invalid listener id") {
+                    # Don't display an error that the lister has already been deleted.
+                    break;
+                }
+
+                Log.print(error);
+            }
         }
 
         me._listeners.clear();

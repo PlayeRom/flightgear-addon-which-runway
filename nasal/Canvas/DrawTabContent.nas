@@ -28,53 +28,57 @@ var DrawTabContent = {
     # @return hash
     #
     new: func(tabsContent, tabContent, tabId) {
-        var me = { parents: [DrawTabContent] };
+        var obj = {
+            parents: [
+                DrawTabContent,
+            ],
+            _tabsContent: tabsContent,
+            _tabContent: tabContent,
+            _tabId: tabId,
+        };
 
-        me._tabsContent = tabsContent;
-        me._tabContent = tabContent;
-        me._tabId = tabId;
-        me._icao = "";
-        me._icaoEdit = nil;
-        me._isHoldUpdateNearest = false;
+        obj._icao = "";
+        obj._icaoEdit = nil;
+        obj._isHoldUpdateNearest = false;
 
-        if (me._isTabNearest() or me._isTabAlternate()) {
-            me._btnLoadIcaos = std.Vector.new();
+        if (obj._isTabNearest() or obj._isTabAlternate()) {
+            obj._btnLoadIcaos = std.Vector.new();
             for (var i = 0; i < 5; i += 1) {
-                var btn = canvas.gui.widgets.Button.new(me._tabsContent, canvas.style, {})
+                var btn = canvas.gui.widgets.Button.new(obj._tabsContent, canvas.style, {})
                     .setText("----");
 
-                me._btnLoadIcaos.append(btn);
+                obj._btnLoadIcaos.append(btn);
             }
         }
 
-        me._scrollArea = me._createScrollArea();
+        obj._scrollArea = obj._createScrollArea();
 
-        me._tabContent.addItem(me._scrollArea, 1); # 2nd param = stretch
+        obj._tabContent.addItem(obj._scrollArea, 1); # 2nd param = stretch
 
-        me._scrollContent = me._getScrollAreaContent(
-            context  : me._scrollArea,
-            font     : Fonts.SANS_REGULAR,
+        obj._scrollContent = obj._getScrollAreaContent(
+            context  : obj._scrollArea,
+            font     : canvas.font_mapper("sans"),
             fontSize : 16,
             alignment: "left-baseline",
         );
 
-        me._drawBottomBar();
+        obj._drawBottomBar();
 
         ########################################################################
 
-        me._metar = Metar.new(tabId, me, me._metarUpdatedCallback, me._realWxUpdatedCallback);
-        me._draw = Draw.new(me._scrollContent);
-        me._drawMetar = DrawMetar.new(me._draw, me._metar);
-        me._drawRunways = DrawRunways.new(me._draw, me._metar);
+        obj._metar = Metar.new(tabId, obj, obj._metarUpdatedCallback, obj._realWxUpdatedCallback);
+        obj._draw = Draw.new(obj._scrollContent);
+        obj._drawMetar = DrawMetar.new(obj._draw, obj._metar);
+        obj._drawRunways = DrawRunways.new(obj._draw, obj._metar);
 
-        me._listeners = Listeners.new();
-        me._setListeners();
+        obj._listeners = Listeners.new();
+        obj._setListeners();
 
-        if (me._isTabAlternate()) {
-            me._reDrawContentWithMessage("Enter the ICAO code of an airport below.");
+        if (obj._isTabAlternate()) {
+            obj._reDrawContentWithMessage("Enter the ICAO code of an airport below.");
         }
 
-        return me;
+        return obj;
     },
 
     #
@@ -141,10 +145,10 @@ var DrawTabContent = {
 
         scrollArea.setColorBackground(canvas.style.getColor("bg_color"));
         scrollArea.setContentsMargins(
-            DrawTabContent.PADDING, # left
-            DrawTabContent.PADDING, # top
+            me.PADDING, # left
+            me.PADDING, # top
             1,                      # right
-            DrawTabContent.PADDING, # bottom
+            me.PADDING, # bottom
         );
 
         return scrollArea;
@@ -296,7 +300,7 @@ var DrawTabContent = {
     # @param  airport|nil  Airport or nil if not found.
     #
     _getNearestAirportWithMetar: func(airport) {
-        var airports = globals.findAirportsWithinRange(airport, DrawTabContent.METAR_RANGE_NM);
+        var airports = globals.findAirportsWithinRange(airport, me.METAR_RANGE_NM);
         foreach (var nearest; airports) {
             if (nearest.has_metar) {
                 return nearest;

@@ -21,15 +21,21 @@ var DrawRunways = {
     # @return hash
     #
     new: func(draw, metar) {
-        var me = { parents: [DrawRunways] };
+        var obj = {
+            parents: [
+                DrawRunways,
+            ],
+            _draw: draw,
+            _metar: metar,
+        };
 
-        me._draw = draw;
-        me._metar = metar;
+        obj._runwaysData = RunwaysData.new(metar);
+        obj._drawWindRose = DrawWindRose.new(draw);
 
-        me._runwaysData = RunwaysData.new(metar);
-        me._drawWindRose = DrawWindRose.new(draw);
+        obj._fontSansRegular = canvas.font_mapper("sans");
+        obj._fontSansBold    = canvas.font_mapper("sans", "bold");
 
-        return me;
+        return obj;
     },
 
     #
@@ -77,7 +83,7 @@ var DrawRunways = {
             ).y;
 
             var rwyHdgTrue = math.round(rwy.heading);
-            var rwyHdgMag = Utils.normalizeCourse(rwy.heading - aptMagVar);
+            var rwyHdgMag = geo.normdeg(rwy.heading - aptMagVar);
 
             y += me._draw.printLineWithValue(0, y, "Heading true:", rwyHdgTrue ~ "°").y;
             y += me._draw.printLineWithValue(0, y, "Heading mag:", rwyHdgMag ~ "°").y;
@@ -113,14 +119,14 @@ var DrawRunways = {
     _printRunwayLabel: func(x, y, runway) {
         var text = me._draw.createText(runway.type ~ ":")
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT);
+            .setColor(canvas.style.getColor("text_color"));
 
         x += text.getSize()[0] + 5;
         text = me._draw.createText(runway.rwyId)
             .setTranslation(x, y)
-            .setColor(Colors.DEFAULT_TEXT)
+            .setColor(canvas.style.getColor("text_color"))
             .setFontSize(20)
-            .setFont(Fonts.SANS_BOLD);
+            .setFont(me._fontSansBold);
 
         x += text.getSize()[0] + 10;
         text = me._draw.createText(me._geWindLabelByDir(runway.normDiffDeg))
@@ -147,10 +153,10 @@ var DrawRunways = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                       return Colors.DEFAULT_TEXT;
+           if (normDiffDeg == nil)                       return canvas.style.getColor("text_color");
         elsif (normDiffDeg <= Metar.HEADWIND_THRESHOLD)  return Colors.GREEN;
         elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Colors.AMBER;
-        else                                             return Colors.DEFAULT_TEXT;
+        else                                             return canvas.style.getColor("text_color");
     },
 
     #
@@ -158,9 +164,9 @@ var DrawRunways = {
     # @return string  Font path.
     #
     _geWindFontByDir: func(normDiffDeg) {
-           if (normDiffDeg == nil)                       return Fonts.SANS_REGULAR;
-        elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return Fonts.SANS_BOLD;
-        else                                             return Fonts.SANS_REGULAR;
+           if (normDiffDeg == nil)                       return me._fontSansRegular;
+        elsif (normDiffDeg <= Metar.CROSSWIND_THRESHOLD) return me._fontSansBold;
+        else                                             return me._fontSansRegular;
     },
 
     #

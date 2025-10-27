@@ -30,27 +30,30 @@ var Metar = {
     # @return hash
     #
     new: func(tabId, objCallbacks, funcUpdatedCallback, funcRealWxCallback) {
-        var me = { parents: [Metar] };
-
-        me._tabId = tabId;
-        me._objCallbacks = objCallbacks;
-        me._funcUpdatedCallback = funcUpdatedCallback;
-        me._funcRealWxCallback = funcRealWxCallback;
+        var obj = {
+            parents: [
+                Metar,
+            ],
+            _tabId: tabId,
+            _objCallbacks: objCallbacks,
+            _funcUpdatedCallback: funcUpdatedCallback,
+            _funcRealWxCallback: funcRealWxCallback,
+        };
 
         # If we download a METAR from an airport other than the current one,
         # because the current one does not have a META, we set this variable to true.
         # Therefore, if this variable is set, it means we have a METAR,
         # even if the current airport doesn't have a METAR.
-        me._isMetarFromNearestAirport = false;
+        obj._isMetarFromNearestAirport = false;
 
-        me._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ me._tabId ~ "/metar";
+        obj._pathToMyMetar = g_Addon.node.getPath() ~ "/" ~ obj._tabId ~ "/metar";
 
-        me._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
+        obj._realWxEnabledNode = props.globals.getNode("/environment/realwx/enabled");
 
-        me._listeners = Listeners.new();
-        me._setListeners();
+        obj._listeners = Listeners.new();
+        obj._setListeners();
 
-        return me;
+        return obj;
     },
 
     #

@@ -11,19 +11,19 @@
             <enabled type="bool">true</enabled>
 
             <item>
-                <label>Runways</label>
+                <label>Runways...</label>
                 <name>which-runway-addon-main</name>
                 <binding>
                     <command>nasal</command>
-                    <script>whichRunway.g_WhichRwyDialog.show();</script>
+                    <script>whichRunwayAddon.g_WhichRwyDialog.show();</script>
                 </binding>
             </item>
             <item>
-                <label>About</label>
+                <label>About...</label>
                 <name>which-runway-addon-about</name>
                 <binding>
                     <command>nasal</command>
-                    <script>whichRunway.g_AboutDialog.show();</script>
+                    <script>whichRunwayAddon.g_AboutDialog.show();</script>
                 </binding>
             </item>
 

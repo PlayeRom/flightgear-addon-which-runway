@@ -16,9 +16,7 @@ var AboutDialog = {
     #
     # Constants
     #
-    WINDOW_WIDTH  : 280,
-    WINDOW_HEIGHT : 400,
-    PADDING       : 10,
+    PADDING: 10,
 
     #
     # Constructor
@@ -26,22 +24,26 @@ var AboutDialog = {
     # @return hash
     #
     new: func() {
-        var me = { parents: [
+        var obj = { parents: [
             AboutDialog,
-            Dialog.new(AboutDialog.WINDOW_WIDTH, AboutDialog.WINDOW_HEIGHT, "About Which Runway"),
+            PersistentDialog.new(
+                width: 280,
+                height: 400,
+                title: "About Which Runway",
+            ),
         ] };
 
-        me.setPositionOnCenter();
+        call(PersistentDialog.setChild, [obj, AboutDialog], obj.parents[1]); # Let the parent know who their child is.
+        call(PersistentDialog.setPositionOnCenter, [], obj.parents[1]);
 
-        me.vbox.addSpacing(AboutDialog.PADDING);
-        me._drawContent();
+        obj._widget = WidgetHelper.new(obj._group);
 
-        var buttonBoxClose = me._drawBottomBar("Close", func { me.window.hide(); });
-        me.vbox.addSpacing(AboutDialog.PADDING);
-        me.vbox.addItem(buttonBoxClose);
-        me.vbox.addSpacing(AboutDialog.PADDING);
+        obj._vbox.addSpacing(AboutDialog.PADDING);
+        obj._createLayout();
 
-        return me;
+        g_VersionChecker.registerCallback(Callback.new(obj._newVersionAvailable, obj));
+
+        return obj;
     },
 
     #
@@ -50,37 +52,62 @@ var AboutDialog = {
     # @return void
     #
     del: func() {
-        call(Dialog.del, [], me);
+        call(PersistentDialog.del, [], me);
     },
 
     #
-    # Draw content.
+    # Create layout.
     #
     # @return void
     #
-    _drawContent: func() {
-        me.vbox.addItem(me._getLabel(g_Addon.name));
-        me.vbox.addItem(me._getLabel(sprintf("version %s", g_Addon.version.str())));
-        me.vbox.addItem(me._getLabel("September 15, 2025"));
+    _createLayout: func() {
+        me._vbox.addItem(me._getLabel(g_Addon.name));
+        me._vbox.addItem(me._getLabel(sprintf("version %s", g_Addon.version.str())));
+        me._vbox.addItem(me._getLabel("September 15, 2025"));
 
-        me.vbox.addStretch(1);
-        me.vbox.addItem(me._getLabel("Written by:"));
+        me._vbox.addStretch(1);
+        me._vbox.addItem(me._getLabel("Written by:"));
 
         foreach (var author; g_Addon.authors) {
-            me.vbox.addItem(me._getLabel(Utils.toString(author.name)));
+            me._vbox.addItem(me._getLabel(author.name));
         }
 
-        me.vbox.addStretch(1);
+        me._vbox.addStretch(1);
 
-        me.vbox.addItem(me._getButton("FlightGear wiki...", func {
+        me._vbox.addItem(me._getButton("FlightGear wiki", func {
             Utils.openBrowser({ "url": g_Addon.homePage });
         }));
 
-        me.vbox.addItem(me._getButton("GitHub website...", func {
+        me._vbox.addItem(me._getButton("GitHub website", func {
             Utils.openBrowser({ "url": g_Addon.codeRepositoryUrl });
         }));
 
-        me.vbox.addStretch(1);
+        me._vbox.addStretch(1);
+
+        me._createLayoutNewVersionInfo();
+
+        me._vbox.addStretch(1);
+
+        me._vbox.addSpacing(me.PADDING);
+        me._vbox.addItem(me._drawBottomBar());
+        me._vbox.addSpacing(me.PADDING);
+    },
+
+    #
+    # Create hidden layout for new version info.
+    #
+    # @return void
+    #
+    _createLayoutNewVersionInfo: func() {
+        me._newVersionAvailLabel = me._getLabel("New version is available").setVisible(false);
+        me._newVersionAvailLabel.setColor([0.9, 0.0, 0.0]);
+
+        me._newVersionAvailBtn = me._getButton("Download new version", func {
+            Utils.openBrowser({ url: g_Addon.downloadUrl });
+        }).setVisible(false);
+
+        me._vbox.addItem(me._newVersionAvailLabel);
+        me._vbox.addItem(me._newVersionAvailBtn);
     },
 
     #
@@ -89,12 +116,7 @@ var AboutDialog = {
     # @return ghost  Label widget.
     #
     _getLabel: func(text, wordWrap = false) {
-        var label = canvas.gui.widgets.Label.new(me.group, canvas.style, {wordWrap: wordWrap})
-            .setText(text);
-
-        label.setTextAlign("center");
-
-        return label;
+        return me._widget.getLabel(text, wordWrap, "center");
     },
 
     #
@@ -103,29 +125,35 @@ var AboutDialog = {
     # @return ghost  Button widget.
     #
     _getButton: func(text, callback) {
-        return canvas.gui.widgets.Button.new(me.group, canvas.style, {})
-            .setText(text)
-            .setFixedSize(200, 26)
-            .listen("clicked", callback);
+        return me._widget.getButton(text, callback, 200);
     },
 
     #
-    # @param  string  label  Label of button
-    # @param  func  callback  function which will be executed after click the button
-    # @return ghost  HBoxLayout object with button
+    # @return ghost  Canvas layout with buttons.
     #
-    _drawBottomBar: func(label, callback) {
+    _drawBottomBar: func() {
+        var btnClose = me._widget.getButton("Close", func me.hide(), 75);
+
         var buttonBox = canvas.HBoxLayout.new();
-
-        var btnClose = canvas.gui.widgets.Button.new(me.group, canvas.style, {})
-            .setText(label)
-            .setFixedSize(75, 26)
-            .listen("clicked", callback);
-
         buttonBox.addStretch(1);
         buttonBox.addItem(btnClose);
         buttonBox.addStretch(1);
 
         return buttonBox;
+    },
+
+    #
+    # Callback called when a new version of add-on is detected.
+    #
+    # @param  string  newVersion
+    # @return void
+    #
+    _newVersionAvailable: func(newVersion) {
+        me._newVersionAvailLabel
+            .setText(sprintf("New version %s is available", newVersion))
+            .setVisible(true);
+
+        me._newVersionAvailBtn
+            .setVisible(true);
     },
 };
