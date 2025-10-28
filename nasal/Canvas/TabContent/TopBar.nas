@@ -77,26 +77,28 @@ var TopBar = {
         var rwySize = size(runwaysData);
         forindex (var index; me._runwayBtns.vector) {
             var rwy = index < rwySize ? runwaysData[index] : nil;
+            var button = me._runwayBtns.vector[index];
 
             if (rwy == nil) {
-                me._runwayBtns.vector[index]
-                    .setText("---")
+                button.setText("---")
                     .setVisible(false)
                     .listen("clicked", func);
 
                 continue;
             }
 
-            func() {
-                var tmpIndex = index;
-                me._runwayBtns.vector[index]
-                    .setText(rwy.rwyId)
-                    .setVisible(true)
-                    .listen("clicked", func() {
-                        me._clickRwyCallback.invoke(tmpIndex);
-                    });
-            }();
+            button.setText(rwy.rwyId)
+                .setVisible(true)
+                .listen("clicked", me._clickCallback(index));
         }
+    },
+
+    #
+    # @return  int  index
+    # @return func
+    #
+    _clickCallback: func(index) {
+        return func me._clickRwyCallback.invoke(index);
     },
 
     #

@@ -92,26 +92,28 @@ var BottomBar = {
 
         forindex (var index; me._loadIcaoBtns.vector) {
             var airport = index < airportSize ? airports[index] : nil;
+            var button = me._loadIcaoBtns.vector[index];
 
             if (airport == nil) {
-                me._loadIcaoBtns.vector[index]
-                    .setText("----")
+                button.setText("----")
                     .setVisible(false)
                     .listen("clicked", nil);
+
                 continue;
             }
 
-            func() {
-                var icao = airport.id;
-
-                me._loadIcaoBtns.vector[index]
-                    .setText(icao)
-                    .setVisible(true)
-                    .listen("clicked", func() {
-                        me._downloadMetarCallback.invoke(icao);
-                    });
-            }();
+            button.setText(airport.id)
+                .setVisible(true)
+                .listen("clicked", me._clickedCallback(airport.id));
         }
+    },
+
+    #
+    # @param  string  icao
+    # @return func
+    #
+    _clickedCallback: func(icao) {
+        return func me._downloadMetarCallback.invoke(icao);
     },
 
     #
