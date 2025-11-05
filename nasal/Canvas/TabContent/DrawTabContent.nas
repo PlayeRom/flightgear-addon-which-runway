@@ -595,7 +595,7 @@ var DrawTabContent = {
         var runwayWidgetsSize = me._runwayWidgets.size();
 
         if (runwaysSize > runwayWidgetsSize) {
-            Log.print(airport.id, " has ", runwaysSize,
+            Log.printWarning(airport.id, " has ", runwaysSize,
                 " runways (including helipads), more than allocated (", runwayWidgetsSize, ")"
             );
         }

@@ -51,7 +51,7 @@ var LoadRwyUseXml = {
 
         var node = io.readxml(path);
         if (node == nil) {
-            Log.print(icao, ", loading rwyuse.xml file failed from ", path);
+            Log.error(icao, ", loading rwyuse.xml file failed from ", path);
             return nil;
         }
 
@@ -98,7 +98,7 @@ var LoadRwyUseXml = {
             }
 
             if (contains(data.schedules, scheduleName)) {
-                Log.alert(icao, ".rwyuse.xml has duplicate schedule name \"", scheduleName, "\"");
+                Log.alertError(icao, ".rwyuse.xml has duplicate schedule name \"", scheduleName, "\"");
                 continue;
             }
 
@@ -259,9 +259,9 @@ var LoadRwyUseXml = {
 
         # We make sure that each array has the same number of elements
         if (minSize != nil and minSize != maxSize) {
-            Log.alert(icao, ".rwyuse.xml - the schedule \"", node.getValue("___name"),
-                "\" has a different number of runways in columns. ",
-                "Trimming runways to size ", minSize, ".",
+            Log.warning(icao, '.rwyuse.xml - the schedule "', node.getValue('___name'), '"',
+                ' has a different number of runways in columns. ',
+                'Trimming runways to size ', minSize, '.',
             );
 
             forindex (var index; takeoffs) {

@@ -100,7 +100,7 @@ var AircraftTypeFinder = {
     _hasTag: func(tags...) {
         foreach (var tag; tags) {
             if (me._tags.contains(tag)) {
-                Log.print("found aircraft tag: \"", tag, "\"");
+                Log.print('found aircraft tag: "', tag, '"');
                 return true;
             }
         }
