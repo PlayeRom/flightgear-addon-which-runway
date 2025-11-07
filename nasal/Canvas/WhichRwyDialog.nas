@@ -152,6 +152,15 @@ var WhichRwyDialog = {
     },
 
     #
+    # @return void
+    #
+    updateNearestAirportButtons: func {
+        foreach (var tabId; me._tabContents.getKeys()) {
+            me._tabContents.get(tabId).updateNearestAirportButtons();
+        }
+    },
+
+    #
     # @param  string  tabId
     # @return string
     #

@@ -29,7 +29,7 @@ var SettingsDialog = {
                 SettingsDialog,
                 PersistentDialog.new(
                     width: 400,
-                    height: 500,
+                    height: 630,
                     title: "Settings Which Runway",
                 ),
             ],
@@ -44,6 +44,7 @@ var SettingsDialog = {
         obj._rwyUseEnable = g_Settings.getRwyUseEnabled();
         obj._hwThreshold = g_Settings.getHwThreshold();
         obj._xwThreshold = g_Settings.getXwThreshold();
+        obj._nearestType = g_Settings.getNearestType();
 
         obj._rangeComboBox = nil;
         obj._checkboxRwyUse = nil;
@@ -53,12 +54,11 @@ var SettingsDialog = {
         obj._hwLabel = obj._widget.getLabel(obj._printAngle(obj._hwThreshold));
         obj._xwLabel = obj._widget.getLabel(obj._printAngle(obj._xwThreshold));
 
-        obj._vbox.addSpacing(me.PADDING);
-        obj._drawContent();
+        obj._radioNearTypeAirport = nil;
+        obj._radioNearTypeHeliport = nil;
+        obj._radioNearTypeSeaport = nil;
 
-        obj._vbox.addSpacing(me.PADDING);
-        obj._vbox.addItem(obj._drawBottomBar());
-        obj._vbox.addSpacing(me.PADDING);
+        obj._drawContent();
 
         return obj;
     },
@@ -82,6 +82,7 @@ var SettingsDialog = {
         me._rwyUseEnable = g_Settings.getRwyUseEnabled();
         me._hwThreshold = g_Settings.getHwThreshold();
         me._xwThreshold = g_Settings.getXwThreshold();
+        me._nearestType = g_Settings.getNearestType();
 
         me._rangeComboBox.setSelectedByValue(me._maxMetarRangeNm);
         me._checkboxRwyUse.setChecked(me._rwyUseEnable);
@@ -102,13 +103,17 @@ var SettingsDialog = {
     # @return void
     #
     _drawContent: func() {
+        me._vbox.setContentsMargins(me.PADDING, me.PADDING, me.PADDING, me.PADDING);
         me._vbox.addItem(me._drawNearestMetarRange());
         me._vbox.addItem(me._widget.getHorizontalRule());
         me._vbox.addItem(me._drawEnableRwyUse());
         me._vbox.addItem(me._widget.getHorizontalRule());
         me._vbox.addItem(me._drawWindSettings());
         me._vbox.addItem(me._widget.getHorizontalRule());
+        me._vbox.addItem(me._drawNearestType());
+        me._vbox.addItem(me._widget.getHorizontalRule());
         me._vbox.addStretch(1);
+        me._vbox.addItem(me._drawBottomBar());
     },
 
     #
@@ -134,10 +139,8 @@ var SettingsDialog = {
 
         var hBox = canvas.HBoxLayout.new();
 
-        hBox.addSpacing(me.PADDING);
         hBox.addItem(label);
         hBox.addItem(me._rangeComboBox);
-        hBox.addSpacing(me.PADDING);
         hBox.addStretch(1);
 
         return hBox;
@@ -151,14 +154,7 @@ var SettingsDialog = {
             me._rwyUseEnable = e.detail.checked ? true : false; # conversion on true/false is needed ¯\_(ツ)_/¯
         });
 
-        var hBox = canvas.HBoxLayout.new();
-
-        hBox.addSpacing(me.PADDING);
-        hBox.addItem(me._checkboxRwyUse);
-        hBox.addSpacing(me.PADDING);
-        hBox.addStretch(1);
-
-        return hBox;
+        return me._checkboxRwyUse;
     },
 
     #
@@ -283,6 +279,56 @@ var SettingsDialog = {
     },
 
     #
+    # Crate layout with radio buttons to select type of nearest landing sites.
+    #
+    # #return ghost  Return canvas layout.
+    #
+    _drawNearestType: func() {
+        me._radioNearTypeAirport = me._widget.getRadioButton('Airport')
+            .setChecked(me._nearestType == 'airport');
+
+        me._radioNearTypeHeliport = me._widget.getRadioButton('Heliport', me._radioNearTypeAirport)
+            .setChecked(me._nearestType == 'heliport');
+
+        me._radioNearTypeSeaport = me._widget.getRadioButton('Seaport', me._radioNearTypeAirport)
+            .setChecked(me._nearestType == 'seaport');
+
+        me._radioNearTypeAirport.listen('group-checked-radio-changed', func(e) {
+            var radioGroup = me._radioNearTypeAirport.getRadioButtonsGroup();
+
+            # In the dev version of the FG, the getCheckedRadio() method has been changed to getCheckedRadioButton().
+            # TODO: Remove the check and only use getCheckedRadioButton when version 2024 becomes obsolete.
+            var checkedRadio = Utils.tryCatch(func typeof(radioGroup.getCheckedRadioButton))
+                ? radioGroup.getCheckedRadioButton()
+                : radioGroup.getCheckedRadio();
+
+            #
+            # @param  ghost  item
+            # @return string
+            #
+            var getRadioValueByLabel = func(item) {
+                if (item != nil) {
+                    if (item._text == 'Heliport') return 'heliport';
+                    if (item._text == 'Seaport')  return 'seaport';
+                }
+
+                return 'airport';
+            };
+
+            me._nearestType = getRadioValueByLabel(checkedRadio);
+        });
+
+        var vBox = canvas.VBoxLayout.new();
+        vBox.addItem(me._widget.getLabel('Types of nearest landing sites'));
+        vBox.addItem(me._radioNearTypeAirport);
+        vBox.addItem(me._radioNearTypeHeliport);
+        vBox.addItem(me._radioNearTypeSeaport);
+        vBox.addStretch(1);
+
+        return vBox;
+    },
+
+    #
     # @param  string  label  Label of button.
     # @param  func  callback  Function which will be executed after click the button.
     # @return ghost  Button widget.
@@ -332,14 +378,20 @@ var SettingsDialog = {
     #
     _save: func() {
         var isNeedReload = me._isChangesNeedReload();
+        var isUpdateNearestAirportButtons = me._isUpdateNearestAirportButtons();
 
         g_Settings.setMaxMetarRangeNm(me._maxMetarRangeNm);
         g_Settings.setRwyUseEnabled(me._rwyUseEnable);
         g_Settings.setHwThreshold(me._hwThreshold);
         g_Settings.setXwThreshold(me._xwThreshold);
+        g_Settings.setNearestType(me._nearestType);
 
         if (isNeedReload) {
             g_WhichRwyDialog.reloadAllTabs();
+        }
+
+        if (isUpdateNearestAirportButtons) {
+            g_WhichRwyDialog.updateNearestAirportButtons();
         }
 
         me.hide();
@@ -351,14 +403,18 @@ var SettingsDialog = {
     # @return bool
     #
     _isChangesNeedReload: func() {
-        var maxMetarRangeNm = g_Settings.getMaxMetarRangeNm();
-        var rwyUseEnable    = g_Settings.getRwyUseEnabled();
-        var hwThreshold = g_Settings.getHwThreshold();
-        var xwThreshold = g_Settings.getXwThreshold();
+        return me._maxMetarRangeNm != g_Settings.getMaxMetarRangeNm()
+            or me._rwyUseEnable != g_Settings.getRwyUseEnabled()
+            or me._hwThreshold != g_Settings.getHwThreshold()
+            or me._xwThreshold != g_Settings.getXwThreshold();
+    },
 
-        return me._maxMetarRangeNm != maxMetarRangeNm
-            or me._rwyUseEnable != rwyUseEnable
-            or me._hwThreshold != hwThreshold
-            or me._xwThreshold != xwThreshold;
+    #
+    # Return true if WhichRwyDialog needs update nearest airport buttons.
+    #
+    # @return bool
+    #
+    _isUpdateNearestAirportButtons: func {
+        return me._nearestType != g_Settings.getNearestType();
     },
 };

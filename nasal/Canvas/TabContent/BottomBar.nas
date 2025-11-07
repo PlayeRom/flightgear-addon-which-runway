@@ -35,10 +35,12 @@ var BottomBar = {
 
         obj._icaoEdit = nil;
         obj._icao = "";
-        obj._loadIcaoBtns = std.Vector.new();
+        obj._loadIcaoBtns = nil;
         obj._isHoldUpdateNearest = false;
 
         if (obj._isTabNearest() or obj._isTabAlternate()) {
+            obj._loadIcaoBtns = std.Vector.new();
+
             for (var i = 0; i < 5; i += 1) {
                 var btn = obj._widget.getButton("----");
 
@@ -55,7 +57,9 @@ var BottomBar = {
     # @return void
     #
     del: func() {
-        me._loadIcaoBtns.clear();
+        if (me._loadIcaoBtns != nil) {
+            me._loadIcaoBtns.clear();
+        }
 
         call(DrawTabBase.del, [], me);
     },
@@ -87,7 +91,11 @@ var BottomBar = {
     # @return void
     #
     updateNearestAirportButtons: func() {
-        var airports = findAirportsWithinRange(50); # range in NM
+        if (!me._isTabNearest() and !me._isTabAlternate()) {
+            return;
+        }
+
+        var airports = findAirportsWithinRange(50, g_Settings.getNearestType()); # range in NM
         var airportSize = size(airports);
 
         forindex (var index; me._loadIcaoBtns.vector) {

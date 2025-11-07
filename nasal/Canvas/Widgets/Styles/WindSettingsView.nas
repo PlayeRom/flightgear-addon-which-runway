@@ -93,8 +93,6 @@ DefaultStyle.widgets["wind-settings-view"] = {
     # @return void
     #
     reDrawContent: func(model) {
-        # me._root.removeAllChildren();
-
         var centerX = model._radius;
         var centerY = model._radius;
 

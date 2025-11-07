@@ -35,6 +35,10 @@
                         <!-- Default aircraft type, it can be: "com", "gen", "mil", "ul" -->
                         <aircraft-type type="string">com</aircraft-type>
                     </rwyuse>
+
+                    <!-- The type for findAirportsWithinRange function.
+                         Possible values: 'airport' (default), 'heliport' or 'seaport' -->
+                    <nearest-type type="string" userarchive="y">airport</nearest-type>
                 </settings>
 
                 <!-- We need ../metar/data here for setlistener to work because we are observing these properties.-->

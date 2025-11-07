@@ -286,7 +286,7 @@ var DrawRwyUseControls = {
     },
 
     #
-    # Crate layout with with radio buttons to select takeoff or landing.
+    # Crate layout with radio buttons to select takeoff or landing.
     #
     # #return ghost  Return canvas layout.
     #

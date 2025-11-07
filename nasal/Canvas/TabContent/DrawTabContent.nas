@@ -221,13 +221,13 @@ var DrawTabContent = {
     #
     _setListeners: func() {
         # Get ICAO code from appropriate property and listen it for update METAR.
-        var icaoProperty = me._getICAOPropertyByTabId();
+        var icaoProperty = me._getIcaoPropertyByTabId();
         if (icaoProperty != nil) {
             me._listeners.add(
                 node: icaoProperty,
                 code: func(node) {
                     if (me._isTabNearest()) {
-                        me._bottomBar.updateNearestAirportButtons();
+                        me.updateNearestAirportButtons();
 
                         if (me._bottomBar.isHoldUpdateNearest()) {
                             # The ICAO code update is blocked by a checkbox, so we're leaving.
@@ -248,7 +248,7 @@ var DrawTabContent = {
         if (me._isTabAlternate()) {
             me._listeners.add(
                 node: "/sim/airport/closest-airport-id",
-                code: func { me._bottomBar.updateNearestAirportButtons(); },
+                code: func me.updateNearestAirportButtons(),
                 init: true, # if set to true, the listener will additionally be triggered when it is created.
                 type: Listeners.ON_CHANGE_ONLY, # the listener will only trigger when the property is changed.
             );
@@ -271,7 +271,7 @@ var DrawTabContent = {
     #
     # @return string|nil
     #
-    _getICAOPropertyByTabId: func() {
+    _getIcaoPropertyByTabId: func() {
         if (me._isTabNearest())   return "/sim/airport/closest-airport-id";
         if (me._isTabDeparture()) return "/autopilot/route-manager/departure/airport";
         if (me._isTabArrival())   return "/autopilot/route-manager/destination/airport";
@@ -748,5 +748,12 @@ var DrawTabContent = {
     #
     getScrollPageHeight: func() {
         return ScrollAreaHelper.getScrollPageHeight(me._scrollArea);
+    },
+
+    #
+    # @return void
+    #
+    updateNearestAirportButtons: func {
+        me._bottomBar.updateNearestAirportButtons();
     },
 };

@@ -32,6 +32,7 @@ var Settings = {
         obj._keyPageMoveSize    = props.globals.getNode(obj._addonNodePath ~ "/settings/keys/page-move-size");
         obj._rwyUseEnabled      = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/enabled");
         obj._rwyUseAircraftType = props.globals.getNode(obj._addonNodePath ~ "/settings/rwyuse/aircraft-type");
+        obj._nearestType        = props.globals.getNode(obj._addonNodePath ~ "/settings/nearest-type");
 
         return obj;
     },
@@ -137,5 +138,24 @@ var Settings = {
     #
     setRwyUseAircraftType: func(aircraftType) {
         setprop(me._addonNodePath ~ "/settings/rwyuse/aircraft-type", aircraftType);
+    },
+
+    #
+    # Get type for findAirportsWithinRange function.
+    #
+    # @return string  'airport' (default), 'heliport' or 'seaport'
+    #
+    getNearestType: func() {
+        return me._nearestType.getValue() or 'airport';
+    },
+
+    #
+    # Set type for findAirportsWithinRange function.
+    #
+    # @param  string  value  'airport' (default), 'heliport' or 'seaport'
+    # @return void
+    #
+    setNearestType: func(value) {
+        me._nearestType.setValue(value);
     },
 };
