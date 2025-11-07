@@ -272,10 +272,11 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return string  Wind label: "Headwind", "Crosswind" or "Tailwind"
     #
     _geWindLabelByDir: func(model, normDiffDeg) {
-           if (normDiffDeg == nil)                return "n/a";
-        elsif (normDiffDeg <= model._hwThreshold) return "Headwind";
-        elsif (normDiffDeg <= model._xwThreshold) return "Crosswind";
-        else                                      return "Tailwind";
+        if (normDiffDeg == nil)                return "n/a";
+        if (normDiffDeg <= model._hwThreshold) return "Headwind";
+        if (normDiffDeg <= model._xwThreshold) return "Crosswind";
+
+        return "Tailwind";
     },
 
     #
@@ -284,10 +285,11 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(model, normDiffDeg) {
-           if (normDiffDeg == nil)                return style.getColor("text_color");
-        elsif (normDiffDeg <= model._hwThreshold) return me._colors.GREEN;
-        elsif (normDiffDeg <= model._xwThreshold) return me._colors.AMBER;
-        else                                      return style.getColor("text_color");
+        if (normDiffDeg == nil)                return style.getColor("text_color");
+        if (normDiffDeg <= model._hwThreshold) return me._colors.GREEN;
+        if (normDiffDeg <= model._xwThreshold) return me._colors.AMBER;
+
+        return style.getColor("text_color");
     },
 
     #
@@ -296,9 +298,10 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return string  Font path.
     #
     _geWindFontByDir: func(model, normDiffDeg) {
-           if (normDiffDeg == nil)                return me._fontSansRegular;
-        elsif (normDiffDeg <= model._xwThreshold) return me._fontSansBold;
-        else                                      return me._fontSansRegular;
+        if (normDiffDeg == nil)                return me._fontSansRegular;
+        if (normDiffDeg <= model._xwThreshold) return me._fontSansBold;
+
+        return me._fontSansRegular;
     },
 
     #
@@ -306,9 +309,10 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return string
     #
     _getMainWindLabel: func(headwind) {
-           if (headwind == nil) return "Wind:";
-        elsif (headwind < 0)    return "Tailwind:";
-        else                    return "Headwind:";
+        if (headwind == nil) return "Wind:";
+        if (headwind < 0)    return "Tailwind:";
+
+        return "Headwind:";
     },
 
     #
@@ -357,19 +361,19 @@ DefaultStyle.widgets["runway-info-view"] = {
     # @return string
     #
     _getSurface: func(surfaceId) {
-           if (surfaceId == 1 or (surfaceId >= 20 and surfaceId <= 38)) return "asphalt";
-        elsif (surfaceId == 2 or (surfaceId >= 50 and surfaceId <= 57)) return "concrete";
-        elsif (surfaceId == 3)  return "turf";
-        elsif (surfaceId == 4)  return "dirt";
-        elsif (surfaceId == 5)  return "gravel";
-        elsif (surfaceId == 6)  return "asphalt helipad";
-        elsif (surfaceId == 7)  return "concrete helipad";
-        elsif (surfaceId == 8)  return "turf helipad";
-        elsif (surfaceId == 9)  return "dirt helipad";
-        elsif (surfaceId == 12) return "lakebed";
-        elsif (surfaceId == 13) return "water";
-        elsif (surfaceId == 14) return "ice"; # also snow
-        elsif (surfaceId == 15) return "transparent"; # Hard surface, but no texture/markings (use in custom scenery)
+        if (surfaceId == 1 or (surfaceId >= 20 and surfaceId <= 38)) return "asphalt";
+        if (surfaceId == 2 or (surfaceId >= 50 and surfaceId <= 57)) return "concrete";
+        if (surfaceId == 3)  return "turf";
+        if (surfaceId == 4)  return "dirt";
+        if (surfaceId == 5)  return "gravel";
+        if (surfaceId == 6)  return "asphalt helipad";
+        if (surfaceId == 7)  return "concrete helipad";
+        if (surfaceId == 8)  return "turf helipad";
+        if (surfaceId == 9)  return "dirt helipad";
+        if (surfaceId == 12) return "lakebed";
+        if (surfaceId == 13) return "water";
+        if (surfaceId == 14) return "ice"; # also snow
+        if (surfaceId == 15) return "transparent"; # Hard surface, but no texture/markings (use in custom scenery)
 
         return "unknown";
     },

@@ -160,10 +160,10 @@ DefaultStyle.widgets["wind-rose-view"] = {
     # @return string
     #
     _getGeoDirMark: func(deg) {
-           if (deg == 0)   return "N";
-        elsif (deg == 90)  return "E";
-        elsif (deg == 180) return "S";
-        elsif (deg == 270) return "W";
+        if (deg == 0)   return "N";
+        if (deg == 90)  return "E";
+        if (deg == 180) return "S";
+        if (deg == 270) return "W";
 
         return "?";
     },
@@ -328,10 +328,10 @@ DefaultStyle.widgets["wind-rose-view"] = {
         var inside1 = (math.pow(x1 - cx, 2) + math.pow(y1 - cy, 2)) <= radiusPow2;
         var inside2 = (math.pow(x2 - cx, 2) + math.pow(y2 - cy, 2)) <= radiusPow2;
 
-           if (inside1 and inside2)          return [ {x: x1, y: y1}, { x: x2, y: y2} ];
-        elsif (inside1 and size(points) > 0) return [ {x: x1, y: y1}, points[0] ];
-        elsif (inside2 and size(points) > 0) return [ points[0], {x: x2, y: y2} ];
-        elsif (size(points) == 2)            return [ points[0], points[1] ];
+        if (inside1 and inside2)          return [ {x: x1, y: y1}, { x: x2, y: y2} ];
+        if (inside1 and size(points) > 0) return [ {x: x1, y: y1}, points[0] ];
+        if (inside2 and size(points) > 0) return [ points[0], {x: x2, y: y2} ];
+        if (size(points) == 2)            return [ points[0], points[1] ];
 
         return nil; # whole line is out of circle
     },
@@ -395,9 +395,9 @@ DefaultStyle.widgets["wind-rose-view"] = {
     # @return vector  RGB color.
     #
     _geWindColorByDir: func(model, normDiffDeg) {
-           if (normDiffDeg == nil)                return style.getColor("text_color");
-        elsif (normDiffDeg <= model._hwThreshold) return me._colors.GREEN;
-        elsif (normDiffDeg <= model._xwThreshold) return me._colors.AMBER;
+        if (normDiffDeg == nil)                return style.getColor("text_color");
+        if (normDiffDeg <= model._hwThreshold) return me._colors.GREEN;
+        if (normDiffDeg <= model._xwThreshold) return me._colors.AMBER;
 
         return style.getColor("text_color");
     },

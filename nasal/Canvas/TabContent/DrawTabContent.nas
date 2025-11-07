@@ -272,10 +272,10 @@ var DrawTabContent = {
     # @return string|nil
     #
     _getICAOPropertyByTabId: func() {
-           if (me._isTabNearest())   return "/sim/airport/closest-airport-id";
-        elsif (me._isTabDeparture()) return "/autopilot/route-manager/departure/airport";
-        elsif (me._isTabArrival())   return "/autopilot/route-manager/destination/airport";
-        elsif (me._isTabAlternate()) return nil;
+        if (me._isTabNearest())   return "/sim/airport/closest-airport-id";
+        if (me._isTabDeparture()) return "/autopilot/route-manager/departure/airport";
+        if (me._isTabArrival())   return "/autopilot/route-manager/destination/airport";
+        if (me._isTabAlternate()) return nil;
 
         return nil;
     },
@@ -286,10 +286,10 @@ var DrawTabContent = {
     # @return string
     #
     _getNoIcaoMessage: func() {
-           if (me._isTabNearest())   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
-        elsif (me._isTabDeparture()) return "No ICAO code. Enter the departure airport in Route Manager first.";
-        elsif (me._isTabArrival())   return "No ICAO code. Enter the arrival airport in Route Manager first.";
-        elsif (me._isTabAlternate()) return "Enter the ICAO code of an airport below.";
+        if (me._isTabNearest())   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
+        if (me._isTabDeparture()) return "No ICAO code. Enter the departure airport in Route Manager first.";
+        if (me._isTabArrival())   return "No ICAO code. Enter the arrival airport in Route Manager first.";
+        if (me._isTabAlternate()) return "Enter the ICAO code of an airport below.";
 
         return "No ICAO code.";
     },
@@ -643,7 +643,9 @@ var DrawTabContent = {
     _getWarningMsgForNoRwyUse: func(rwyUseStatus) {
         if (rwyUseStatus == RunwayFinder.CODE_NO_SCHEDULE) {
             return "No preferred runway for the selected time, so the best headwind is used.";
-        } elsif (rwyUseStatus == RunwayFinder.CODE_NO_WIND_CRITERIA) {
+        }
+
+        if (rwyUseStatus == RunwayFinder.CODE_NO_WIND_CRITERIA) {
             return "No preferred runway meets the wind criteria, so the best headwind is used.";
         }
 
@@ -657,9 +659,9 @@ var DrawTabContent = {
     # @return ghost|nil  Canvas layout object with controls or nil if failed.
     #
     _getBottomBarByTabId: func() {
-           if (me._isTabNearest())                         return me._bottomBar.drawBottomBarForNearest();
-        elsif (me._isTabDeparture() or me._isTabArrival()) return me._bottomBar.drawBottomBarForScheduledTab();
-        elsif (me._isTabAlternate())                       return me._bottomBar.drawBottomBarForAlternate();
+        if (me._isTabNearest())                         return me._bottomBar.drawBottomBarForNearest();
+        if (me._isTabDeparture() or me._isTabArrival()) return me._bottomBar.drawBottomBarForScheduledTab();
+        if (me._isTabAlternate())                       return me._bottomBar.drawBottomBarForAlternate();
 
         return nil;
     },

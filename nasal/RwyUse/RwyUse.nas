@@ -196,10 +196,10 @@ var RwyUse = {
 
         acType = me._checkAircraftType(icao, acType);
 
-           if (acType == RwyUse.COMMERCIAL) return "commercial";
-        elsif (acType == RwyUse.GENERAL)    return "general";
-        elsif (acType == RwyUse.MILITARY)   return "military";
-        elsif (acType == RwyUse.ULTRALIGHT) return "ultralight";
+        if (acType == RwyUse.COMMERCIAL) return "commercial";
+        if (acType == RwyUse.GENERAL)    return "general";
+        if (acType == RwyUse.MILITARY)   return "military";
+        if (acType == RwyUse.ULTRALIGHT) return "ultralight";
 
         return "n/a";
     },

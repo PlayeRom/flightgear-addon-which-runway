@@ -277,10 +277,10 @@ var DrawRwyUseControls = {
     # #return int
     #
     _getDefaultAircraftOperationByTabId: func() {
-           if (me._isTabNearest())   return RwyUse.LANDING;
-        elsif (me._isTabDeparture()) return RwyUse.TAKEOFF;
-        elsif (me._isTabArrival())   return RwyUse.LANDING;
-        elsif (me._isTabAlternate()) return RwyUse.LANDING;
+        if (me._isTabNearest())   return RwyUse.LANDING;
+        if (me._isTabDeparture()) return RwyUse.TAKEOFF;
+        if (me._isTabArrival())   return RwyUse.LANDING;
+        if (me._isTabAlternate()) return RwyUse.LANDING;
 
         return RwyUse.TAKEOFF;
     },
@@ -317,8 +317,8 @@ var DrawRwyUseControls = {
             #
             var getRadioValueByLabel = func(item) {
                 if (item != nil) {
-                       if (item._text == "Takeoff") return RwyUse.TAKEOFF;
-                    elsif (item._text == "Landing") return RwyUse.LANDING;
+                    if (item._text == "Takeoff") return RwyUse.TAKEOFF;
+                    if (item._text == "Landing") return RwyUse.LANDING;
                 }
 
                 return me._getDefaultAircraftOperationByTabId();

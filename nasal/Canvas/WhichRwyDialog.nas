@@ -156,10 +156,10 @@ var WhichRwyDialog = {
     # @return string
     #
     _getLabelByTagId: func(tabId) {
-           if (tabId == me.TAB_NEAREST)   return "Nearest";
-        elsif (tabId == me.TAB_DEPARTURE) return "Departure";
-        elsif (tabId == me.TAB_ARRIVAL)   return "Arrival";
-        elsif (tabId == me.TAB_ALTERNATE) return "Alternate";
+        if (tabId == me.TAB_NEAREST)   return "Nearest";
+        if (tabId == me.TAB_DEPARTURE) return "Departure";
+        if (tabId == me.TAB_ARRIVAL)   return "Arrival";
+        if (tabId == me.TAB_ALTERNATE) return "Alternate";
 
         return "";
     },

@@ -102,7 +102,9 @@ var RunwayFinder = {
         if (preferredRunways == nil) {
             me._rwyUseStatus = RunwayFinder.CODE_NO_XML;
             return nil;
-        } elsif (preferredRunways == RwyUse.ERR_NO_SCHEDULE) {
+        }
+
+        if (preferredRunways == RwyUse.ERR_NO_SCHEDULE) {
             me._rwyUseStatus = RunwayFinder.CODE_NO_SCHEDULE;
             return nil;
         }
@@ -387,10 +389,10 @@ var RunwayFinder = {
     #
     _sortRunwaysByHeadwind: func(runwaysData) {
         return sort(runwaysData, func(a, b) {
-              if (a.normDiffDeg > b.normDiffDeg) return  1;
-           elsif (a.normDiffDeg < b.normDiffDeg) return -1;
+            if (a.normDiffDeg > b.normDiffDeg) return  1;
+            if (a.normDiffDeg < b.normDiffDeg) return -1;
 
-           return 0;
+            return 0;
         });
     },
 };

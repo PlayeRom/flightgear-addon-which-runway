@@ -385,10 +385,10 @@ var BasicWeather = {
     #
     _sortLayers: func(layers) {
         return sort(layers, func(a, b) {
-              if (a.elevation > b.elevation) return  1;
-           elsif (a.elevation < b.elevation) return -1;
+            if (a.elevation > b.elevation) return  1;
+            if (a.elevation < b.elevation) return -1;
 
-           return 0;
+            return 0;
         });
     },
 };
