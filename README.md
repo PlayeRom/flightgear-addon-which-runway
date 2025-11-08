@@ -176,6 +176,7 @@ From the "Which Runway" -> "Settings..." menu, you can open the global settings 
     Below are the controls for changing these angles. The "<" and ">" buttons change the angle by 1°, and the "<<" and ">>" buttons change the angle by 5°. The "Default" button resets the settings to 45° for HW and 90° for XW.
 
     **These settings do not affect the selection of runways**, but only affect the information about whether the wind is considered headwind, crosswind, or tailwind.
+4. `Types of nearest landing sites` – at the bottom of the "Nearest" and "Alternate" tabs, buttons with the nearest airports are displayed (by default). Here, you can choose to display the nearest heliports or seaports.
 
 Settings are saved to the FlightGear `$FG_HOME/autosave_{version}.xml` file. This saving only occurs when you properly close FlightGear via the "File" -> "Exit" menu.
 
