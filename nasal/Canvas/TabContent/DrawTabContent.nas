@@ -357,7 +357,7 @@ var DrawTabContent = {
     # Get nearest airport which has a METAR.
     #
     # @param  ghost  airport  The airport we are searching around.
-    # @param  airport|nil  Airport or nil if not found.
+    # @param  ghost|nil  Airport or nil if not found.
     #
     _getNearestAirportWithMetar: func(airport) {
         var airports = findAirportsWithinRange(airport, g_Settings.getMaxMetarRangeNm());

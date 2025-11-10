@@ -176,7 +176,7 @@ var DrawRwyUseControls = {
     #
     # Crate whole layout to control rwyuse.
     #
-    # #return ghost  Return canvas layout.
+    # @return ghost  Return canvas layout.
     #
     createRwyUseLayout: func() {
         var vBox = canvas.VBoxLayout.new();
@@ -195,7 +195,7 @@ var DrawRwyUseControls = {
     #
     # Crate layout with control of rwyuse.
     #
-    # #return ghost  Return canvas layout.
+    # @return ghost  Return canvas layout.
     #
     _createRwyUseLayoutCtrl: func() {
         var aircraftTypeLayout = me._creteRwyUseComboBoxAircraft();
@@ -244,7 +244,7 @@ var DrawRwyUseControls = {
     #
     # Crate layout with combo box to select aircraft/traffic.
     #
-    # #return ghost  Return canvas layout.
+    # @return ghost  Return canvas layout.
     #
     _creteRwyUseComboBoxAircraft: func() {
         me._labelAircraftType = me._widget.getLabel("Aircraft type:");
@@ -274,7 +274,7 @@ var DrawRwyUseControls = {
     #
     # Get default aircraft operation (takeoff or landing) according do tab ID.
     #
-    # #return int
+    # @return int
     #
     _getDefaultAircraftOperationByTabId: func() {
         if (me._isTabNearest())   return RwyUse.LANDING;
@@ -288,7 +288,7 @@ var DrawRwyUseControls = {
     #
     # Crate layout with radio buttons to select takeoff or landing.
     #
-    # #return ghost  Return canvas layout.
+    # @return ghost  Return canvas layout.
     #
     _creteRwyUseRadioBtnsTakeoffLanding: func() {
         me._radioTakeoff = me._widget.getRadioButton("Takeoff")

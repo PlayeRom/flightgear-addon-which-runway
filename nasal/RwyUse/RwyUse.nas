@@ -149,7 +149,7 @@ var RwyUse = {
     # @param  string  acType  Aircraft type: "com", "gen", "mil", "ul".
     # @param  int  utcHour
     # @param  int  utcMinute
-    # @return hash
+    # @return hash|nil
     #
     getAllPreferredRunways: func(icao, acType, utcHour, utcMinute) {
         var schedule = me.getScheduleByTime(icao, acType, utcHour, utcMinute);

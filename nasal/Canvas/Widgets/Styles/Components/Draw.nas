@@ -115,7 +115,7 @@ var Draw = {
 
     #
     # @param  string|nil  text
-    # @param  vector|nil  RGB color.
+    # @param  vector|nil  color  RGB color.
     # @return ghost  Text canvas element for label.
     #
     createTextLabel: func(text = nil, color = nil) {
@@ -125,7 +125,7 @@ var Draw = {
 
     #
     # @param  string|nil  text
-    # @param  vector|nil  RGB color.
+    # @param  vector|nil  color  RGB color.
     # @return ghost  Text canvas element for value.
     #
     createTextValue: func(text = nil, color = nil) {
@@ -136,7 +136,7 @@ var Draw = {
 
     #
     # @param  string|nil  text
-    # @param  vector|nil  RGB color.
+    # @param  vector|nil  color  RGB color.
     # @return ghost  Text canvas element for unit.
     #
     createTextUnit: func(text = nil, color = nil) {
@@ -147,6 +147,7 @@ var Draw = {
     #
     # @param  double  y  Initial Y position.
     # @param  vector  elements  Array of canvas element.
+    # @param  double  valueMarginX
     # @param  bool  isLast
     # @return double  New Y position.
     #

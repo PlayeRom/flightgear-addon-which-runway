@@ -79,7 +79,7 @@ var BasicWeather = {
     #
     # Get wind direction at airport elevation.
     #
-    # @return double
+    # @return double|nil
     #
     getWindDir: func() {
         return me._windDir;

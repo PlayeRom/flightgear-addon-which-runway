@@ -85,7 +85,7 @@ gui.widgets.WindRose = {
 
     #
     # @param  vector  runways  All runways.
-    # #return ghost
+    # @return ghost
     #
     setRunways: func(runways) {
         me._runways = runways;

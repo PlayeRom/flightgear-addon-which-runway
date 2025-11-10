@@ -238,7 +238,7 @@ var RunwayFinder = {
     # @param  ghost  airport
     # @param  string  rwyId
     # @param  hash  wind
-    # @return hash
+    # @return hash|nil
     #
     _checkWindCriteria: func(airport, rwyId, wind) {
         if (!contains(airport.runways, rwyId)) {

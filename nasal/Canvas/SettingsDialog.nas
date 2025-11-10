@@ -147,7 +147,7 @@ var SettingsDialog = {
     },
 
     #
-    # @return ghost  Canvas box layout.
+    # @return ghost  Canvas checkbox widget.
     #
     _drawEnableRwyUse: func() {
         me._checkboxRwyUse = me._widget.getCheckBox("Preferred runways at the airport", me._rwyUseEnable, func(e) {
@@ -281,7 +281,7 @@ var SettingsDialog = {
     #
     # Crate layout with radio buttons to select type of nearest landing sites.
     #
-    # #return ghost  Return canvas layout.
+    # @return ghost  Return canvas layout.
     #
     _drawNearestType: func() {
         me._radioNearTypeAirport = me._widget.getRadioButton('Airport')
