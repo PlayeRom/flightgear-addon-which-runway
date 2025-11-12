@@ -18,7 +18,7 @@ var LoadRwyUseXml = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         return {
             parents: [
                 LoadRwyUseXml,
@@ -31,7 +31,7 @@ var LoadRwyUseXml = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
     },
 
     #

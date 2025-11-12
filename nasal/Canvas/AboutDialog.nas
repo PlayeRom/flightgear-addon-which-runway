@@ -23,7 +23,7 @@ var AboutDialog = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         var obj = {
             parents: [
                 AboutDialog,
@@ -53,7 +53,7 @@ var AboutDialog = {
     # @return void
     # @override PersistentDialog
     #
-    del: func() {
+    del: func {
         call(PersistentDialog.del, [], me);
     },
 
@@ -62,7 +62,7 @@ var AboutDialog = {
     #
     # @return void
     #
-    _createLayout: func() {
+    _createLayout: func {
         me._vbox.addSpacing(me.PADDING);
 
         me._vbox.addItem(me._getLabel(g_Addon.name));
@@ -102,7 +102,7 @@ var AboutDialog = {
     #
     # @return void
     #
-    _createLayoutNewVersionInfo: func() {
+    _createLayoutNewVersionInfo: func {
         me._newVersionAvailLabel = me._getLabel("New version is available").setVisible(false);
         me._newVersionAvailLabel.setColor([0.9, 0.0, 0.0]);
 
@@ -135,7 +135,7 @@ var AboutDialog = {
     #
     # @return ghost  Canvas layout with buttons.
     #
-    _drawBottomBar: func() {
+    _drawBottomBar: func {
         var buttonBox = canvas.HBoxLayout.new();
 
         var btnClose = me._widget.getButton("Close", func me.hide(), 75);

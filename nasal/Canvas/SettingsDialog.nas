@@ -23,7 +23,7 @@ var SettingsDialog = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         var obj = {
             parents: [
                 SettingsDialog,
@@ -69,7 +69,7 @@ var SettingsDialog = {
     # @return void
     # @override PersistentDialog
     #
-    del: func() {
+    del: func {
         call(PersistentDialog.del, [], me);
     },
 
@@ -77,7 +77,7 @@ var SettingsDialog = {
     # @return void
     # @override PersistentDialog
     #
-    show: func() {
+    show: func {
         me._maxMetarRangeNm = g_Settings.getMaxMetarRangeNm();
         me._rwyUseEnable = g_Settings.getRwyUseEnabled();
         me._hwThreshold = g_Settings.getHwThreshold();
@@ -102,7 +102,7 @@ var SettingsDialog = {
     #
     # @return void
     #
-    _drawContent: func() {
+    _drawContent: func {
         me._vbox.setContentsMargins(me.PADDING, me.PADDING, me.PADDING, me.PADDING);
         me._vbox.addItem(me._drawNearestMetarRange());
         me._vbox.addItem(me._widget.getHorizontalRule());
@@ -119,7 +119,7 @@ var SettingsDialog = {
     #
     # @return ghost  Canvas box layout.
     #
-    _drawNearestMetarRange: func() {
+    _drawNearestMetarRange: func {
         var label = me._widget.getLabel("Max range for nearest METAR in NM:");
 
         var items = [
@@ -149,7 +149,7 @@ var SettingsDialog = {
     #
     # @return ghost  Canvas checkbox widget.
     #
-    _drawEnableRwyUse: func() {
+    _drawEnableRwyUse: func {
         me._checkboxRwyUse = me._widget.getCheckBox("Preferred runways at the airport", me._rwyUseEnable, func(e) {
             me._rwyUseEnable = e.detail.checked ? true : false; # conversion on true/false is needed ¯\_(ツ)_/¯
         });
@@ -160,7 +160,7 @@ var SettingsDialog = {
     #
     # @return ghost  Canvas box layout.
     #
-    _drawWindSettings: func() {
+    _drawWindSettings: func {
         var vBox = canvas.VBoxLayout.new();
         vBox.addSpacing(me.PADDING);
         vBox.addItem(me._widget.getLabel("Set thresholds for HW, XW and TW"));
@@ -182,7 +182,7 @@ var SettingsDialog = {
     #
     # @return ghost  Canvas box layout.
     #
-    _drawHwControls: func() {
+    _drawHwControls: func {
         var btnMinusBig   = me._getButtonSmall("<<", func me._setHwAngle(-5));
         var btnMinusSmall = me._getButtonSmall("<",  func me._setHwAngle(-1));
         var btnPlusSmall  = me._getButtonSmall(">",  func me._setHwAngle( 1));
@@ -219,7 +219,7 @@ var SettingsDialog = {
     #
     # @return ghost  Canvas box layout.
     #
-    _drawXwControls: func() {
+    _drawXwControls: func {
         var btnMinusBig   = me._getButtonSmall("<<", func me._setXwAngle(-5));
         var btnMinusSmall = me._getButtonSmall("<",  func me._setXwAngle(-1));
         var btnPlusSmall  = me._getButtonSmall(">",  func me._setXwAngle( 1));
@@ -283,7 +283,7 @@ var SettingsDialog = {
     #
     # @return ghost  Return canvas layout.
     #
-    _drawNearestType: func() {
+    _drawNearestType: func {
         me._radioNearTypeAirport = me._widget.getRadioButton('Airport')
             .setChecked(me._nearestType == 'airport');
 
@@ -357,7 +357,7 @@ var SettingsDialog = {
     #
     # @return ghost  Canvas layout with buttons.
     #
-    _drawBottomBar: func() {
+    _drawBottomBar: func {
         var hBox = canvas.HBoxLayout.new();
 
         var saveButton = me._getButton("Save", func me._save());
@@ -376,7 +376,7 @@ var SettingsDialog = {
     #
     # @return void
     #
-    _save: func() {
+    _save: func {
         var isNeedReload = me._isChangesNeedReload();
         var isUpdateNearestAirportButtons = me._isUpdateNearestAirportButtons();
 
@@ -402,7 +402,7 @@ var SettingsDialog = {
     #
     # @return bool
     #
-    _isChangesNeedReload: func() {
+    _isChangesNeedReload: func {
         return me._maxMetarRangeNm != g_Settings.getMaxMetarRangeNm()
             or me._rwyUseEnable != g_Settings.getRwyUseEnabled()
             or me._hwThreshold != g_Settings.getHwThreshold()

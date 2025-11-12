@@ -18,7 +18,7 @@ var AircraftTypeFinder = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         var obj = { parents: [AircraftTypeFinder] };
 
         obj._tagsNode = props.globals.getNode("/sim/tags");
@@ -42,7 +42,7 @@ var AircraftTypeFinder = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
         me._tags.clear();
     },
 
@@ -51,7 +51,7 @@ var AircraftTypeFinder = {
     #
     # @return string  RwyUse traffic type, it can be "com", "gen", "mil", "ul".
     #
-    getType: func() {
+    getType: func {
         var type = me._getTypeByTags();
         if (type != nil) {
             return type;
@@ -70,7 +70,7 @@ var AircraftTypeFinder = {
     #
     # @return string|nil
     #
-    _getTypeByTags: func() {
+    _getTypeByTags: func {
         if (me._tagsNode == nil) {
             # No tags, nothing to check
             return nil;
@@ -113,7 +113,7 @@ var AircraftTypeFinder = {
     #
     # @return string|nil
     #
-    _getTypeByAcId: func() {
+    _getTypeByAcId: func {
         var aircraftId = me._getAircraftId();
 
         if (substr(aircraftId, 0, 5) == "ask21" # ask21, ask21mi, ask21-jsb, ask21mi-jsb
@@ -139,7 +139,7 @@ var AircraftTypeFinder = {
     #
     # @return string
     #
-    _getAircraftId: func() {
+    _getAircraftId: func {
         # When "/sim/aircraft" exists, this property contains the correct ID.
         # This is a case that can occur when an aircraft has multiple variants.
         var aircraft = me._removeHangarName(getprop("/sim/aircraft"));

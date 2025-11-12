@@ -96,7 +96,7 @@ gui.widgets.WindRose = {
     #
     # @return double  Max runway length in meters.
     #
-    _findMaxLengthRunway: func() {
+    _findMaxLengthRunway: func {
         var maxLen = 0;
         foreach (var rwy; me._runways) {
             if (rwy.length > maxLen) {
@@ -115,7 +115,7 @@ gui.widgets.WindRose = {
     #
     # @return void
     #
-    updateView: func() {
+    updateView: func {
         me._view.reDrawContent(me);
     },
 };

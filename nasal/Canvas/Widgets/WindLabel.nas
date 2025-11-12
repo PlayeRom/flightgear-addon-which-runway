@@ -66,7 +66,7 @@ gui.widgets.WindLabel = {
     #
     # @return void
     #
-    updateView: func() {
+    updateView: func {
         me._view.reDrawContent(me);
     },
 };

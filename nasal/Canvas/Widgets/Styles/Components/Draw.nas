@@ -39,13 +39,13 @@ var Draw = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
     },
 
     #
     # @return ghost  Canvas content.
     #
-    _getContent: func() {
+    _getContent: func {
         return me._content;
     },
 
@@ -70,7 +70,7 @@ var Draw = {
     #
     # @return ghost  Canvas path element.
     #
-    createPath: func() {
+    createPath: func {
         return me._getContent().createChild("path");
     },
 

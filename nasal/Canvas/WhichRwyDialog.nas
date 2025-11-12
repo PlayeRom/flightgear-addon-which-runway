@@ -26,7 +26,7 @@ var WhichRwyDialog = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         var obj = {
             parents: [
                 WhichRwyDialog,
@@ -78,7 +78,7 @@ var WhichRwyDialog = {
     # @return void
     # @override PersistentDialog
     #
-    del: func() {
+    del: func {
         me._timer.stop();
 
         foreach (var tabId; me._tabContents.getKeys()) {
@@ -98,7 +98,7 @@ var WhichRwyDialog = {
     # @return void
     # @override PersistentDialog
     #
-    show: func() {
+    show: func {
         me._updateDynamicData();
         me._timer.start();
 
@@ -111,7 +111,7 @@ var WhichRwyDialog = {
     # @return void
     # @override PersistentDialog
     #
-    hide: func() {
+    hide: func {
         me._timer.stop();
 
         call(PersistentDialog.hide, [], me);
@@ -145,7 +145,7 @@ var WhichRwyDialog = {
     #
     # @return void
     #
-    reloadAllTabs: func() {
+    reloadAllTabs: func {
         foreach (var tabId; me._tabContents.getKeys()) {
             me._tabContents.get(tabId).reload();
         }
@@ -178,7 +178,7 @@ var WhichRwyDialog = {
     #
     # @return void
     #
-    _updateDynamicData: func() {
+    _updateDynamicData: func {
         var currentTabId = TabWidgetHelper.getCurrentTabId(me._tabs);
 
         if (currentTabId != nil and me._tabContents.contains(currentTabId)) {
@@ -202,7 +202,7 @@ var WhichRwyDialog = {
     #
     # @return void
     #
-    _keyActions: func() {
+    _keyActions: func {
         me._window.addEventListener("keydown", func(event) {
                if (event.key == "Up"     or event.key == "Down")     me._handleScrollKey(true,  event.key == "Up");
             elsif (event.key == "PageUp" or event.key == "PageDown") me._handleScrollKey(false, event.key == "PageUp");
@@ -241,7 +241,7 @@ var WhichRwyDialog = {
     #
     # @return string
     #
-    _getStandardTitle: func() {
+    _getStandardTitle: func {
         return g_Addon.name ~ " " ~ g_Addon.version.str();
     },
 

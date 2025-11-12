@@ -87,7 +87,7 @@ var DrawRwyUseControls = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
         me._listeners.del();
 
         call(DrawTabBase.del, [], me);
@@ -98,14 +98,14 @@ var DrawRwyUseControls = {
     #
     # @return bool
     #
-    isRwyUse: func() {
+    isRwyUse: func {
         return me._isRwyUse;
     },
 
     #
     # @return void
     #
-    setUtcTimeToCurrent: func() {
+    setUtcTimeToCurrent: func {
         me._setUtcTimeToCurrentValue();
 
         me._labelUtcHour.setText(me._getPrintTimeFormat(me._utcHourValue));
@@ -117,7 +117,7 @@ var DrawRwyUseControls = {
     #
     # @return string
     #
-    getAircraftType: func()  {
+    getAircraftType: func  {
         return me._aircraftType;
     },
 
@@ -137,7 +137,7 @@ var DrawRwyUseControls = {
     #
     # @return bool
     #
-    isTakeoff: func() {
+    isTakeoff: func {
         return me._aircraftOperation == RwyUse.TAKEOFF;
     },
 
@@ -146,7 +146,7 @@ var DrawRwyUseControls = {
     #
     # @return ghost
     #
-    getComboBoxAircraftType: func() {
+    getComboBoxAircraftType: func {
         return me._comboBoxAircraftType;
     },
 
@@ -155,21 +155,21 @@ var DrawRwyUseControls = {
     #
     # @return ghost
     #
-    getRwyUseInfoWidget: func() {
+    getRwyUseInfoWidget: func {
         return me._rwyUseInfoWidget;
     },
 
     #
     # @return int  Set hour in UTC time.
     #
-    getScheduleUtcHour: func() {
+    getScheduleUtcHour: func {
         return me._utcHourValue;
     },
 
     #
     # @return int  Set minute in UTC time.
     #
-    getScheduleUtcMinute: func() {
+    getScheduleUtcMinute: func {
         return me._utcMinuteValue;
     },
 
@@ -178,7 +178,7 @@ var DrawRwyUseControls = {
     #
     # @return ghost  Return canvas layout.
     #
-    createRwyUseLayout: func() {
+    createRwyUseLayout: func {
         var vBox = canvas.VBoxLayout.new();
         vBox.addItem(me._rwyUseInfoWidget);
         vBox.addStretch(1);
@@ -197,7 +197,7 @@ var DrawRwyUseControls = {
     #
     # @return ghost  Return canvas layout.
     #
-    _createRwyUseLayoutCtrl: func() {
+    _createRwyUseLayoutCtrl: func {
         var aircraftTypeLayout = me._creteRwyUseComboBoxAircraft();
         var takeOffLandingLayout = me._creteRwyUseRadioBtnsTakeoffLanding();
 
@@ -246,7 +246,7 @@ var DrawRwyUseControls = {
     #
     # @return ghost  Return canvas layout.
     #
-    _creteRwyUseComboBoxAircraft: func() {
+    _creteRwyUseComboBoxAircraft: func {
         me._labelAircraftType = me._widget.getLabel("Aircraft type:");
 
         var items = [
@@ -276,7 +276,7 @@ var DrawRwyUseControls = {
     #
     # @return int
     #
-    _getDefaultAircraftOperationByTabId: func() {
+    _getDefaultAircraftOperationByTabId: func {
         if (me._isTabNearest())   return RwyUse.LANDING;
         if (me._isTabDeparture()) return RwyUse.TAKEOFF;
         if (me._isTabArrival())   return RwyUse.LANDING;
@@ -290,7 +290,7 @@ var DrawRwyUseControls = {
     #
     # @return ghost  Return canvas layout.
     #
-    _creteRwyUseRadioBtnsTakeoffLanding: func() {
+    _creteRwyUseRadioBtnsTakeoffLanding: func {
         me._radioTakeoff = me._widget.getRadioButton("Takeoff")
             .setChecked(me._aircraftOperation == RwyUse.TAKEOFF);
 
@@ -350,7 +350,7 @@ var DrawRwyUseControls = {
     #
     # @return ghost  Canvas layout.
     #
-    _createCurrentUtcTimeLayout: func() {
+    _createCurrentUtcTimeLayout: func {
         me._labelCurrentUtcTime = me._widget.getLabel("Current UTC time:");
 
         me._labelCurrentUtcTimeValue = me._widget.getLabel(me._currentUtcTime);
@@ -367,7 +367,7 @@ var DrawRwyUseControls = {
     #
     # @return ghost  Canvas layout.
     #
-    _createUtcTimeControlLayout: func() {
+    _createUtcTimeControlLayout: func {
         me._labelUtcTimeCtrl = me._widget.getLabel("Schedule UTC time:");
 
         me._labelUtcHour   = me._widget.getLabel(me._getPrintTimeFormat(me._utcHourValue));
@@ -376,17 +376,17 @@ var DrawRwyUseControls = {
         me._labelUtcHour.setFixedSize(18, 26);
         me._labelUtcMinute.setFixedSize(18, 26);
 
-        me._btnUtcHourMinus = me._getButton("-", func() {
+        me._btnUtcHourMinus = me._getButton("-", func {
             me._minuHour();
             me._redrawCallback.invoke(false);
         });
 
-        me._btnUtcHourPlus = me._getButton("+", func() {
+        me._btnUtcHourPlus = me._getButton("+", func {
             me._plusHour();
             me._redrawCallback.invoke(false);
         });
 
-        me._btnUtcMinuteMinus = me._getButton("-", func() {
+        me._btnUtcMinuteMinus = me._getButton("-", func {
             me._utcMinuteValue -= me.MIN_INTERVAL;
             if (me._utcMinuteValue < 0) {
                 me._utcMinuteValue = 60 - me.MIN_INTERVAL;
@@ -398,7 +398,7 @@ var DrawRwyUseControls = {
             me._redrawCallback.invoke(false);
         });
 
-        me._btnUtcMinutePlus = me._getButton("+", func() {
+        me._btnUtcMinutePlus = me._getButton("+", func {
             me._utcMinuteValue += me.MIN_INTERVAL;
             if (me._utcMinuteValue >= 60) {
                 me._utcMinuteValue = 0;
@@ -426,7 +426,7 @@ var DrawRwyUseControls = {
     #
     # @return void
     #
-    _minuHour: func() {
+    _minuHour: func {
         me._utcHourValue -= 1;
         if (me._utcHourValue <= -1) {
             me._utcHourValue = 23;
@@ -438,7 +438,7 @@ var DrawRwyUseControls = {
     #
     # @return void
     #
-    _plusHour: func() {
+    _plusHour: func {
         me._utcHourValue += 1;
         if (me._utcHourValue >= 24) {
             me._utcHourValue = 0;
@@ -450,7 +450,7 @@ var DrawRwyUseControls = {
     #
     # @return void
     #
-    _updateCurrentUtcTime: func() {
+    _updateCurrentUtcTime: func {
         if (me._labelCurrentUtcTimeValue == nil) {
             return;
         }
@@ -471,7 +471,7 @@ var DrawRwyUseControls = {
     #
     # @return value
     #
-    _setUtcTimeToCurrentValue: func() {
+    _setUtcTimeToCurrentValue: func {
         me._utcHourValue = me._utcHourNode.getValue();
 
         var minute = math.ceil(me._utcMinuteNode.getValue() / me.MIN_INTERVAL) * me.MIN_INTERVAL;

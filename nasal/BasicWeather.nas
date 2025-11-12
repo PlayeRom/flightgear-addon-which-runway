@@ -19,7 +19,7 @@ var BasicWeather = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         var obj = { parents: [BasicWeather] };
 
         obj._localWeatherEnabledNode = props.globals.getNode("/nasal/local_weather/enabled");
@@ -56,7 +56,7 @@ var BasicWeather = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
         me._wxChangeTimer.stop();
         me._manCfgListenersTimer.stop();
 
@@ -72,7 +72,7 @@ var BasicWeather = {
     #
     # @return bool
     #
-    isBasicWxManCfgEnabled: func() {
+    isBasicWxManCfgEnabled: func {
         return !me._localWeatherEnabledNode.getBoolValue() and !me._metarUpdatesEnvNode.getBoolValue();
     },
 
@@ -81,7 +81,7 @@ var BasicWeather = {
     #
     # @return double|nil
     #
-    getWindDir: func() {
+    getWindDir: func {
         return me._windDir;
     },
 
@@ -90,7 +90,7 @@ var BasicWeather = {
     #
     # @return double
     #
-    getWindKt: func() {
+    getWindKt: func {
         return me._windKt;
     },
 
@@ -99,7 +99,7 @@ var BasicWeather = {
     #
     # @return double
     #
-    getQnh: func() {
+    getQnh: func {
         return me._qnhCfgNode.getValue();
     },
 
@@ -124,7 +124,7 @@ var BasicWeather = {
     #
     # @return void
     #
-    _invokeWxChangeCallbacks: func() {
+    _invokeWxChangeCallbacks: func {
         foreach (var callback; me._wxChangeCallback.vector) {
             callback.invoke();
         }
@@ -135,7 +135,7 @@ var BasicWeather = {
     #
     # @return void
     #
-    _setListeners: func() {
+    _setListeners: func {
         # Redraw canvas if weather engine has been changed.
         me._listeners.add(
             node: me._localWeatherEnabledNode,
@@ -184,7 +184,7 @@ var BasicWeather = {
     #
     # @return void
     #
-    _addListenersForManualConfig: func() {
+    _addListenersForManualConfig: func {
         me._addListenersForBoundaryLayers();
 
         me._manCfgListeners.add(
@@ -205,7 +205,7 @@ var BasicWeather = {
     #
     # @return void
     #
-    _addListenersForBoundaryLayers: func() {
+    _addListenersForBoundaryLayers: func {
         foreach (var layer; me._boundaryCfgNode.getChildren("entry")) {
             if (layer == nil) {
                 continue;
@@ -255,7 +255,7 @@ var BasicWeather = {
     #
     # @return void.
     #
-    _wxChangeTimerCallback: func() {
+    _wxChangeTimerCallback: func {
         if (me.isBasicWxManCfgEnabled()) {
             me._calculateWindAt0Agl();
         }
@@ -269,7 +269,7 @@ var BasicWeather = {
     #
     # @return void.
     #
-    _manCfgListenersTimerCallback: func() {
+    _manCfgListenersTimerCallback: func {
         me._handleManCfgListeners();
         me._manCfgListenersTimer.stop();
     },
@@ -280,7 +280,7 @@ var BasicWeather = {
     #
     # @return void.
     #
-    _handleManCfgListeners: func() {
+    _handleManCfgListeners: func {
         if (me.isBasicWxManCfgEnabled()) {
             if (me._manCfgListeners.size() > 0) {
                 return; # already added
@@ -306,7 +306,7 @@ var BasicWeather = {
     #
     # @return void
     #
-    _calculateWindAt0Agl: func() {
+    _calculateWindAt0Agl: func {
         var airportElevation = 0; # For boundary layers the airport has elevation at 0 ft
 
         var layers = me._getBoundaryLayers();
@@ -358,7 +358,7 @@ var BasicWeather = {
     #
     # @return vector  Vector of hashes.
     #
-    _getBoundaryLayers: func() {
+    _getBoundaryLayers: func {
         var layers = [];
 
         foreach (var layer; me._boundaryCfgNode.getChildren("entry")) {

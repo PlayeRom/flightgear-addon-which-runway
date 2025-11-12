@@ -204,7 +204,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
         me._listeners.del();
         me._runwayFinder.del();
         me._metar.del();
@@ -219,7 +219,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    _setListeners: func() {
+    _setListeners: func {
         # Get ICAO code from appropriate property and listen it for update METAR.
         var icaoProperty = me._getIcaoPropertyByTabId();
         if (icaoProperty != nil) {
@@ -271,7 +271,7 @@ var DrawTabContent = {
     #
     # @return string|nil
     #
-    _getIcaoPropertyByTabId: func() {
+    _getIcaoPropertyByTabId: func {
         if (me._isTabNearest())   return "/sim/airport/closest-airport-id";
         if (me._isTabDeparture()) return "/autopilot/route-manager/departure/airport";
         if (me._isTabArrival())   return "/autopilot/route-manager/destination/airport";
@@ -285,7 +285,7 @@ var DrawTabContent = {
     #
     # @return string
     #
-    _getNoIcaoMessage: func() {
+    _getNoIcaoMessage: func {
         if (me._isTabNearest())   return "Cannot find the ICAO code of the nearest airport, please enter the ICAO code manually.";
         if (me._isTabDeparture()) return "No ICAO code. Enter the departure airport in Route Manager first.";
         if (me._isTabArrival())   return "No ICAO code. Enter the arrival airport in Route Manager first.";
@@ -375,7 +375,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    _metarUpdatedCallback: func() {
+    _metarUpdatedCallback: func {
         me._reDrawContent(false);
     },
 
@@ -384,7 +384,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    _realWxUpdatedCallback: func() {
+    _realWxUpdatedCallback: func {
         me.reload();
     },
 
@@ -393,7 +393,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    _weatherEngineChangedCallback: func() {
+    _weatherEngineChangedCallback: func {
         me.reload();
     },
 
@@ -402,7 +402,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    reload: func() {
+    reload: func {
         me._downloadMetar(me._icao);
     },
 
@@ -438,7 +438,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    _hideAllRunways: func() {
+    _hideAllRunways: func {
         foreach (var widget; me._runwayWidgets.vector) {
             widget.runwayInfoView.setVisible(false);
             widget.windRoseView.setVisible(false);
@@ -658,7 +658,7 @@ var DrawTabContent = {
     #
     # @return ghost|nil  Canvas layout object with controls or nil if failed.
     #
-    _getBottomBarByTabId: func() {
+    _getBottomBarByTabId: func {
         if (me._isTabNearest())                         return me._bottomBar.drawBottomBarForNearest();
         if (me._isTabDeparture() or me._isTabArrival()) return me._bottomBar.drawBottomBarForScheduledTab();
         if (me._isTabAlternate())                       return me._bottomBar.drawBottomBarForAlternate();
@@ -681,7 +681,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    _scrollToAirport: func() {
+    _scrollToAirport: func {
         me._scrollArea.scrollToTop();
         me._scrollArea.scrollToLeft();
     },
@@ -723,7 +723,7 @@ var DrawTabContent = {
     #
     # @return void
     #
-    updateDynamicData: func() {
+    updateDynamicData: func {
         if (me._airportInfoView != nil and me._airportInfoView.isVisible()) {
             me._airportInfoView.updateDynamicData();
         }
@@ -732,7 +732,7 @@ var DrawTabContent = {
     #
     # @return double
     #
-    _getScrollHeightScale: func() {
+    _getScrollHeightScale: func {
         # TODO: use ScrollArea methods as they become available.
         var scrollTrackHeight = me._scrollArea._scroller_delta[1];
         var contentHeight     = me._scrollArea._max_scroll[1];
@@ -746,7 +746,7 @@ var DrawTabContent = {
     #
     # @return double
     #
-    getScrollPageHeight: func() {
+    getScrollPageHeight: func {
         return ScrollAreaHelper.getScrollPageHeight(me._scrollArea);
     },
 

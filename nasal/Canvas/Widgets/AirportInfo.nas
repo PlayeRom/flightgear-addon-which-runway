@@ -73,7 +73,7 @@ gui.widgets.AirportInfo = {
     #
     # @return void
     #
-    updateView: func() {
+    updateView: func {
         me._view.reDrawContent(me);
     },
 
@@ -82,7 +82,7 @@ gui.widgets.AirportInfo = {
     #
     # @return void
     #
-    updateDynamicData: func() {
+    updateDynamicData: func {
         me._view.updateDynamicData(me);
     },
 };

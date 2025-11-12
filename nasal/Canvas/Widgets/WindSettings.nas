@@ -70,7 +70,7 @@ gui.widgets.WindSettings = {
     #
     # @return ghost
     #
-    updateView: func() {
+    updateView: func {
         me._view.updateView(me);
         return me;
     },

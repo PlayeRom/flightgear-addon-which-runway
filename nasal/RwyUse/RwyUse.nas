@@ -32,7 +32,7 @@ var RwyUse = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         var obj = {
             parents: [
                 RwyUse,
@@ -140,7 +140,7 @@ var RwyUse = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
         me._loadRwyUseXml.del();
     },
 

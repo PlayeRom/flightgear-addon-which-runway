@@ -19,7 +19,7 @@ var Settings = {
     #
     # @return hash
     #
-    new: func() {
+    new: func {
         var obj = {
             parents: [Settings],
         };
@@ -42,7 +42,7 @@ var Settings = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
     },
 
     #
@@ -50,7 +50,7 @@ var Settings = {
     #
     # @return int  Range in NM.
     #
-    getMaxMetarRangeNm: func() {
+    getMaxMetarRangeNm: func {
         return me._maxMetarRangeNm.getValue() or 30;
     },
 
@@ -69,7 +69,7 @@ var Settings = {
     #
     # @return int  Headwind threshold angle.
     #
-    getHwThreshold: func() {
+    getHwThreshold: func {
         return me._hwThreshold.getValue() or Metar.HEADWIND_THRESHOLD;
     },
 
@@ -88,7 +88,7 @@ var Settings = {
     #
     # @return int  Crosswind threshold angle.
     #
-    getXwThreshold: func() {
+    getXwThreshold: func {
         return me._xwThreshold.getValue() or Metar.CROSSWIND_THRESHOLD;
     },
 
@@ -107,7 +107,7 @@ var Settings = {
     #
     # @return bool
     #
-    getRwyUseEnabled: func() {
+    getRwyUseEnabled: func {
         return me._rwyUseEnabled.getBoolValue();
     },
 
@@ -126,7 +126,7 @@ var Settings = {
     #
     # @return string
     #
-    getRwyUseAircraftType: func() {
+    getRwyUseAircraftType: func {
         return me._rwyUseAircraftType.getValue() or RwyUse.COMMERCIAL;
     },
 
@@ -145,7 +145,7 @@ var Settings = {
     #
     # @return string  'airport' (default), 'heliport' or 'seaport'
     #
-    getNearestType: func() {
+    getNearestType: func {
         return me._nearestType.getValue() or 'airport';
     },
 

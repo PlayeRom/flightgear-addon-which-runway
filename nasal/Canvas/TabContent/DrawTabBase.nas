@@ -35,7 +35,7 @@ var DrawTabBase = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
     },
 
     #
@@ -43,7 +43,7 @@ var DrawTabBase = {
     #
     # @return bool
     #
-    _isTabNearest: func() {
+    _isTabNearest: func {
         return me._tabId == WhichRwyDialog.TAB_NEAREST;
     },
 
@@ -52,7 +52,7 @@ var DrawTabBase = {
     #
     # @return bool
     #
-    _isTabDeparture: func() {
+    _isTabDeparture: func {
         return me._tabId == WhichRwyDialog.TAB_DEPARTURE;
     },
 
@@ -61,7 +61,7 @@ var DrawTabBase = {
     #
     # @return bool
     #
-    _isTabArrival: func() {
+    _isTabArrival: func {
         return me._tabId == WhichRwyDialog.TAB_ARRIVAL;
     },
 
@@ -70,7 +70,7 @@ var DrawTabBase = {
     #
     # @return bool
     #
-    _isTabAlternate: func() {
+    _isTabAlternate: func {
         return me._tabId == WhichRwyDialog.TAB_ALTERNATE;
     },
 };

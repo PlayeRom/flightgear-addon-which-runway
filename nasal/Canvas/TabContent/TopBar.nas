@@ -35,7 +35,7 @@ var TopBar = {
             .setText("----")
             .setFixedSize(58, 28)
             .setVisible(false)
-            .listen("clicked", func() {
+            .listen("clicked", func {
                 obj._clickAptCallback.invoke();
             });
 
@@ -58,7 +58,7 @@ var TopBar = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
         me._runwayBtns.clear();
     },
 
@@ -104,7 +104,7 @@ var TopBar = {
     #
     # @return ghost  Canvas layout object with controls.
     #
-    drawTopBar: func() {
+    drawTopBar: func {
         var buttonBox = canvas.HBoxLayout.new();
 
         buttonBox.addStretch(1);

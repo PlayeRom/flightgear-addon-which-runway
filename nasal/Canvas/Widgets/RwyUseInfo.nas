@@ -110,7 +110,7 @@ gui.widgets.RwyUseInfo = {
     #
     # @return void
     #
-    updateView: func() {
+    updateView: func {
         me._view.reDrawContent(me);
     },
 };

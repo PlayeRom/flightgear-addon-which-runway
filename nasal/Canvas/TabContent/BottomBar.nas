@@ -56,7 +56,7 @@ var BottomBar = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
         if (me._loadIcaoBtns != nil) {
             me._loadIcaoBtns.clear();
         }
@@ -81,7 +81,7 @@ var BottomBar = {
     #
     # @return bool
     #
-    isHoldUpdateNearest: func() {
+    isHoldUpdateNearest: func {
         return me._isHoldUpdateNearest;
     },
 
@@ -90,7 +90,7 @@ var BottomBar = {
     #
     # @return void
     #
-    updateNearestAirportButtons: func() {
+    updateNearestAirportButtons: func {
         if (!me._isTabNearest() and !me._isTabAlternate()) {
             return;
         }
@@ -127,7 +127,7 @@ var BottomBar = {
     #
     # @return ghost  Canvas layout object with controls.
     #
-    drawBottomBarForNearest: func() {
+    drawBottomBarForNearest: func {
         var buttonBox = canvas.HBoxLayout.new();
 
         buttonBox.addStretch(1);
@@ -141,7 +141,7 @@ var BottomBar = {
             me._downloadMetarCallback.invoke(e.detail.text);
         });
 
-        var btnLoad = me._widget.getButton("Load", func() {
+        var btnLoad = me._widget.getButton("Load", func {
             me._downloadMetarCallback.invoke(me._icaoEdit.text());
         });
 
@@ -172,10 +172,10 @@ var BottomBar = {
     #
     # @return ghost  Canvas layout object with controls.
     #
-    drawBottomBarForScheduledTab: func() {
+    drawBottomBarForScheduledTab: func {
         var buttonBox = canvas.HBoxLayout.new();
 
-        var btnLoad = me._widget.getButton("Update METAR", func() {
+        var btnLoad = me._widget.getButton("Update METAR", func {
             me._downloadMetarCallback.invoke(me._icao);
         });
 
@@ -189,7 +189,7 @@ var BottomBar = {
     #
     # @return ghost  Canvas layout object with controls.
     #
-    drawBottomBarForAlternate: func() {
+    drawBottomBarForAlternate: func {
         var buttonBox = canvas.HBoxLayout.new();
 
         buttonBox.addStretch(1);
@@ -203,7 +203,7 @@ var BottomBar = {
             me._downloadMetarCallback.invoke(e.detail.text);
         });
 
-        var btnLoad = me._widget.getButton("Load", func() {
+        var btnLoad = me._widget.getButton("Load", func {
             me._downloadMetarCallback.invoke(me._icaoEdit.text());
         });
 

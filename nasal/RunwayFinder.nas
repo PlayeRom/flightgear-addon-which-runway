@@ -46,7 +46,7 @@ var RunwayFinder = {
     #
     # @return void
     #
-    del: func() {
+    del: func {
     },
 
     #
@@ -77,7 +77,7 @@ var RunwayFinder = {
     #
     # @return int
     #
-    getRwyUseStatus: func() {
+    getRwyUseStatus: func {
         return me._rwyUseStatus;
     },
 
