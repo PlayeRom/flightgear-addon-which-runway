@@ -155,7 +155,9 @@ var RwyUse = {
         var schedule = me.getScheduleByTime(icao, acType, utcHour, utcMinute);
         if (schedule == nil) {
             return nil; # error, no icao or traffic
-        } else if (schedule == RwyUse.ERR_NO_SCHEDULE) {
+        }
+
+        if (schedule == RwyUse.ERR_NO_SCHEDULE) {
             return RwyUse.ERR_NO_SCHEDULE; # the indicated traffic does not operate at the specified time
         }
 
