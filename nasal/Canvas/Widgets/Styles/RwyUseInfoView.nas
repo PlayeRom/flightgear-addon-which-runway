@@ -16,7 +16,7 @@ DefaultStyle.widgets["rwy-use-info-view"] = {
     #
     # Constructor
     #
-    # @param  ghost  parent
+    # @param  hash  parent
     # @param  hash  cfg
     # @return void
     #

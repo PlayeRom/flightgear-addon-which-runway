@@ -18,7 +18,7 @@ gui.widgets.WindSettings = {
     #
     # Constructor.
     #
-    # @param  ghost  parent
+    # @param  hash  parent
     # @param  hash|nil  style
     # @param  hash|nil  cfg
     # @return ghost

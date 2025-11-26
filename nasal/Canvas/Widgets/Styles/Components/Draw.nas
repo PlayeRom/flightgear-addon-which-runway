@@ -22,7 +22,7 @@ var Draw = {
     #
     # Constructor.
     #
-    # @param  ghost  canvasContent  Canvas object where we will be drawn.
+    # @param  hash  canvasContent  Canvas object where we will be drawn.
     # @param  string|nil  fontSansBold
     # @return hash
     #
@@ -43,7 +43,7 @@ var Draw = {
     },
 
     #
-    # @return ghost  Canvas content.
+    # @return hash  Canvas content.
     #
     _getContent: func {
         return me._content;
@@ -53,7 +53,7 @@ var Draw = {
     # Create and return canvas text element.
     #
     # @param  string|nil  text
-    # @return ghost  Canvas text element.
+    # @return hash  Canvas text element.
     #
     createText: func(text = nil) {
         var element = me._getContent().createChild("text");
@@ -68,7 +68,7 @@ var Draw = {
     #
     # Create and return canvas path element.
     #
-    # @return ghost  Canvas path element.
+    # @return hash  Canvas path element.
     #
     createPath: func {
         return me._getContent().createChild("path");
@@ -78,7 +78,7 @@ var Draw = {
     # Create and return canvas SVG element.
     #
     # @param  string  file  SVG file path relative to FGData directory.
-    # @return ghost  Canvas SVG element.
+    # @return hash  Canvas SVG element.
     #
     createSvg: func(file) {
         var svgImg = me._getContent().createChild("group");
@@ -88,7 +88,7 @@ var Draw = {
     },
 
     #
-    # @param  ghost  textElement
+    # @param  hash  textElement
     # @param  int|nil  extraShift  If nil then Draw.SHIFT_X is set.
     # @return double
     #
@@ -101,7 +101,7 @@ var Draw = {
     },
 
     #
-    # @param  ghost  textElement
+    # @param  hash  textElement
     # @param  int|nil  extraShift  If nil then Draw.SHIFT_Y is set.
     # @return double
     #
@@ -116,7 +116,7 @@ var Draw = {
     #
     # @param  string|nil  text
     # @param  vector|nil  color  RGB color.
-    # @return ghost  Text canvas element for label.
+    # @return hash  Text canvas element for label.
     #
     createTextLabel: func(text = nil, color = nil) {
         return me.createText(text)
@@ -126,7 +126,7 @@ var Draw = {
     #
     # @param  string|nil  text
     # @param  vector|nil  color  RGB color.
-    # @return ghost  Text canvas element for value.
+    # @return hash  Text canvas element for value.
     #
     createTextValue: func(text = nil, color = nil) {
         return me.createText(text)
@@ -137,7 +137,7 @@ var Draw = {
     #
     # @param  string|nil  text
     # @param  vector|nil  color  RGB color.
-    # @return ghost  Text canvas element for unit.
+    # @return hash  Text canvas element for unit.
     #
     createTextUnit: func(text = nil, color = nil) {
         return me.createText(text)
