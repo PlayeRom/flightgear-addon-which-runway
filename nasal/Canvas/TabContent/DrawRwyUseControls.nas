@@ -22,7 +22,7 @@ var DrawRwyUseControls = {
     # Constructor.
     #
     # @param  string  tabId
-    # @param  ghost  scrollContent
+    # @param  hash  scrollContent
     # @param  hash  redrawCallback  Callback object.
     # @param  string  aircraftType  As "com", "gen", "mil, "ul".
     # @return hash
