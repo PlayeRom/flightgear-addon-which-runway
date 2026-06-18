@@ -193,8 +193,8 @@ DefaultStyle.widgets["wind-rose-view"] = {
 
         var rwyCenterX = centerX;
         var rwyCenterY = centerY;
-        var startClipped = false;
-        var endClipped = false;
+        var isStartClipped = false;
+        var isEndClipped = false;
         var xStart = 0;
         var yStart = 0;
         var xEnd   = 0;
@@ -246,8 +246,8 @@ DefaultStyle.widgets["wind-rose-view"] = {
                 return;
             }
 
-            startClipped = (clipped[0].x != xStart or clipped[0].y != yStart);
-            endClipped   = (clipped[1].x != xEnd   or clipped[1].y != yEnd);
+            isStartClipped = (clipped[0].x != xStart or clipped[0].y != yStart);
+            isEndClipped   = (clipped[1].x != xEnd   or clipped[1].y != yEnd);
 
             xStart = clipped[0].x;
             yStart = clipped[0].y;
@@ -264,12 +264,12 @@ DefaultStyle.widgets["wind-rose-view"] = {
             .setStrokeLineWidth(widthPix);
 
         # Threshold markings
-        if (rwy.reciprocal != nil and !endClipped) {
+        if (rwy.reciprocal != nil and !isEndClipped) {
             # For reciprocal
             me._drawRunwayId(model, rwyCenterX, rwyCenterY, rwy.reciprocal.id, rwy.normDiffDeg, angleRad, lenPix, false, isMainRwy);
         }
 
-        if (!startClipped) {
+        if (!isStartClipped) {
             angleRad = (rwy.heading + 90) * globals.D2R;
             me._drawRunwayId(model, rwyCenterX, rwyCenterY, rwy.rwyId, rwy.normDiffDeg, angleRad, lenPix, isMainRwy, isMainRwy);
         }
@@ -324,7 +324,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
             });
         }
 
-        # zwróć odcinek przycięty
+        # return the clipped line
         var inside1 = (math.pow(x1 - cx, 2) + math.pow(y1 - cy, 2)) <= radiusPow2;
         var inside2 = (math.pow(x2 - cx, 2) + math.pow(y2 - cy, 2)) <= radiusPow2;
 
@@ -361,6 +361,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     # @param  ghost  model  WindRose model.
     # @param  double  x, y  Center of wind rose in pixels.
     # @param  string  rwyId  Runway id to draw.
+    # @param  int|nil  normDiffDeg
     # @param  double  angleRad  Angle of runway in radians.
     # @param  double  lenPix  Length of runway in pixels.
     # @param  bool  isMainThreshold
@@ -368,12 +369,7 @@ DefaultStyle.widgets["wind-rose-view"] = {
     # @return void
     #
     _drawRunwayId: func(model, x, y, rwyId, normDiffDeg, angleRad, lenPix, isMainThreshold, isMainRwy) {
-        var color = style.getColor("text_color");
-        if (isMainThreshold) {
-            color = me._geWindColorByDir(model, normDiffDeg);
-        } elsif (!isMainRwy) {
-            color = [0.7, 0.7, 0.7];
-        }
+        var color = me._getRunwayIdColor(model, normDiffDeg, isMainThreshold, isMainRwy);
 
         var text = me._draw.createText(rwyId)
             .setFontSize(isMainThreshold ? 16 : 12)
@@ -387,6 +383,20 @@ DefaultStyle.widgets["wind-rose-view"] = {
         if (isMainThreshold) {
             text.setFont(me._fontSansBold);
         }
+    },
+
+    #
+    # @param  ghost  model  WindRose model.
+    # @param  int|nil  normDiffDeg
+    # @param  bool  isMainThreshold
+    # @param  bool  isMainRwy
+    # @return vector  RGB color.
+    #
+    _getRunwayIdColor: func(model, normDiffDeg, isMainThreshold, isMainRwy) {
+        if (isMainThreshold) return me._geWindColorByDir(model, normDiffDeg);
+        if (!isMainRwy)      return [0.7, 0.7, 0.7];
+
+        return style.getColor("text_color");
     },
 
     #
